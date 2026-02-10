@@ -84,8 +84,3 @@ El sistema incluye rutas protegidas que requieren autenticación previa. Los usu
 ## 📄 Licencia
 
 Este proyecto está desarrollado para uso comercial.
-## 🔮 Mejoras Futuras
-
-- **Corrección de Typos**: Renombrar carpetas y archivos para consistencia (e.g., `entitis` -> `entities`).
-- **Pruebas**: Implementar tests unitarios y de integración.
-- **Optimización**: Mejorar el rendimiento de carga inicial.
