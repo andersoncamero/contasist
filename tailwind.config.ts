@@ -93,6 +93,7 @@ export default {
       },
       fontFamily: {
         sans: [
+          "Lato",
           "Work Sans",
           "ui-sans-serif",
           "system-ui",
@@ -103,6 +104,10 @@ export default {
           "Helvetica Neue",
           "Arial",
           "Noto Sans",
+          "sans-serif",
+        ],
+        secondary: [
+          "Rubik",
           "sans-serif",
         ],
         serif: [

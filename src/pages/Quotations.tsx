@@ -62,10 +62,10 @@ export const Quotations = () => {
 
   return (
     <MainLayout>
-      <div className="mb-8 flex items-center justify-between">
+      <div className="page-header">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Cotizaciones</h1>
-          <p className="mt-1 text-muted-foreground">
+          <h1 className="page-title">Cotizaciones</h1>
+          <p className="page-subtitle">
             Gestiona tus cotizaciones
           </p>
         </div>
@@ -102,12 +102,12 @@ export const Quotations = () => {
       </div>
 
       <div className="border-2 border-border bg-card rounded-lg">
-        <div className="hidden md:grid grid-cols-[1fr_1fr_auto_auto_auto] gap-4 border-b-2 border-border bg-muted p-4 text-xs font-bold uppercase tracking-wide rounded-t-lg">
-          <div>Cotización</div>
-          <div>Cliente</div>
-          <div>Total</div>
-          <div>Estado</div>
-          <div>Acciones</div>
+        <div className="table-header hidden md:flex gap-4">
+          <div className="flex-1 text-left">Cotización</div>
+          <div className="flex-1 text-left">Cliente</div>
+          <div className="w-[120px] text-right">Total</div>
+          <div className="w-[120px] text-center">Estado</div>
+          <div className="w-[100px] text-right">Acciones</div>
         </div>
 
         {sortedQuotations.length === 0 ? (
@@ -165,28 +165,28 @@ export const Quotations = () => {
                 </div>
 
                 {/* Layout desktop */}
-                <div className="hidden md:grid grid-cols-[1fr_1fr_auto_auto_auto] gap-4 items-center">
-                  <div>
+                <div className="hidden md:flex gap-4 items-center">
+                  <div className="flex-1 text-left">
                     <p className="font-bold font-mono">{quotation.number}</p>
                     <p className="text-sm text-muted-foreground">
                       {formatShortDate(quotation.createdAt)}
                     </p>
                   </div>
-                  <div>
+                  <div className="flex-1 text-left">
                     <p className="font-medium">{quotation.clientName}</p>
                     <p className="text-sm text-muted-foreground">
                       {quotation.items.length} item(s)
                     </p>
                   </div>
-                  <div className="text-right">
+                  <div className="w-[120px] text-right">
                     <p className="font-mono font-bold">
                       {formatCurrency(quotation.total)}
                     </p>
                   </div>
-                  <div>
+                  <div className="w-[120px] text-center">
                     <StatusBadge status={quotation.status} />
                   </div>
-                  <div className="flex gap-2">
+                  <div className="w-[100px] flex gap-2 justify-end">
                     <Link to={`/quotations/${quotation.id}`}>
                       <Button variant="outline" size="icon">
                         <Eye className="h-4 w-4" />
