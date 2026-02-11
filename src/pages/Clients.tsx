@@ -76,10 +76,10 @@ export default function Clients() {
 
   return (
     <MainLayout>
-      <div className="mb-8 flex items-center justify-between">
+      <div className="page-header">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Clientes</h1>
-          <p className="mt-1 text-muted-foreground">
+          <h1 className="page-title">Clientes</h1>
+          <p className="page-subtitle">
             Gestiona tu base de clientes
           </p>
         </div>
@@ -102,7 +102,7 @@ export default function Clients() {
       </div>
 
       <div className="border-2 border-border bg-card rounded-lg">
-        <div className="hidden md:flex gap-4 border-b-2 border-border bg-muted p-4 text-xs font-bold uppercase tracking-wide rounded-t-lg">
+        <div className="table-header hidden md:flex gap-4">
           <div className="flex-1 flex items-center justify-start text-left">Cliente</div>
           <div className="flex-1 flex items-center justify-start text-left">Contacto</div>
           <div className="flex-1 flex items-center justify-start text-left">Empresa</div>

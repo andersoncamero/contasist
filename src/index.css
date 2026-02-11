@@ -161,3 +161,21 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer components {
+  .table-header {
+    @apply bg-slate-200 font-bold uppercase tracking-wide text-xs p-4 border-b-2 border-border rounded-t-lg;
+  }
+
+  .page-header {
+    @apply mb-8 flex items-center justify-between;
+  }
+
+  .page-title {
+    @apply text-3xl font-bold tracking-tight;
+  }
+
+  .page-subtitle {
+    @apply mt-1 text-muted-foreground;
+  }
+}
