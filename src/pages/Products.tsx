@@ -81,10 +81,11 @@ export default function Products() {
 
   return (
     <MainLayout>
-      <div className="mb-8 flex items-center justify-between">
+
+      <div className="page-header">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Catálogo</h1>
-          <p className="mt-1 text-muted-foreground">
+          <h1 className="page-title">Catálogo</h1>
+          <p className="page-subtitle">
             Productos y servicios disponibles
           </p>
         </div>
@@ -107,12 +108,12 @@ export default function Products() {
       </div>
 
       <div className="border-2 border-border bg-card rounded-lg">
-        <div className="hidden md:grid grid-cols-[1fr_1fr_auto_auto_auto] gap-4 border-b-2 border-border bg-muted p-4 text-xs font-bold uppercase tracking-wide rounded-t-lg">
-          <div>Producto/Servicio</div>
-          <div>Descripción</div>
-          <div>Precio</div>
-          <div>Tipo</div>
-          <div>Acciones</div>
+        <div className="table-header hidden md:flex gap-4">
+          <div className="flex-1 text-left">Producto/Servicio</div>
+          <div className="flex-1 text-left">Descripción</div>
+          <div className="w-[120px] text-right">Precio</div>
+          <div className="w-[100px] text-center">Tipo</div>
+          <div className="w-[100px] text-right">Acciones</div>
         </div>
 
         {filteredProducts.length === 0 ? (
@@ -179,19 +180,20 @@ export default function Products() {
                 </div>
 
                 {/* Layout desktop */}
-                <div className="hidden md:grid grid-cols-[1fr_1fr_auto_auto_auto] gap-4 items-center">
-                  <div>
+
+                <div className="hidden md:flex gap-4 items-center">
+                  <div className="flex-1 text-left">
                     <p className="font-bold">{product.name}</p>
                     <p className="text-sm text-muted-foreground">
                       {product.category}
                     </p>
                   </div>
-                  <div>
+                  <div className="flex-1 text-left">
                     <p className="text-sm line-clamp-2">
                       {product.description}
                     </p>
                   </div>
-                  <div className="text-right">
+                  <div className="w-[120px] text-right">
                     <p className="font-mono font-bold">
                       {formatCurrency(product.price)}
                     </p>
@@ -199,12 +201,12 @@ export default function Products() {
                       /{product.unit}
                     </p>
                   </div>
-                  <div>
+                  <div className="w-[100px] text-center">
                     <span className="inline-block border-2 border-border px-2 py-1 text-xs font-bold uppercase rounded-lg">
                       {product.isService ? "Servicio" : "Producto"}
                     </span>
                   </div>
-                  <div className="flex gap-2">
+                  <div className="w-[100px] flex gap-2 justify-end">
                     <Button
                       variant="outline"
                       size="icon"
@@ -256,6 +258,7 @@ export default function Products() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
     </MainLayout>
   );
 }
