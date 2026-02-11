@@ -22,12 +22,12 @@ import { Client } from '@/entities/Client';
 
 
 const clientSchema = z.object({
-  name: z.string().min(2, 'El nombre debe tener al menos 2 caracteres'),
-  email: z.string().email('Email inválido'),
-  phone: z.string().min(10, 'Teléfono debe tener al menos 10 dígitos'),
-  company: z.string().optional(),
-  address: z.string().optional(),
-  taxId: z.string().optional(),
+  Name: z.string().min(2, 'El nombre debe tener al menos 2 caracteres'),
+  Email: z.email('Email inválido'),
+  Phone: z.string().min(10, 'Teléfono debe tener al menos 10 dígitos'),
+  Company: z.string().optional(),
+  Address: z.string().optional(),
+  TaxId: z.string().optional(),
 });
 
 type ClientFormData = z.infer<typeof clientSchema>;
@@ -48,32 +48,32 @@ export function ClientDialog({
   const form = useForm<ClientFormData>({
     resolver: zodResolver(clientSchema),
     defaultValues: {
-      name: '',
-      email: '',
-      phone: '',
-      company: '',
-      address: '',
-      taxId: '',
+      Name: '',
+      Email: '',
+      Phone: '',
+      Company: '',
+      Address: '',
+      TaxId: '',
     },
   });
 
   useEffect(() => {
     if (client) {
       form.reset({
-        name: client.name,
-        email: client.email,
-        phone: client.phone,
-        company: client.company || '',
-        address: client.address || '',
+        Name: client.Name,
+        Email: client.Email,
+        Phone: client.Phone,
+        Company: client.Company || '',
+        Address: client.Address || '',
       });
     } else {
       form.reset({
-        name: '',
-        email: '',
-        phone: '',
-        company: '',
-        address: '',
-        taxId: '',
+        Name: '',
+        Email: '',
+        Phone: '',
+        Company: '',
+        Address: '',
+        TaxId: '',
       });
     }
   }, [client, form]);
@@ -96,12 +96,12 @@ export function ClientDialog({
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
               control={form.control}
-              name="name"
+              name="Name"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Nombre *</FormLabel>
                   <FormControl>
-                    <Input placeholder="Juan Pérez" {...field} />
+                    <Input placeholder="Juan Pérez" {...field} className="placeholder:text-gray-500" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -111,12 +111,12 @@ export function ClientDialog({
             <div className="grid grid-cols-2 gap-4">
               <FormField
                 control={form.control}
-                name="email"
+                name="Email"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Email *</FormLabel>
                     <FormControl>
-                      <Input type="email" placeholder="juan@email.com" {...field} />
+                      <Input type="email" placeholder="juan@email.com" {...field} className="placeholder:text-gray-500" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -125,12 +125,12 @@ export function ClientDialog({
 
               <FormField
                 control={form.control}
-                name="phone"
+                name="Phone"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Teléfono *</FormLabel>
                     <FormControl>
-                      <Input placeholder="+52 55 1234 5678" {...field} />
+                      <Input placeholder="+52 55 1234 5678" {...field} className="placeholder:text-gray-500" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -140,12 +140,12 @@ export function ClientDialog({
 
             <FormField
               control={form.control}
-              name="company"
+              name="Company"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Empresa</FormLabel>
                   <FormControl>
-                    <Input placeholder="Nombre de la empresa" {...field} />
+                    <Input placeholder="Nombre de la empresa" {...field} className="placeholder:text-gray-500" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -154,12 +154,12 @@ export function ClientDialog({
 
             <FormField
               control={form.control}
-              name="address"
+              name="Address"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Dirección</FormLabel>
                   <FormControl>
-                    <Input placeholder="Dirección completa" {...field} />
+                    <Input placeholder="Dirección completa" {...field} className="placeholder:text-gray-500" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -168,12 +168,12 @@ export function ClientDialog({
 
             <FormField
               control={form.control}
-              name="taxId"
+              name="TaxId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>RFC / ID Fiscal</FormLabel>
+                  <FormLabel>NIT / ID Fiscal</FormLabel>
                   <FormControl>
-                    <Input placeholder="RFC123456789" {...field} />
+                    <Input placeholder="123456789" {...field} className="placeholder:text-gray-500" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

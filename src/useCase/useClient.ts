@@ -4,24 +4,24 @@ import { API_BASE_URL, getAuthHeader } from "./apiConfig";
 
 // Tipos de API
 interface ApiClientResponse {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  company?: string;
-  address?: string;
+  ID: string;
+  Name: string;
+  Email: string;
+  Phone: string;
+  Company?: string;
+  Address?: string;
   created_at?: string;
 }
 
 // Mappers
 const mapApiClient = (apiClient: ApiClientResponse): Client => ({
-  id: apiClient.id,
-  name: apiClient.name,
-  email: apiClient.email,
-  phone: apiClient.phone,
-  company: apiClient.company,
-  address: apiClient.address,
-  createdAt: new Date(apiClient.created_at || Date.now()),
+  ID: apiClient.ID,
+  Name: apiClient.Name,
+  Email: apiClient.Email,
+  Phone: apiClient.Phone,
+  Company: apiClient.Company,
+  Address: apiClient.Address,
+  CreatedAt: new Date(apiClient.created_at || Date.now()),
 });
 
 // Funciones API
@@ -34,7 +34,7 @@ const fetchClientsApi = async (): Promise<Client[]> => {
   return data.map(mapApiClient);
 };
 
-const addClientApi = async (client: Omit<Client, "id" | "createdAt">) => {
+const addClientApi = async (client: Omit<Client, "ID" | "CreatedAt">) => {
   const response = await fetch(`${API_BASE_URL}/clients`, {
     method: "POST",
     headers: getAuthHeader(),
@@ -104,7 +104,7 @@ export const useClient = () => {
   // Facade para mantener compatibilidad con los componentes existentes
   // aunque idealmente deberíamos retornar query y mutations directamente.
   
-  const addClient = async (client: Omit<Client, "id" | "createdAt">) => {
+  const addClient = async (client: Omit<Client, "ID" | "CreatedAt">) => {
     try {
       await addMutation.mutateAsync(client);
       return { success: true };

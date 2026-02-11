@@ -32,18 +32,18 @@ export default function Clients() {
   const [editingClient, setEditingClient] = useState<Client | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
- 
+
 
   const filteredClients = clients.filter(
     (client) =>
-      client.name?.toLowerCase().includes(search.toLowerCase()) ||
-      client.email?.toLowerCase().includes(search.toLowerCase()) ||
-      client.company?.toLowerCase().includes(search.toLowerCase()),
+      client.Name?.toLowerCase().includes(search.toLowerCase()) ||
+      client.Email?.toLowerCase().includes(search.toLowerCase()) ||
+      client.Company?.toLowerCase().includes(search.toLowerCase()),
   );
 
-  const handleSave = async (data: Omit<Client, "id" | "createdAt">) => {
+  const handleSave = async (data: Omit<Client, "ID" | "CreatedAt">) => {
     if (editingClient) {
-      const result = await updateClient(editingClient.id, data);
+      const result = await updateClient(editingClient.ID, data);
 
       if (result.success) {
         toast.success("Cliente actualizado exitosamente");
@@ -102,14 +102,14 @@ export default function Clients() {
       </div>
 
       <div className="border-2 border-border bg-card rounded-lg">
-        <div className="hidden md:grid grid-cols-[1fr_1fr_1fr_auto] gap-4 border-b-2 border-border bg-muted p-4 text-xs font-bold uppercase tracking-wide rounded-t-lg">
-          <div>Cliente</div>
-          <div>Contacto</div>
-          <div>Empresa</div>
-          <div>Acciones</div>
+        <div className="hidden md:flex gap-4 border-b-2 border-border bg-muted p-4 text-xs font-bold uppercase tracking-wide rounded-t-lg">
+          <div className="flex-1 flex items-center justify-start text-left">Cliente</div>
+          <div className="flex-1 flex items-center justify-start text-left">Contacto</div>
+          <div className="flex-1 flex items-center justify-start text-left">Empresa</div>
+          <div className="w-[100px] flex items-center justify-end text-right">Acciones</div>
         </div>
 
- {filteredClients.length === 0 ? (
+        {filteredClients.length === 0 ? (
           <div className="flex flex-col items-center justify-center p-12 text-center">
             <Building2 className="h-12 w-12 text-muted-foreground" />
             <p className="mt-4 text-lg font-medium">No hay clientes</p>
@@ -120,14 +120,14 @@ export default function Clients() {
         ) : (
           <div className="divide-y-2 divide-border">
             {filteredClients.map((client) => (
-              <div key={client.id}>
+              <div key={client.ID}>
 
                 <div className="md:hidden p-4 space-y-3">
                   <div className="flex items-start justify-between">
                     <div className="flex-1 min-w-0">
-                      <p className="font-bold truncate">{client.name}</p>
+                      <p className="font-bold truncate">{client.Name}</p>
                       <p className="text-sm text-muted-foreground">
-                        Desde {formatShortDate(client.createdAt)}
+                        Desde {formatShortDate(client.CreatedAt)}
                       </p>
                     </div>
                     <div className="flex gap-2 ml-2">
@@ -142,7 +142,7 @@ export default function Clients() {
                       <Button
                         variant="outline"
                         size="icon"
-                        onClick={() => setDeleteId(client.id)}
+                        onClick={() => setDeleteId(client.ID)}
                         disabled={isLoading}
                       >
                         <Trash2 className="h-4 w-4" />
@@ -150,23 +150,29 @@ export default function Clients() {
                     </div>
                   </div>
                   <div className="text-sm space-y-1">
-                    <p>{client.email}</p>
-                    <p className="text-muted-foreground">{client.phone}</p>
+                    <p>{client.Email}</p>
+                    <p className="text-muted-foreground">{client.Phone}</p>
                   </div>
                 </div>
 
-                <div className="hidden md:grid grid-cols-[1fr_1fr_1fr_auto] gap-4 p-4 transition-colors hover:bg-accent">
-                  <div>
-                    <p className="font-bold">{client.name}</p>
+                <div className="hidden md:flex gap-4 p-4 transition-colors hover:bg-accent">
+                  <div className="flex-1 flex flex-col justify-center items-start text-left">
+                    <p className="font-bold">{client.Name}</p>
                     <p className="text-sm text-muted-foreground">
-                      Desde {formatShortDate(client.createdAt)}
+                      Desde {formatShortDate(client.CreatedAt)}
                     </p>
                   </div>
-                  <div>
-                    <p className="text-sm">{client.email}</p>
-                    <p className="text-sm text-muted-foreground">{client.phone}</p>
+
+                  <div className="flex-1 flex flex-col justify-center items-start text-left">
+                    <p className="text-sm">{client.Email}</p>
+                    <p className="text-sm text-muted-foreground">{client.Phone}</p>
                   </div>
-                  <div className="flex gap-2">
+
+                  <div className="flex-1 flex flex-col justify-center items-start text-left">
+                    <p className="text-sm text-muted-foreground ">{client.Company}</p>
+                  </div>
+
+                  <div className="w-[100px] flex gap-2 justify-end items-center">
                     <Button
                       variant="outline"
                       size="icon"
@@ -178,7 +184,7 @@ export default function Clients() {
                     <Button
                       variant="outline"
                       size="icon"
-                      onClick={() => setDeleteId(client.id)}
+                      onClick={() => setDeleteId(client.ID)}
                       disabled={isLoading}
                     >
                       <Trash2 className="h-4 w-4" />
