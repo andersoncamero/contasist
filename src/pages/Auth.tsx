@@ -2,7 +2,7 @@ import { useToast } from "@/hooks/useToast";
 import { useAuth } from "@/useCase/auth";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { FileText, Mail, Lock, User } from "lucide-react";
+import { Mail, Lock, User, Eye } from "lucide-react";
 import { Card, CardContent, CardHeader } from "@/components/UI/Card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/UI/Tabs";
 import { Label } from "@/components/UI/Label";
@@ -25,6 +25,15 @@ export const Auth = () => {
   if (isAuthenticated) {
     navigate("/");
     return null;
+  }
+
+  const togglePasswordVisibility = () => {
+    const input = document.getElementById("login-password") || document.getElementById("register-password")
+    if (input?.getAttribute("type") === "password") {
+      input?.setAttribute("type", "text")
+    } else {
+      input?.setAttribute("type", "password")
+    }
   }
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -132,7 +141,7 @@ export const Auth = () => {
                         placeholder="corre@ejemplo.com"
                         value={loginEmail}
                         onChange={(e) => setLoginEmail(e.target.value)}
-                        className="pl-10"
+                        className="pl-10 placeholder:text-gray-500 placeholder:italic"
                         required
                       />
                     </div>
@@ -148,9 +157,10 @@ export const Auth = () => {
                         placeholder="••••••••"
                         value={loginPassword}
                         onChange={(e) => setLoginPassword(e.target.value)}
-                        className="pl-10"
+                        className="pl-10 placeholder:text-gray-500"
                         required
                       />
+                      <Eye className="absolute right-3 top-3 h-4 w-4 text-muted-foreground" onClick={togglePasswordVisibility} />
                     </div>
                   </div>
 
@@ -172,7 +182,7 @@ export const Auth = () => {
                         placeholder="Juan Pérez"
                         value={registerName}
                         onChange={(e) => setRegisterName(e.target.value)}
-                        className="pl-10"
+                        className="pl-10 placeholder:text-gray-500"
                         required
                       />
                     </div>
@@ -188,7 +198,7 @@ export const Auth = () => {
                         placeholder="correo@ejemplo.com"
                         value={registerEmail}
                         onChange={(e) => setRegisterEmail(e.target.value)}
-                        className="pl-10"
+                        className="pl-10 placeholder:text-gray-500 placeholder:italic"
                         required
                       />
                     </div>
@@ -204,9 +214,10 @@ export const Auth = () => {
                         placeholder="Mínimo 6 caracteres"
                         value={registerPassword}
                         onChange={(e) => setRegisterPassword(e.target.value)}
-                        className="pl-10"
+                        className="pl-10 placeholder:text-gray-500"
                         required
                       />
+                      <Eye className="absolute right-3 top-3 h-4 w-4 text-muted-foreground" onClick={togglePasswordVisibility} />
                     </div>
                   </div>
 
@@ -224,9 +235,10 @@ export const Auth = () => {
                         onChange={(e) =>
                           setRegisterConfirmPassword(e.target.value)
                         }
-                        className="pl-10"
+                        className="pl-10 placeholder:text-gray-500"
                         required
                       />
+                      <Eye className="absolute right-3 top-3 h-4 w-4 text-muted-foreground" onClick={togglePasswordVisibility} />
                     </div>
                   </div>
 
