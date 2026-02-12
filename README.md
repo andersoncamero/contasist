@@ -81,6 +81,32 @@ El sistema incluye rutas protegidas que requieren autenticación previa. Los usu
 - **Cotizaciones**: Creación y seguimiento de presupuestos
 - **Configuración**: Ajustes de usuario e información empresarial
 
+## 🎨 Sistema de Diseño
+
+### Paleta de Colores
+Colores definidos en `src/index.css` (HSL) para facilitar el soporte de temas (Light/Dark).
+
+| Variable | Descripción |
+| :--- | :--- |
+| **Primary** | Color principal de marca, botones primarios y estados activos. |
+| **Secondary** | Elementos secundarios. |
+| **Background** | Fondo general de la página. |
+| **Foreground** | Color de texto principal. |
+| **Card** | Fondo de los componentes tipo tarjeta. |
+| **Muted** | Fondos atenuados (ej. encabezados de tabla, breadcrumbs). |
+| **Accent** | Elementos destacados y estados hover. |
+| **Destructive**| Indicadores de error y acciones destructivas (ej. eliminar). |
+| **Border** | Color para bordes y separadores. |
+
+### Tipografía
+
+| Tipo | Fuente (Font Family) | Propósito |
+| :--- | :--- | :--- |
+| **Primaria (Sans)** | **Lato** | Texto general, cuerpo, títulos y elementos de interfaz. Configurada como la fuente `sans` por defecto. |
+| **Secundaria** | **Rubik** | Fuente complementaria para elementos decorativos o destacados. Utilizar con `font-secondary`. |
+| **Serif** | **Lora** | Texto elegante o editorial. |
+| **Mono** | **Inconsolata** | Código, identificadores, precios y datos numéricos tabulares. |
+
 ## 📄 Licencia
 
 Este proyecto está desarrollado para uso comercial.

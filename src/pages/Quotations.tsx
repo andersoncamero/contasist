@@ -101,7 +101,7 @@ export const Quotations = () => {
         </Select>
       </div>
 
-      <div className="border-2 border-border bg-card rounded-lg">
+      <div className="border-2 border-border bg-card rounded-lg overflow-hidden">
         <div className="table-header hidden md:flex gap-4">
           <div className="flex-1 text-left">Cotización</div>
           <div className="flex-1 text-left">Cliente</div>
