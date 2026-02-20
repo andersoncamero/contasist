@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { Plus, Search, Pencil, Trash2, Building2 } from "lucide-react";
-import { MainLayout } from "@/components/layout/MainLayout";
-import { Button } from "@/components/UI/Button";
-import { Input } from "@/components/UI/Input";
-import { ClientDialog } from "@/components/clients/ClientDialog";
+import { MainLayout } from "@/templates/MainLayout";
+import { Button } from "@/components/atoms/Button";
+import { Input } from "@/components/atoms/Input";
+import { ClientDialog } from "@/components/organisms/clients/ClientDialog";
 import { formatShortDate, generateId } from "@/lib/utils";
 import {
   AlertDialog,
@@ -14,9 +14,9 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/UI/AlertDialog";
+} from "@/components/molecules/AlertDialog";
 import { Client } from "@/entities/Client";
-import { useClient } from "@/useCase/useClient";
+import { useClient } from "@/useCases/useClient";
 import { toast } from "sonner";
 
 export default function Clients() {

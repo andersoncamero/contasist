@@ -8,7 +8,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from '@/components/UI/Dialog';
+} from '@/components/molecules/Dialog';
 import {
   Form,
   FormControl,
@@ -16,11 +16,11 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/UI/Form';
-import { Input } from '@/components/UI/Input';
-import { Textarea } from '@/components/UI/Textarea';
-import { Button } from '@/components/UI/Button';
-import { Switch } from '@/components/UI/Switch';
+} from '@/components/molecules/Form';
+import { Input } from '@/components/atoms/Input';
+import { Textarea } from '@/components/atoms/Textarea';
+import { Button } from '@/components/atoms/Button';
+import { Switch } from '@/components/atoms/Switch';
 import { Product } from '@/entities/Product';
 
 

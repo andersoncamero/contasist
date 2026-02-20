@@ -1,18 +1,20 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { Toaster } from "./components/UI/Toaster";
-import { Toaster as Sonner } from "./components/UI/Sonner";
-import { TooltipProvider } from "./components/UI/Tooltip";
+import { Toaster } from "./components/molecules/Toaster";
+import { Toaster as Sonner } from "./components/atoms/Sonner";
+import { TooltipProvider } from "./components/atoms/Tooltip";
 import { Auth } from "./pages/Auth";
 import { Dashboard } from "./pages/Dashboard";
 import Clients from "./pages/Clients";
 import NotFound from "./pages/NotFound";
 import Products from "./pages/Products";
+import Suppliers from "./pages/Suppliers";
+import Expenses from "./pages/Expenses";
 import { Quotations } from "./pages/Quotations";
 import { QuotationDetail } from "./pages/QuotationDetail";
 import { QuotationNew } from "./pages/QuotationNew";
 import { Settings } from "./pages/Settings";
-import { ProtectedRoute } from "./components/auth/ProtectedRoute";
+import { ProtectedRoute } from "./components/organisms/auth/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
@@ -29,7 +31,7 @@ function App() {
               path="/"
               element={
                 <ProtectedRoute>
-                <Dashboard />
+                  <Dashboard />
                 </ProtectedRoute>
               }
             />
@@ -37,7 +39,7 @@ function App() {
               path="/clients"
               element={
                 <ProtectedRoute>
-                <Clients />
+                  <Clients />
                 </ProtectedRoute>
               }
             />
@@ -45,7 +47,23 @@ function App() {
               path="/products"
               element={
                 <ProtectedRoute>
-                <Products />
+                  <Products />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/suppliers"
+              element={
+                <ProtectedRoute>
+                  <Suppliers />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/expenses"
+              element={
+                <ProtectedRoute>
+                  <Expenses />
                 </ProtectedRoute>
               }
             />
@@ -53,7 +71,7 @@ function App() {
               path="/quotations"
               element={
                 <ProtectedRoute>
-                <Quotations />
+                  <Quotations />
                 </ProtectedRoute>
               }
             />
@@ -61,7 +79,7 @@ function App() {
               path="/quotations/:id"
               element={
                 <ProtectedRoute>
-                <QuotationDetail />
+                  <QuotationDetail />
                 </ProtectedRoute>
               }
             />
@@ -69,7 +87,7 @@ function App() {
               path="/quotations/new"
               element={
                 <ProtectedRoute>
-                <QuotationNew />
+                  <QuotationNew />
                 </ProtectedRoute>
               }
             />

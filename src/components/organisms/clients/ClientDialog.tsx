@@ -7,7 +7,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from '@/components/UI/Dialog';
+} from '@/components/molecules/Dialog';
 import {
   Form,
   FormControl,
@@ -15,9 +15,9 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/UI/Form';
-import { Input } from '@/components/UI/Input';
-import { Button } from '@/components/UI/Button';
+} from '@/components/molecules/Form';
+import { Input } from '@/components/atoms/Input';
+import { Button } from '@/components/atoms/Button';
 import { Client } from '@/entities/Client';
 
 

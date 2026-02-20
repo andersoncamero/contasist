@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Product } from "@/entities/Product";
-import { API_BASE_URL, getAuthHeader } from "./apiConfig";
+import { API_BASE_URL, getAuthHeader } from "@/services/apiConfig";
 
 // Tipos de API
 interface ApiProductResponse {

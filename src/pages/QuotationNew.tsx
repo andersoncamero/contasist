@@ -1,14 +1,14 @@
-import { MainLayout } from "@/components/layout/MainLayout";
-import { Button } from "@/components/UI/Button";
-import { Input } from "@/components/UI/Input";
+import { MainLayout } from "@/templates/MainLayout";
+import { Button } from "@/components/atoms/Button";
+import { Input } from "@/components/atoms/Input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/UI/Select";
-import { Textarea } from "@/components/UI/Textarea";
+} from "@/components/molecules/Select";
+import { Textarea } from "@/components/atoms/Textarea";
 import { QuotationItem } from "@/entities/QuotationItem";
 import {
   formatCurrency,
@@ -16,10 +16,10 @@ import {
   generateQuotationNumber,
 } from "@/lib/utils";
 
-import { useBusiness } from "@/useCase/useBusiness";
-import { useClient } from "@/useCase/useClient";
-import { useProduct } from "@/useCase/useProduct";
-import { useQuotation } from "@/useCase/useQuotation";
+import { useBusiness } from "@/useCases/useBusiness";
+import { useClient } from "@/useCases/useClient";
+import { useProduct } from "@/useCases/useProduct";
+import { useQuotation } from "@/useCases/useQuotation";
 import { ArrowLeft, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -39,7 +39,7 @@ export const QuotationNew = () => {
   const [notes, setNotes] = useState("");
   const [validDays, setValidDays] = useState(30);
 
-  const selectedClient = clients.find((c) => c.id === clientId);
+  const selectedClient = clients.find((c) => c.ID === clientId);
 
   const addItem = (productId: string) => {
     const product = products.find((p) => p.id === productId);
@@ -52,11 +52,11 @@ export const QuotationNew = () => {
         items.map((i) =>
           i.productId === productId
             ? {
-                ...i,
-                quantity: i.quantity + 1,
-                subtotal:
-                  (i.quantity + 1) * i.unitPrice * (1 - i.discount / 100),
-              }
+              ...i,
+              quantity: i.quantity + 1,
+              subtotal:
+                (i.quantity + 1) * i.unitPrice * (1 - i.discount / 100),
+            }
             : i,
         ),
       );
@@ -107,7 +107,7 @@ export const QuotationNew = () => {
       id: generateId(),
       number: generateQuotationNumber(),
       clientId,
-      clientName: selectedClient?.name || "",
+      clientName: selectedClient?.Name || "",
       items,
       subtotal,
       taxRate: Number(businessInfo.defaultTaxRate),
@@ -153,8 +153,8 @@ export const QuotationNew = () => {
               </SelectTrigger>
               <SelectContent>
                 {clients.map((client) => (
-                  <SelectItem key={client.id} value={client.id}>
-                    {client.name} {client.company && `- ${client.company}`}
+                  <SelectItem key={client.ID} value={client.ID}>
+                    {client.Name} {client.Company && `- ${client.Company}`}
                   </SelectItem>
                 ))}
               </SelectContent>

@@ -1,13 +1,13 @@
 import { useToast } from "@/hooks/useToast";
-import { useAuth } from "@/useCase/auth";
+import { useAuth } from "@/useCases/auth";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Mail, Lock, User, Eye } from "lucide-react";
-import { Card, CardContent, CardHeader } from "@/components/UI/Card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/UI/Tabs";
-import { Label } from "@/components/UI/Label";
-import { Input } from "@/components/UI/Input";
-import { Button } from "@/components/UI/Button";
+import { Card, CardContent, CardHeader } from "@/components/molecules/Card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/molecules/Tabs";
+import { Label } from "@/components/atoms/Label";
+import { Input } from "@/components/atoms/Input";
+import { Button } from "@/components/atoms/Button";
 
 export const Auth = () => {
   const navigate = useNavigate();

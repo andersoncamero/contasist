@@ -1,13 +1,13 @@
-import { MainLayout } from "@/components/layout/MainLayout";
-import { Button } from "@/components/UI/Button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/UI/Select";
-import { StatusBadge } from "@/components/UI/StatusBadge";
+import { MainLayout } from "@/templates/MainLayout";
+import { Button } from "@/components/atoms/Button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/molecules/Select";
+import { StatusBadge } from "@/components/atoms/StatusBadge";
 import { generatePDF } from "@/lib/PDF";
 import { formatCurrency, formatDate } from "@/lib/utils";
 
-import { useBusiness } from "@/useCase/useBusiness";
-import { useClient } from "@/useCase/useClient";
-import { useQuotation } from "@/useCase/useQuotation";
+import { useBusiness } from "@/useCases/useBusiness";
+import { useClient } from "@/useCases/useClient";
+import { useQuotation } from "@/useCases/useQuotation";
 
 import { ArrowLeft, Check, Download, Send, X } from "lucide-react";
 import { useEffect } from "react";
@@ -24,7 +24,7 @@ export const QuotationDetail = () => {
   // React Query fetches automatically on mount
 
   const quotation = quotations.find((q) => q.id === id);
-  const client = clients.find((c) => c.id === quotation?.clientId);
+  const client = clients.find((c) => c.ID === quotation?.clientId);
 
   if (!quotation) {
     return (
@@ -64,7 +64,7 @@ export const QuotationDetail = () => {
           <ArrowLeft className="h-4 w-4" />
           Volver a cotizaciones
         </Link>
-        
+
         <div className="flex items-start justify-between">
           <div>
             <div className="flex items-center gap-4">
@@ -77,12 +77,12 @@ export const QuotationDetail = () => {
               Creada el {formatDate(quotation.createdAt)}
             </p>
           </div>
-          
+
           <div className="flex gap-3">
             <Select
               value={quotation.status}
               onValueChange={handleStatusChange}
-               disabled={isLoading}
+              disabled={isLoading}
             >
               <SelectTrigger className="w-40">
                 <SelectValue />
@@ -94,14 +94,14 @@ export const QuotationDetail = () => {
                 <SelectItem value="rejected">Rechazada</SelectItem>
               </SelectContent>
             </Select>
-            
+
             <Button variant="outline" onClick={handleDownloadPDF}>
               <Download className="mr-2 h-4 w-4" />
               PDF
             </Button>
-            
+
             {quotation.status === 'draft' && (
-              <Button onClick={handleSend}  disabled={isLoading}>
+              <Button onClick={handleSend} disabled={isLoading}>
                 <Send className="mr-2 h-4 w-4" />
                 Marcar Enviada
               </Button>
@@ -119,16 +119,16 @@ export const QuotationDetail = () => {
             </h2>
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
-                <p className="text-lg font-bold">{client?.name || quotation.clientName}</p>
-                {client?.company && (
-                  <p className="text-muted-foreground">{client.company}</p>
+                <p className="text-lg font-bold">{client?.Name || quotation.clientName}</p>
+                {client?.Company && (
+                  <p className="text-muted-foreground">{client.Company}</p>
                 )}
               </div>
               <div className="text-sm">
-                {client?.email && <p>{client.email}</p>}
-                {client?.phone && <p>{client.phone}</p>}
-                {client?.address && (
-                  <p className="text-muted-foreground">{client.address}</p>
+                {client?.Email && <p>{client.Email}</p>}
+                {client?.Phone && <p>{client.Phone}</p>}
+                {client?.Address && (
+                  <p className="text-muted-foreground">{client.Address}</p>
                 )}
               </div>
             </div>
@@ -141,7 +141,7 @@ export const QuotationDetail = () => {
                 Detalle
               </h2>
             </div>
-            
+
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
@@ -206,7 +206,7 @@ export const QuotationDetail = () => {
             <h2 className="mb-4 text-xs font-bold uppercase tracking-wide text-muted-foreground">
               Totales
             </h2>
-            
+
             <div className="space-y-3">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Subtotal</span>
@@ -251,7 +251,7 @@ export const QuotationDetail = () => {
                 variant="outline"
                 className="flex-1"
                 onClick={() => handleStatusChange('rejected')}
-                 disabled={isLoading}
+                disabled={isLoading}
               >
                 <X className="mr-2 h-4 w-4" />
                 Rechazada
@@ -259,7 +259,7 @@ export const QuotationDetail = () => {
               <Button
                 className="flex-1"
                 onClick={() => handleStatusChange('approved')}
-                 disabled={isLoading}
+                disabled={isLoading}
               >
                 <Check className="mr-2 h-4 w-4" />
                 Aprobada

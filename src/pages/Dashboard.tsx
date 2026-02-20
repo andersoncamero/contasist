@@ -1,12 +1,12 @@
 import { Users, Package, FileText, TrendingUp } from "lucide-react";
-import { MainLayout } from "@/components/layout/MainLayout";
-import { StatCard } from "@/components/dashboard/StatCard";
-import { RecentQuotations } from "@/components/dashboard/RecentQuotations";
+import { MainLayout } from "@/templates/MainLayout";
+import { StatCard } from "@/components/organisms/dashboard/StatCard";
+import { RecentQuotations } from "@/components/organisms/dashboard/RecentQuotations";
 import { formatCurrency } from "@/lib/utils";
 
-import { useClient } from "@/useCase/useClient";
-import { useProduct } from "@/useCase/useProduct";
-import { useQuotation } from "@/useCase/useQuotation";
+import { useClient } from "@/useCases/useClient";
+import { useProduct } from "@/useCases/useProduct";
+import { useQuotation } from "@/useCases/useQuotation";
 
 export const Dashboard = () => {
   const { clients } = useClient();

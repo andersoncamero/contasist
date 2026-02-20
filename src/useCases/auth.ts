@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { User } from "@/entities/User";
-import { API_BASE_URL } from "./apiConfig";
+import { API_BASE_URL } from "@/services/apiConfig";
 
 
 

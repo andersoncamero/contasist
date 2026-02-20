@@ -5,10 +5,12 @@ Es una aplicación web de gestión administrativa y contable ligera diseñada pa
 
 - **Autenticación**: Sistema seguro de login y rutas protegidas
 - **Gestión de Clientes**: Crear, editar y eliminar información de clientes
+- **Proveedores**: Administración completa de proveedores de bienes y servicios
 - **Catálogo de Productos**: Administración completa del inventario de productos
+- **Compras y Gastos**: Gestión de cuentas por pagar, egresos y control de pagos
 - **Cotizaciones**: Crear y gestionar cotizaciones con cálculos automáticos
 - **Dashboard**: Panel de control con estadísticas e información reciente
-- **Exportación PDF**: Generar cotizaciones en formato PDF
+- **Exportación PDF**: Generar cotizaciones y documentos en formato PDF
 - **Interfaz Responsiva**: Diseño adaptable a cualquier dispositivo
 - **Notificaciones**: Sistema de notificaciones con Sonner
 
@@ -18,7 +20,8 @@ Es una aplicación web de gestión administrativa y contable ligera diseñada pa
 - **Build Tool**: Vite
 - **Estilos**: Tailwind CSS + PostCSS
 - **UI Components**: Componentes personalizados + shadcn/ui
-- **Gestión de Estado**: React Hooks
+- **Gestión de Estado**: React Hooks + React Query (@tanstack/react-query)
+- **Validación de Formularios**: Zod + React Hook Form
 - **Notificaciones**: Sonner
 - **Herramientas**: ESLint para code quality
 
@@ -26,25 +29,23 @@ Es una aplicación web de gestión administrativa y contable ligera diseñada pa
 
 ```
 src/
-├── components/        # Componentes reutilizables
-│   ├── auth/         # Autenticación
-│   ├── clients/      # Clientes
-│   ├── dashboard/    # Dashboard
-│   ├── layout/       # Layout principal
-│   ├── products/     # Productos
-│   └── UI/           # Componentes UI base
-├── entities/         # Definiciones de entidades de datos
-├── hooks/            # Custom React hooks
-├── lib/              # Utilidades y helpers
-├── pages/            # Páginas principales
-└── useCase/          # Lógica de negocio
+├── components/       # Componentes estructurales (Atomic Design)
+│   ├── atoms/        # Base UI (botones, inputs, badges)
+│   ├── molecules/    # Agrupaciones simples (forms, cards, dialogs)
+│   └── organisms/    # Componentes complejos (listas y formularios por dominio)
+├── entities/         # Definiciones de interfaces (Domain Entities)
+├── hooks/            # Hooks de utilidad general e infraestructura
+├── lib/              # Utilidades, helpers y configuración de UI
+├── pages/            # Vistas principales de la aplicación
+├── templates/        # Layouts y estructuras de página base
+└── useCases/         # Lógica de negocio y persistencia (React Query Facades)
 ```
 
 ## 🚀 Inicio Rápido
 
 ### Requisitos previos
-- Node.js 16+ 
-- pnpm
+- Node.js 18+ 
+- npm / pnpm
 
 ### Instalación
 
@@ -75,11 +76,20 @@ El sistema incluye rutas protegidas que requieren autenticación previa. Los usu
 
 ## 📊 Módulos Principales
 
-- **Dashboard**: Resumen de información y estadísticas
-- **Clientes**: Gestión completa de base de datos de clientes
-- **Productos**: Administración del catálogo de productos
-- **Cotizaciones**: Creación y seguimiento de presupuestos
-- **Configuración**: Ajustes de usuario e información empresarial
+- **Dashboard**: Resumen de información y estadísticas clave.
+- **Clientes**: Gestión completa de base de datos de clientes.
+- **Catálogo**: Administración del inventario de productos y servicios.
+- **Proveedores**: Registro y administración de proveedores (Compras).
+- **Gastos**: Control de egresos, categorías de gastos y cuentas por pagar.
+- **Cotizaciones**: Creación, seguimiento y exportación de presupuestos.
+- **Configuración**: Ajustes de usuario, perfil empresarial y personalización.
+
+## 🏗️ Principios de Desarrollo
+
+- **Atomic Design**: Organización de componentes por nivel de complejidad (Atoms -> Molecules -> Organisms).
+- **Clean Architecture**: Separación clara entre entidades de dominio, lógica de aplicación (Use Cases) e infraestructura (Hooks/Servicios).
+- **SOLID**: Implementación de código mantenible, extensible y con responsabilidades únicas.
+- **Legibilidad**: El código prioriza la claridad y la documentación sobre la brevedad.
 
 ## 🎨 Sistema de Diseño
 

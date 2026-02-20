@@ -9,22 +9,26 @@ import {
   LogOut,
   Menu,
   X,
+  Truck,
+  CreditCard,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useAuth } from "@/useCase/auth";
-import { Button } from "@/components/UI/Button";
+import { useAuth } from "@/useCases/auth";
+import { Button } from "@/components/atoms/Button";
 import {
   Sheet,
   SheetContent,
   SheetTrigger,
   SheetClose,
-} from "@/components/UI/Sheet";
+} from "@/components/molecules/Sheet";
 import { useState } from "react";
 
 const navigation = [
   { name: "Dashboard", href: "/", icon: LayoutDashboard },
   { name: "Clientes", href: "/clients", icon: Users },
   { name: "Catálogo", href: "/products", icon: Package },
+  { name: "Proveedores", href: "/suppliers", icon: Truck },
+  { name: "Gastos", href: "/expenses", icon: CreditCard },
   { name: "Cotizaciones", href: "/quotations", icon: FileText },
   { name: "Configuración", href: "/settings", icon: Settings },
 ];

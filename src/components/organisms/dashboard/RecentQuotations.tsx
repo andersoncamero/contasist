@@ -1,9 +1,9 @@
 import { Link } from 'react-router-dom';
 
-import { StatusBadge } from '@/components/UI/StatusBadge';
+import { StatusBadge } from '@/components/atoms/StatusBadge';
 import { formatCurrency } from '@/lib/utils';
 import { ArrowRight } from 'lucide-react';
-import { useQuotation } from '@/useCase/useQuotation';
+import { useQuotation } from '@/useCases/useQuotation';
 
 export function RecentQuotations() {
   const { quotations } = useQuotation();

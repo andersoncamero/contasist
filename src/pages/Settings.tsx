@@ -1,5 +1,5 @@
-import { MainLayout } from "@/components/layout/MainLayout";
-import { Button } from "@/components/UI/Button";
+import { MainLayout } from "@/templates/MainLayout";
+import { Button } from "@/components/atoms/Button";
 import {
   Form,
   FormControl,
@@ -8,10 +8,10 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/UI/Form";
-import { Input } from "@/components/UI/Input";
-import { Switch } from "@/components/UI/Switch";
-import { useBusiness } from "@/useCase/useBusiness";
+} from "@/components/molecules/Form";
+import { Input } from "@/components/atoms/Input";
+import { Switch } from "@/components/atoms/Switch";
+import { useBusiness } from "@/useCases/useBusiness";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FileText, Save } from "lucide-react";
 import { useEffect } from "react";

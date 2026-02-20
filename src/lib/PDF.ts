@@ -82,16 +82,16 @@ export async function generatePDF(
   doc.setFont('helvetica', 'bold');
   doc.text('CLIENTE:', 20, infoStartY);
   doc.setFont('helvetica', 'normal');
-  doc.text(client?.name || quotation.clientName, 20, infoStartY + 6);
+  doc.text(client?.Name || quotation.clientName, 20, infoStartY + 6);
   
   let clientY = infoStartY + 6;
-  if (client?.company) {
+  if (client?.Company) {
     clientY += 6;
-    doc.text(client.company, 20, clientY);
+    doc.text(client.Company, 20, clientY);
   }
-  if (client?.email) {
+  if (client?.Email) {
     clientY += 6;
-    doc.text(client.email, 20, clientY);
+    doc.text(client.Email, 20, clientY);
   }
 
   doc.setFont('helvetica', 'bold');

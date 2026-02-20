@@ -1,4 +1,4 @@
-import { MainLayout } from "@/components/layout/MainLayout";
+import { MainLayout } from "@/templates/MainLayout";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -8,20 +8,20 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/UI/AlertDialog";
-import { Button } from "@/components/UI/Button";
-import { Input } from "@/components/UI/Input";
+} from "@/components/molecules/AlertDialog";
+import { Button } from "@/components/atoms/Button";
+import { Input } from "@/components/atoms/Input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/UI/Select";
-import { StatusBadge } from "@/components/UI/StatusBadge";
+} from "@/components/molecules/Select";
+import { StatusBadge } from "@/components/atoms/StatusBadge";
 import { formatCurrency, formatShortDate } from "@/lib/utils";
 
-import { useQuotation } from "@/useCase/useQuotation";
+import { useQuotation } from "@/useCases/useQuotation";
 import { Eye, FileText, Plus, Search, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";

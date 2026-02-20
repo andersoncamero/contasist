@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { API_BASE_URL, getAuthHeader } from "./apiConfig";
+import { API_BASE_URL, getAuthHeader } from "@/services/apiConfig";
 import { BusinessInfo } from "@/entities/BusinessInfo";
 
 interface BusinessState {

@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { Plus, Search, Pencil, Trash2, Package } from "lucide-react";
-import { MainLayout } from "@/components/layout/MainLayout";
-import { Button } from "@/components/UI/Button";
-import { Input } from "@/components/UI/Input";
+import { MainLayout } from "@/templates/MainLayout";
+import { Button } from "@/components/atoms/Button";
+import { Input } from "@/components/atoms/Input";
 
-import { ProductDialog } from "@/components/products/ProductDialog";
+import { ProductDialog } from "@/components/organisms/products/ProductDialog";
 
 import { formatCurrency, generateId } from "@/lib/utils";
 import {
@@ -16,9 +16,9 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/UI/AlertDialog";
+} from "@/components/molecules/AlertDialog";
 import { Product } from "@/entities/Product";
-import { useProduct } from "@/useCase/useProduct";
+import { useProduct } from "@/useCases/useProduct";
 import { toast } from "sonner";
 
 export default function Products() {

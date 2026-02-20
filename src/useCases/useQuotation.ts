@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Quotation } from "@/entities/Quotation";
 import { QuotationItem } from "@/entities/QuotationItem";
-import { API_BASE_URL, getAuthHeader } from "./apiConfig";
+import { API_BASE_URL, getAuthHeader } from "@/services/apiConfig";
 
 // Tipos de API
 interface ApiQuotationItemResponse {
