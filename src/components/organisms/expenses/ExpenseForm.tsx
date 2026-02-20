@@ -62,7 +62,7 @@ export function ExpenseForm({
     const { categories } = useExpenseCategory();
 
     const form = useForm<ExpenseFormData>({
-        resolver: zodResolver(expenseSchema),
+        resolver: zodResolver(expenseSchema) as any,
         defaultValues: {
             SupplierId: '',
             CategoryId: '',

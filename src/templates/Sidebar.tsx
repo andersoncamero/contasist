@@ -8,9 +8,10 @@ import {
   Receipt,
   LogOut,
   Menu,
-  X,
   Truck,
   CreditCard,
+  BookOpen,
+  ListTree,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/useCases/auth";
@@ -29,6 +30,8 @@ const navigation = [
   { name: "Catálogo", href: "/products", icon: Package },
   { name: "Proveedores", href: "/suppliers", icon: Truck },
   { name: "Gastos", href: "/expenses", icon: CreditCard },
+  { name: "Plan de Cuentas", href: "/accounting/chart", icon: ListTree },
+  { name: "Libro Diario", href: "/accounting/journal", icon: BookOpen },
   { name: "Cotizaciones", href: "/quotations", icon: FileText },
   { name: "Configuración", href: "/settings", icon: Settings },
 ];

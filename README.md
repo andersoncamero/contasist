@@ -81,6 +81,7 @@ El sistema incluye rutas protegidas que requieren autenticación previa. Los usu
 - **Catálogo**: Administración del inventario de productos y servicios.
 - **Proveedores**: Registro y administración de proveedores (Compras).
 - **Gastos**: Control de egresos, categorías de gastos y cuentas por pagar.
+- **Contabilidad**: Libro Diario con partida doble, Libro Mayor y Balances (PUC Colombia).
 - **Cotizaciones**: Creación, seguimiento y exportación de presupuestos.
 - **Configuración**: Ajustes de usuario, perfil empresarial y personalización.
 

@@ -10,6 +10,8 @@ import NotFound from "./pages/NotFound";
 import Products from "./pages/Products";
 import Suppliers from "./pages/Suppliers";
 import Expenses from "./pages/Expenses";
+import ChartOfAccounts from "./pages/ChartOfAccounts";
+import AccountingJournal from "./pages/AccountingJournal";
 import { Quotations } from "./pages/Quotations";
 import { QuotationDetail } from "./pages/QuotationDetail";
 import { QuotationNew } from "./pages/QuotationNew";
@@ -64,6 +66,22 @@ function App() {
               element={
                 <ProtectedRoute>
                   <Expenses />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/accounting/chart"
+              element={
+                <ProtectedRoute>
+                  <ChartOfAccounts />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/accounting/journal"
+              element={
+                <ProtectedRoute>
+                  <AccountingJournal />
                 </ProtectedRoute>
               }
             />
