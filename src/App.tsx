@@ -16,6 +16,12 @@ import { Quotations } from "./pages/Quotations";
 import { QuotationDetail } from "./pages/QuotationDetail";
 import { QuotationNew } from "./pages/QuotationNew";
 import { Settings } from "./pages/Settings";
+import { BalanceSheet } from "./pages/BalanceSheet";
+import { IncomeStatement } from "./pages/IncomeStatement";
+import { AuxiliaryReport } from "./pages/AuxiliaryReport";
+import { InventoryDashboard } from "./pages/InventoryDashboard";
+import { InventoryMovementNew } from "./pages/InventoryMovementNew";
+import { KardexReport } from "./pages/KardexReport";
 import { ProtectedRoute } from "./components/organisms/auth/ProtectedRoute";
 
 const queryClient = new QueryClient();
@@ -114,6 +120,54 @@ function App() {
               element={
                 <ProtectedRoute>
                   <Settings />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/reports/balance"
+              element={
+                <ProtectedRoute>
+                  <BalanceSheet />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/reports/income-statement"
+              element={
+                <ProtectedRoute>
+                  <IncomeStatement />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/reports/auxiliary"
+              element={
+                <ProtectedRoute>
+                  <AuxiliaryReport />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/inventory"
+              element={
+                <ProtectedRoute>
+                  <InventoryDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/inventory/movements/new"
+              element={
+                <ProtectedRoute>
+                  <InventoryMovementNew />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/inventory/kardex/:id"
+              element={
+                <ProtectedRoute>
+                  <KardexReport />
                 </ProtectedRoute>
               }
             />

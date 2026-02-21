@@ -12,6 +12,9 @@ import {
   CreditCard,
   BookOpen,
   ListTree,
+  TrendingUp,
+  FileSearch,
+  Box,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/useCases/auth";
@@ -32,7 +35,11 @@ const navigation = [
   { name: "Gastos", href: "/expenses", icon: CreditCard },
   { name: "Plan de Cuentas", href: "/accounting/chart", icon: ListTree },
   { name: "Libro Diario", href: "/accounting/journal", icon: BookOpen },
+  { name: "Balance General", href: "/reports/balance", icon: FileText },
+  { name: "Estado de Resultados", href: "/reports/income-statement", icon: TrendingUp },
+  { name: "Movimientos Auxiliares", href: "/reports/auxiliary", icon: FileSearch },
   { name: "Cotizaciones", href: "/quotations", icon: FileText },
+  { name: "Inventario", href: "/inventory", icon: Box },
   { name: "Configuración", href: "/settings", icon: Settings },
 ];
 

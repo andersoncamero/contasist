@@ -5,23 +5,29 @@ import { API_BASE_URL, getAuthHeader } from "@/services/apiConfig";
 // Tipos de API
 interface ApiProductResponse {
   id: string;
+  code: string;
   name: string;
   description: string;
   price: number;
   unit: string;
   category: string;
   is_service: boolean;
+  initial_stock: number;
+  min_stock: number;
 }
 
 // Mappers
 const mapApiProduct = (apiProduct: ApiProductResponse): Product => ({
   id: apiProduct.id,
+  code: apiProduct.code || "",
   name: apiProduct.name,
   description: apiProduct.description,
   category: apiProduct.category,
   unit: apiProduct.unit,
   price: apiProduct.price,
   isService: apiProduct.is_service,
+  initialStock: apiProduct.initial_stock || 0,
+  minStock: apiProduct.min_stock || 0,
 });
 
 // Funciones API
@@ -39,12 +45,15 @@ const addProductApi = async (product: Omit<Product, "id">) => {
     method: "POST",
     headers: getAuthHeader(),
     body: JSON.stringify({
+      code: product.code,
       name: product.name,
       description: product.description,
       price: product.price,
       unit: product.unit,
       category: product.category,
       is_service: product.isService,
+      initial_stock: product.initialStock,
+      min_stock: product.minStock,
     }),
   });
 
@@ -60,12 +69,15 @@ const updateProductApi = async ({ id, data }: { id: string; data: Partial<Produc
     method: "PUT",
     headers: getAuthHeader(),
     body: JSON.stringify({
+      code: data.code,
       name: data.name,
       description: data.description,
       price: data.price,
       unit: data.unit,
       category: data.category,
       is_service: data.isService,
+      initial_stock: data.initialStock,
+      min_stock: data.minStock,
     }),
   });
 
