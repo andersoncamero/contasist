@@ -1,0 +1,18 @@
+TERCEROS
+ - Crear tercero  
+ *Cliente, empleado o proveedor* 
+ *Persona natural o persona juridica*
+ PJ: Contacto, nombre, cel, correo
+ 
+ - Consultar tercero *Modificar
+ Buscar ID____   Nombre____
+ 
+ 
+ CONTABILIDAD
+ -Plan de cuentas
+ -Libro diario
+ -Balance general
+ -Estado de resultado
+ -Movimientos auxiliares
+ 
+ 

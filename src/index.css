@@ -14,37 +14,47 @@
 
 @layer base {
   :root {
-    --background: 0 0% 96%;
-    --foreground: 0 0% 9%;
+    /* Background: #F7F5ED (Soft Beige/Cream from image) */
+    --background: 48 29% 95%;
+    --foreground: 0 0% 15%; /* Dark gray for text readability */
 
-    --card: 0 0% 98%;
-    --card-foreground: 0 0% 9%;
+    /* Cards: Pure white to stand out subtly against the background, 
+       or matching the background depending on preference, going with white for contrast */
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 15%;
 
-    --popover: 0 0% 89%;
-    --popover-foreground: 0 0% 9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 15%;
 
-    --primary: 200 50% 30%;
-    --primary-foreground: 0 0% 98%;
+    /* Primary: #0082A6 (Deep Cyan/Blue from image) */
+    --primary: 193 100% 33%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 0 0% 32%;
-    --secondary-foreground: 0 0% 98%;
+    /* Secondary: #C4DEE3 (Lightest Cyan/Blue from image) */
+    --secondary: 190 41% 83%;
+    --secondary-foreground: 193 100% 33%;
 
-    --muted: 0 0% 63%;
-    --muted-foreground: 0 0% 9%;
+    /* Muted: Subtle gray-blue for borders/backgrounds */
+    --muted: 190 20% 90%;
+    --muted-foreground: 0 0% 40%;
 
-    --accent: 200 50% 95%;
-    --accent-foreground: 173 80% 40%;
+    /* Accent: #86B9C7 (Mid Cyan/Blue from image) */
+    --accent: 193 35% 65%;
+    --accent-foreground: 0 0% 15%;
 
     --destructive: 0 72% 50%;
-    --destructive-foreground: 0 85% 97%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 0 0% 83%;
-    --input: 0 0% 83%;
-    --ring: 200 50% 30%;
+    /* Border color using a faded version of the mid-blue */
+    --border: 193 30% 85%;
+    --input: 193 30% 85%;
+    
+    /* Focus ring using the Primary color */
+    --ring: 193 100% 33%;
 
     --radius: 1.5rem;
 
-    --sidebar-background: 0 0% 98%;
+    --sidebar-background: 48 29% 95%;
 
     --sidebar-foreground: 200 50% 30%;
 
