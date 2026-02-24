@@ -154,5 +154,6 @@ sketch
 
 ### Antigravity ###
 .agent/
-
-
+.agents/
+_agent/
+_agents/
