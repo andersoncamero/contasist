@@ -93,8 +93,7 @@ export default {
       },
       fontFamily: {
         sans: [
-          "Lato",
-          "Work Sans",
+          '"Plus Jakarta Sans"',
           "ui-sans-serif",
           "system-ui",
           "-apple-system",
@@ -103,24 +102,10 @@ export default {
           "Roboto",
           "Helvetica Neue",
           "Arial",
-          "Noto Sans",
           "sans-serif",
-        ],
-        secondary: [
-          "Rubik",
-          "sans-serif",
-        ],
-        serif: [
-          "Lora",
-          "ui-serif",
-          "Georgia",
-          "Cambria",
-          "Times New Roman",
-          "Times",
-          "serif",
         ],
         mono: [
-          "Inconsolata",
+          '"JetBrains Mono"',
           "ui-monospace",
           "SFMono-Regular",
           "Menlo",

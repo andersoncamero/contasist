@@ -84,14 +84,14 @@ export function IncomeStatementReport({ accounts, totals, netIncome }: IncomeSta
                             <div className="flex-1 truncate">
                                 {acc.Name}
                             </div>
-                            <div className="w-32 text-right font-mono text-xs text-muted-foreground">
+                            <div className="w-32 text-right text-xs text-muted-foreground">
                                 {acc.DebitBalance !== 0 ? formatCurrency(acc.DebitBalance) : "-"}
                             </div>
-                            <div className="w-32 text-right font-mono text-xs text-muted-foreground">
+                            <div className="w-32 text-right text-xs text-muted-foreground">
                                 {acc.CreditBalance !== 0 ? formatCurrency(acc.CreditBalance) : "-"}
                             </div>
                             <div className={cn(
-                                "w-32 text-right font-mono font-medium",
+                                "w-32 text-right font-medium",
                                 acc.TotalBalance < 0 && "text-destructive"
                             )}>
                                 {formatCurrency(acc.TotalBalance)}

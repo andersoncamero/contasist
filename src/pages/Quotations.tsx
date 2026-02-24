@@ -143,7 +143,7 @@ export const Quotations = () => {
                     </p>
                   </div>
                   <div className="flex items-center justify-between">
-                    <p className="font-mono font-bold">
+                    <p className="font-bold">
                       {formatCurrency(quotation.total)}
                     </p>
                     <div className="flex gap-2">
@@ -179,7 +179,7 @@ export const Quotations = () => {
                     </p>
                   </div>
                   <div className="w-[120px] text-right">
-                    <p className="font-mono font-bold">
+                    <p className="font-bold">
                       {formatCurrency(quotation.total)}
                     </p>
                   </div>

@@ -163,7 +163,7 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
     <>
       <div className="flex h-16 shrink-0 items-center justify-center px-6 gap-3">
         <img src="/logo-sin.png" alt="ContAsist" className="h-14 w-auto object-contain drop-shadow-md" />
-        <span className="text-2xl font-bold tracking-tight">CONTASIST</span>
+        <span className="text-2xl font-bold tracking-tight text-primary">CONTASIST</span>
       </div>
 
       <nav className="mt-6 px-4 flex-1 overflow-y-auto mb-4 scrollbar-hide">
@@ -226,8 +226,8 @@ export function MobileHeader() {
         </SheetContent>
       </Sheet>
       <div className="flex items-center justify-center gap-2 ml-3">
-        <img src="/logo.webp" alt="ContAsist" className="h-16 w-auto object-contain drop-shadow-md" />
-        <span className="text-xl font-bold">CONTASIST</span>
+        <img src="/logo.png" alt="ContAsist" className="h-16 w-auto object-contain drop-shadow-md" />
+        <span className="text-xl font-bold text-primary">CONTASIST</span>
       </div>
     </header>
   );

@@ -25,7 +25,7 @@ export function StatCard({
             <p className="mt-1 text-sm text-muted-foreground">{description}</p>
           )}
         </div>
-        <div className="border-2 border-border bg-accent p-3 rounded-lg">
+        <div className="border-2 border-border bg-secondary p-3 rounded-lg">
           <Icon className="h-6 w-6" />
         </div>
       </div>

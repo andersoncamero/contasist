@@ -172,14 +172,14 @@ export const QuotationDetail = () => {
                           {item.description}
                         </p>
                       </td>
-                      <td className="p-4 text-right font-mono">{item.quantity}</td>
-                      <td className="p-4 text-right font-mono">
+                      <td className="p-4 text-right">{item.quantity}</td>
+                      <td className="p-4 text-right">
                         {formatCurrency(item.unitPrice)}
                       </td>
-                      <td className="p-4 text-right font-mono">
+                      <td className="p-4 text-right">
                         {item.discount > 0 ? `${item.discount}%` : '—'}
                       </td>
-                      <td className="p-4 text-right font-mono font-bold">
+                      <td className="p-4 text-right font-bold">
                         {formatCurrency(item.subtotal)}
                       </td>
                     </tr>
@@ -210,18 +210,18 @@ export const QuotationDetail = () => {
             <div className="space-y-3">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Subtotal</span>
-                <span className="font-mono">{formatCurrency(quotation.subtotal)}</span>
+                <span>{formatCurrency(quotation.subtotal)}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">
                   IVA ({quotation.taxRate}%)
                 </span>
-                <span className="font-mono">{formatCurrency(quotation.taxAmount)}</span>
+                <span>{formatCurrency(quotation.taxAmount)}</span>
               </div>
               <div className="border-t-2 border-border pt-3">
                 <div className="flex justify-between">
                   <span className="text-xl font-bold">Total</span>
-                  <span className="text-xl font-bold font-mono">
+                  <span className="text-xl font-bold">
                     {formatCurrency(quotation.total)}
                   </span>
                 </div>

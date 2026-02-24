@@ -194,7 +194,7 @@ export default function Products() {
                     </p>
                   </div>
                   <div className="w-[120px] text-right">
-                    <p className="font-mono font-bold">
+                    <p className="font-bold">
                       {formatCurrency(product.price)}
                     </p>
                     <p className="text-sm text-muted-foreground">

@@ -114,10 +114,8 @@ Colores definidos en `src/index.css` (HSL) para facilitar el soporte de temas (L
 
 | Tipo | Fuente (Font Family) | Propósito |
 | :--- | :--- | :--- |
-| **Primaria (Sans)** | **Lato** | Texto general, cuerpo, títulos y elementos de interfaz. Configurada como la fuente `sans` por defecto. |
-| **Secundaria** | **Rubik** | Fuente complementaria para elementos decorativos o destacados. Utilizar con `font-secondary`. |
-| **Serif** | **Lora** | Texto elegante o editorial. |
-| **Mono** | **Inconsolata** | Código, identificadores, precios y datos numéricos tabulares. |
+| **Primaria (Sans)** | **Plus Jakarta Sans** | Texto general, cuerpo, títulos y elementos de interfaz (`sans` por defecto). Usa números tabulares (`tabular-nums`) para reportes y finanzas. |
+| **Mono** | **JetBrains Mono** | Únicamente para identificadores técnicos (códigos de cuenta, numéricos de referencia y tickets). |
 
 ## 📄 Licencia
 

@@ -262,7 +262,7 @@ export const QuotationNew = () => {
                         <label className="text-xs font-bold uppercase text-muted-foreground">
                           Subtotal
                         </label>
-                        <p className="font-mono font-bold">
+                        <p className="font-bold">
                           {formatCurrency(item.subtotal)}
                         </p>
                       </div>
@@ -300,18 +300,18 @@ export const QuotationNew = () => {
             <div className="space-y-3">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Subtotal</span>
-                <span className="font-mono">{formatCurrency(subtotal)}</span>
+                <span>{formatCurrency(subtotal)}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">
                   IVA ({businessInfo.defaultTaxRate}%)
                 </span>
-                <span className="font-mono">{formatCurrency(taxAmount)}</span>
+                <span>{formatCurrency(taxAmount)}</span>
               </div>
               <div className="border-t-2 border-border pt-3">
                 <div className="flex justify-between">
                   <span className="text-lg font-bold">Total</span>
-                  <span className="text-lg font-bold font-mono">
+                  <span className="text-lg font-bold">
                     {formatCurrency(total)}
                   </span>
                 </div>

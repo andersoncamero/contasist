@@ -76,14 +76,14 @@ export function AuxiliaryReportTable({ movements, initialBalance, finalBalance, 
                                             </div>
                                         )}
                                     </td>
-                                    <td className="px-4 py-3 text-right font-mono text-xs">
+                                    <td className="px-4 py-3 text-right text-xs">
                                         {move.Debit > 0 ? formatCurrency(move.Debit) : "-"}
                                     </td>
-                                    <td className="px-4 py-3 text-right font-mono text-xs text-red-600/80">
+                                    <td className="px-4 py-3 text-right text-xs text-red-600/80">
                                         {move.Credit > 0 ? formatCurrency(move.Credit) : "-"}
                                     </td>
                                     <td className={cn(
-                                        "px-4 py-3 text-right font-mono font-bold bg-primary/5",
+                                        "px-4 py-3 text-right font-bold bg-primary/5",
                                         move.RunningBalance < 0 && "text-destructive"
                                     )}>
                                         {formatCurrency(move.RunningBalance)}
