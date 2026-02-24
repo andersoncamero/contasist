@@ -38,81 +38,81 @@ function App() {
             <Route
               path="/"
               element={
-                <ProtectedRoute>
-                  <Dashboard />
-                </ProtectedRoute>
+                //<ProtectedRoute>
+                <Dashboard />
+                //</ProtectedRoute>
               }
             />
             <Route
               path="/clients"
               element={
-                <ProtectedRoute>
-                  <Clients />
-                </ProtectedRoute>
+                //<ProtectedRoute>
+                <Clients />
+                //</ProtectedRoute>
               }
             />
             <Route
               path="/products"
               element={
-                <ProtectedRoute>
-                  <Products />
-                </ProtectedRoute>
+                //<ProtectedRoute>
+                <Products />
+                //</ProtectedRoute>
               }
             />
             <Route
               path="/suppliers"
               element={
-                <ProtectedRoute>
-                  <Suppliers />
-                </ProtectedRoute>
+                //<ProtectedRoute>
+                <Suppliers />
+                //</ProtectedRoute>
               }
             />
             <Route
               path="/expenses"
               element={
-                <ProtectedRoute>
-                  <Expenses />
-                </ProtectedRoute>
+                //<ProtectedRoute>
+                <Expenses />
+                //</ProtectedRoute>
               }
             />
             <Route
               path="/accounting/chart"
               element={
-                <ProtectedRoute>
-                  <ChartOfAccounts />
-                </ProtectedRoute>
+                //<ProtectedRoute>
+                <ChartOfAccounts />
+                //</ProtectedRoute>
               }
             />
             <Route
               path="/accounting/journal"
               element={
-                <ProtectedRoute>
-                  <AccountingJournal />
-                </ProtectedRoute>
+                //<ProtectedRoute>
+                <AccountingJournal />
+                //</ProtectedRoute>
               }
             />
             <Route
               path="/quotations"
               element={
-                <ProtectedRoute>
-                  <Quotations />
-                </ProtectedRoute>
+                //<ProtectedRoute>
+                <Quotations />
+                //</ProtectedRoute>
               }
             />
             <Route
               path="/quotations/:id"
               element={
-                <ProtectedRoute>
-                  <QuotationDetail />
-                </ProtectedRoute>
+                //<ProtectedRoute>
+                <QuotationDetail />
+                //</ProtectedRoute>
               }
             />
             <Route
               path="/quotations/new"
               element={
-                <ProtectedRoute>
-                  <QuotationNew />
-                </ProtectedRoute>
+                //<ProtectedRoute>
+                <QuotationNew />
+                //</ProtectedRoute>
               }
             />
             <Route
@@ -126,49 +126,49 @@ function App() {
             <Route
               path="/reports/balance"
               element={
-                <ProtectedRoute>
-                  <BalanceSheet />
-                </ProtectedRoute>
+                //<ProtectedRoute>
+                <BalanceSheet />
+                //</ProtectedRoute>
               }
             />
             <Route
               path="/reports/income-statement"
               element={
-                <ProtectedRoute>
-                  <IncomeStatement />
-                </ProtectedRoute>
+                //<ProtectedRoute>
+                <IncomeStatement />
+                //</ProtectedRoute>
               }
             />
             <Route
               path="/reports/auxiliary"
               element={
-                <ProtectedRoute>
-                  <AuxiliaryReport />
-                </ProtectedRoute>
+                //<ProtectedRoute>
+                <AuxiliaryReport />
+                //</ProtectedRoute>
               }
             />
             <Route
               path="/inventory"
               element={
-                <ProtectedRoute>
-                  <InventoryDashboard />
-                </ProtectedRoute>
+                //<ProtectedRoute>
+                <InventoryDashboard />
+                //</ProtectedRoute>
               }
             />
             <Route
               path="/inventory/movements/new"
               element={
-                <ProtectedRoute>
-                  <InventoryMovementNew />
-                </ProtectedRoute>
+                //<ProtectedRoute>
+                <InventoryMovementNew />
+                //</ProtectedRoute>
               }
             />
             <Route
               path="/inventory/kardex/:id"
               element={
-                <ProtectedRoute>
-                  <KardexReport />
-                </ProtectedRoute>
+                //<ProtectedRoute>
+                <KardexReport />
+                //</ProtectedRoute>
               }
             />
             <Route path="*" element={<NotFound />} />
