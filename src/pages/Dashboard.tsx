@@ -39,7 +39,11 @@ export const Dashboard = () => {
             description="Total registrados"
           />
           <StatCard
-            title="Productos/Servicios"
+            title={
+              <>
+                Productos <br /> Servicios
+              </>
+            }
             value={products.length}
             icon={Package}
             description="En catálogo"
