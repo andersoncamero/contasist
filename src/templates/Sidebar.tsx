@@ -18,7 +18,8 @@ import {
   ChevronDown,
   ChevronRight,
   ShoppingCart,
-  HelpCircle
+  HelpCircle,
+  Boxes
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/useCases/auth";
@@ -60,7 +61,7 @@ const navigation: NavItem[] = [
     icon: Box,
     subItems: [
       { name: "Catálogo", href: "/products", icon: Package },
-      { name: "Inventario", href: "/inventory", icon: Box },
+      { name: "Control de Stock", href: "/inventory", icon: Boxes },
     ]
   },
   {

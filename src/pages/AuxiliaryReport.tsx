@@ -75,7 +75,7 @@ export const AuxiliaryReport = () => {
                 {/* Header */}
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                     <div>
-                        <h1 className="text-3xl font-black tracking-tight text-primary flex items-center gap-2">
+                        <h1 className="text-3xl font-black tracking-tight  flex items-center gap-2">
                             <FileSearch className="h-8 w-8" />
                             Movimientos Auxiliares
                         </h1>

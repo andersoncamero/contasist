@@ -8,8 +8,10 @@ interface ApiClientResponse {
   Name: string;
   Email: string;
   Phone: string;
+  PersonType?: 'natural' | 'juridica';
   Company?: string;
   Address?: string;
+  TaxId?: string;
   created_at?: string;
 }
 
@@ -19,8 +21,10 @@ const mapApiClient = (apiClient: ApiClientResponse): Client => ({
   Name: apiClient.Name,
   Email: apiClient.Email,
   Phone: apiClient.Phone,
+  PersonType: apiClient.PersonType,
   Company: apiClient.Company,
   Address: apiClient.Address,
+  TaxId: apiClient.TaxId,
   CreatedAt: new Date(apiClient.created_at || Date.now()),
 });
 

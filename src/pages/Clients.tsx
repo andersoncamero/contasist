@@ -106,6 +106,7 @@ export default function Clients() {
           <div className="flex-1 flex items-center justify-start text-left">Cliente</div>
           <div className="flex-1 flex items-center justify-start text-left">Contacto</div>
           <div className="flex-1 flex items-center justify-start text-left">Empresa</div>
+          <div className="flex-1 flex items-center justify-start text-left">Tipo</div>
           <div className="w-[100px] flex items-center justify-end text-right">Acciones</div>
         </div>
 
@@ -149,9 +150,15 @@ export default function Clients() {
                       </Button>
                     </div>
                   </div>
-                  <div className="text-sm space-y-1">
+                  <div className="text-sm space-y-1 mt-2">
                     <p>{client.Email}</p>
                     <p className="text-muted-foreground">{client.Phone}</p>
+                    <div className="flex justify-between items-center text-xs mt-2">
+                      <span className="bg-muted px-2 py-1 rounded text-muted-foreground capitalize">
+                        Persona {client.PersonType || 'Jurídica'}
+                      </span>
+                      {client.Company && <span>{client.Company}</span>}
+                    </div>
                   </div>
                 </div>
 
@@ -169,7 +176,13 @@ export default function Clients() {
                   </div>
 
                   <div className="flex-1 flex flex-col justify-center items-start text-left">
-                    <p className="text-sm text-muted-foreground ">{client.Company}</p>
+                    <p className="text-sm font-medium">{client.Company || '-'}</p>
+                  </div>
+
+                  <div className="flex-1 flex flex-col justify-center items-start text-left">
+                    <span className="text-sm capitalize px-2 py-1 rounded-full bg-primary/10 text-primary">
+                      Persona {client.PersonType || 'jurídica'}
+                    </span>
                   </div>
 
                   <div className="w-[100px] flex gap-2 justify-end items-center">

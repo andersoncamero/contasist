@@ -9,6 +9,13 @@ import {
   DialogTitle,
 } from '@/components/molecules/Dialog';
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/molecules/Select';
+import {
   Form,
   FormControl,
   FormField,
@@ -25,6 +32,7 @@ const clientSchema = z.object({
   Name: z.string().min(2, 'El nombre debe tener al menos 2 caracteres'),
   Email: z.email('Email inválido'),
   Phone: z.string().min(10, 'Teléfono debe tener al menos 10 dígitos'),
+  PersonType: z.enum(['natural', 'juridica']),
   Company: z.string().optional(),
   Address: z.string().optional(),
   TaxId: z.string().optional(),
@@ -51,6 +59,7 @@ export function ClientDialog({
       Name: '',
       Email: '',
       Phone: '',
+      PersonType: 'juridica',
       Company: '',
       Address: '',
       TaxId: '',
@@ -63,14 +72,17 @@ export function ClientDialog({
         Name: client.Name,
         Email: client.Email,
         Phone: client.Phone,
+        PersonType: client.PersonType || 'juridica',
         Company: client.Company || '',
         Address: client.Address || '',
+        TaxId: client.TaxId || '',
       });
     } else {
       form.reset({
         Name: '',
         Email: '',
         Phone: '',
+        PersonType: 'juridica',
         Company: '',
         Address: '',
         TaxId: '',
@@ -85,7 +97,7 @@ export function ClientDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md">
+      <DialogContent className="max-w-md max-h-[95vh] overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
         <DialogHeader>
           <DialogTitle>
             {client ? 'Editar Cliente' : 'Nuevo Cliente'}
@@ -94,14 +106,79 @@ export function ClientDialog({
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+
+            <FormField
+              control={form.control}
+              name="PersonType"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Tipo de Persona *</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Seleccione un tipo" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="natural">Persona Natural</SelectItem>
+                      <SelectItem value="juridica">Persona Jurídica</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
             <FormField
               control={form.control}
               name="Name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Nombre *</FormLabel>
+                  <FormLabel>Empresa *</FormLabel>
                   <FormControl>
-                    <Input placeholder="Juan Pérez" {...field} className="placeholder:text-gray-500" />
+                    <Input placeholder="Nombre de la empresa" {...field} className="placeholder:text-gray-500" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="TaxId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>NIT / ID Fiscal *</FormLabel>
+                  <FormControl>
+                    <Input placeholder=" " {...field} className="placeholder:text-gray-500" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="Address"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Dirección</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Dirección completa" {...field} className="placeholder:text-gray-500" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="Company"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Nombre del Contacto *</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Nombre del Contacto" {...field} className="placeholder:text-gray-500" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -138,47 +215,7 @@ export function ClientDialog({
               />
             </div>
 
-            <FormField
-              control={form.control}
-              name="Company"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Empresa</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Nombre de la empresa" {...field} className="placeholder:text-gray-500" />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
 
-            <FormField
-              control={form.control}
-              name="Address"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Dirección</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Dirección completa" {...field} className="placeholder:text-gray-500" />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="TaxId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>NIT / ID Fiscal</FormLabel>
-                  <FormControl>
-                    <Input placeholder="123456789" {...field} className="placeholder:text-gray-500" />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
 
             <div className="flex justify-end gap-3 pt-4">
               <Button

@@ -8,7 +8,8 @@ import {
     Plus,
     FileText,
     Search,
-    TrendingUp
+    TrendingUp,
+    Boxes
 } from "lucide-react";
 import { Button } from "@/components/atoms/Button";
 import {
@@ -43,9 +44,9 @@ export const InventoryDashboard = () => {
             <div className="flex flex-col gap-6 p-6">
                 <div className="flex justify-between items-center">
                     <div>
-                        <h1 className="text-3xl font-bold tracking-tight flex items-center gap-2 text-primary">
-                            <Box className="h-8 w-8" />
-                            Gestión de Inventario
+                        <h1 className="text-3xl font-bold tracking-tight flex items-center gap-2">
+                            <Boxes className="h-8 w-8" />
+                            Control de Stock
                         </h1>
                         <p className="text-muted-foreground mt-1">
                             Control de existencias, movimientos y valoración de activos.
