@@ -166,7 +166,7 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
         <span className="text-2xl font-bold tracking-tight">CONTASIST</span>
       </div>
 
-      <nav className="mt-6 px-4 flex-1 overflow-y-auto mb-4">
+      <nav className="mt-6 px-4 flex-1 overflow-y-auto mb-4 scrollbar-hide">
         <ul className="space-y-2">
           {navigation.map((item) => (
             <NavGroup key={item.name} item={item} onNavigate={onNavigate} />

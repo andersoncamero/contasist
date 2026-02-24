@@ -23,42 +23,44 @@ export const Dashboard = () => {
 
   return (
     <MainLayout>
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-        <p className="mt-1 text-muted-foreground">
-          Resumen general de tu negocio
-        </p>
-      </div>
+      <div className="p-6 space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+          <p className="text-muted-foreground">
+            Resumen general de tu negocio
+          </p>
+        </div>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-        <StatCard
-          title="Clientes"
-          value={clients.length}
-          icon={Users}
-          description="Total registrados"
-        />
-        <StatCard
-          title="Productos/Servicios"
-          value={products.length}
-          icon={Package}
-          description="En catálogo"
-        />
-        <StatCard
-          title="Cotizaciones"
-          value={quotations.length}
-          icon={FileText}
-          description={`${pendingQuotations} pendientes`}
-        />
-        <StatCard
-          title="Aprobadas"
-          value={formatCurrency(approvedTotal)}
-          icon={TrendingUp}
-          description="Total aprobado"
-        />
-      </div>
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+          <StatCard
+            title="Clientes"
+            value={clients.length}
+            icon={Users}
+            description="Total registrados"
+          />
+          <StatCard
+            title="Productos/Servicios"
+            value={products.length}
+            icon={Package}
+            description="En catálogo"
+          />
+          <StatCard
+            title="Cotizaciones"
+            value={quotations.length}
+            icon={FileText}
+            description={`${pendingQuotations} pendientes`}
+          />
+          <StatCard
+            title="Aprobadas"
+            value={formatCurrency(approvedTotal)}
+            icon={TrendingUp}
+            description="Total aprobado"
+          />
+        </div>
 
-      <div className="mt-8">
-        <RecentQuotations />
+        <div>
+          <RecentQuotations />
+        </div>
       </div>
     </MainLayout>
   );
