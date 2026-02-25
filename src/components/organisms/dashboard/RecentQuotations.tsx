@@ -8,7 +8,7 @@ import { useQuotation } from '@/useCases/useQuotation';
 export function RecentQuotations() {
   const { quotations } = useQuotation();
   const recentQuotations = [...quotations]
-    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+    .sort((a, b) => new Date(b.CreatedAt).getTime() - new Date(a.CreatedAt).getTime())
     .slice(0, 5);
 
   return (
@@ -31,19 +31,19 @@ export function RecentQuotations() {
         ) : (
           recentQuotations.map((quotation) => (
             <Link
-              key={quotation.id}
-              to={`/quotations/${quotation.id}`}
+              key={quotation.ID}
+              to={`/quotations/${quotation.ID}`}
               className="flex items-center justify-between p-4 transition-colors hover:bg-accent"
             >
               <div>
-                <p className="font-bold">{quotation.number}</p>
-                <p className="text-sm text-muted-foreground">{quotation.clientName}</p>
+                <p className="font-bold">{quotation.Number}</p>
+                <p className="text-sm text-muted-foreground">{quotation.ClientName}</p>
               </div>
               <div className="flex items-center gap-4">
                 <span className="font-bold">
-                  {formatCurrency(quotation.total)}
+                  {formatCurrency(quotation.Total)}
                 </span>
-                <StatusBadge status={quotation.status} />
+                <StatusBadge status={quotation.Status} />
               </div>
             </Link>
           ))

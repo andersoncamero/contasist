@@ -12,7 +12,6 @@ import { Textarea } from "@/components/atoms/Textarea";
 import { QuotationItem } from "@/entities/QuotationItem";
 import {
   formatCurrency,
-  generateId,
   generateQuotationNumber,
 } from "@/lib/utils";
 
@@ -62,7 +61,6 @@ export const QuotationNew = () => {
       );
     } else {
       const newItem: QuotationItem = {
-        ID: generateId(),
         ProductID: product.ID,
         ProductName: product.Name,
         Description: product.Description,
@@ -78,7 +76,7 @@ export const QuotationNew = () => {
   const updateItem = (id: string, updates: Partial<QuotationItem>) => {
     setItems(
       items.map((item) => {
-        if (item.ID === id) {
+        if (item.ProductID === id) {
           const updated = { ...item, ...updates };
           updated.Subtotal =
             updated.Quantity * updated.UnitPrice * (1 - updated.Discount / 100);
@@ -90,7 +88,7 @@ export const QuotationNew = () => {
   };
 
   const removeItem = (id: string) => {
-    setItems(items.filter((i) => i.ID !== id));
+    setItems(items.filter((i) => i.ProductID !== id));
   };
 
   const subtotal = items.reduce((sum, item) => sum + item.Subtotal, 0);
@@ -104,7 +102,6 @@ export const QuotationNew = () => {
     }
 
     const quotation = {
-      ID: generateId(),
       Number: generateQuotationNumber(),
       ClientID: clientId,
       ClientName: selectedClient?.Name || "",
@@ -113,7 +110,7 @@ export const QuotationNew = () => {
       TaxRate: Number(businessInfo.defaultTaxRate),
       TaxAmount: taxAmount,
       Total: total,
-      Status: "draft" as const,
+      Status: "sent" as const,
       Notes: notes,
       ValidUntil: new Date(Date.now() + validDays * 24 * 60 * 60 * 1000),
       CreatedAt: new Date(),
@@ -122,7 +119,7 @@ export const QuotationNew = () => {
 
     addQuotation(quotation);
     toast.success("Cotizacion creada exitosamente");
-    navigate(`/quotations/${quotation.ID}`);
+    navigate(`/quotations`);
   };
 
   return (
@@ -197,7 +194,7 @@ export const QuotationNew = () => {
               <div className="space-y-4">
                 {items.map((item) => (
                   <div
-                    key={item.ID}
+                    key={item.ProductID}
                     className="grid grid-cols-[1fr_auto_auto_auto_auto] gap-4 border-2 border-border p-4 rounded-lg"
                   >
                     <div>
@@ -215,7 +212,7 @@ export const QuotationNew = () => {
                         min="1"
                         value={item.Quantity}
                         onChange={(e) =>
-                          updateItem(item.ID, {
+                          updateItem(item.ProductID, {
                             Quantity: Number(e.target.value),
                           })
                         }
@@ -232,7 +229,7 @@ export const QuotationNew = () => {
                         step="0.01"
                         value={item.UnitPrice}
                         onChange={(e) =>
-                          updateItem(item.ID, {
+                          updateItem(item.ProductID, {
                             UnitPrice: Number(e.target.value),
                           })
                         }
@@ -249,7 +246,7 @@ export const QuotationNew = () => {
                         max="100"
                         value={item.Discount}
                         onChange={(e) =>
-                          updateItem(item.ID, {
+                          updateItem(item.ProductID, {
                             Discount: Number(e.target.value),
                           })
                         }
@@ -268,7 +265,7 @@ export const QuotationNew = () => {
                       <Button
                         variant="outline"
                         size="icon"
-                        onClick={() => removeItem(item.ID)}
+                        onClick={() => removeItem(item.ProductID)}
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>

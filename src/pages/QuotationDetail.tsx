@@ -21,10 +21,8 @@ export const QuotationDetail = () => {
   const { quotations, updateQuotation, updateQuotationStatus, isLoading } = useQuotation();
   const { businessInfo } = useBusiness();
 
-  // React Query fetches automatically on mount
-
-  const quotation = quotations.find((q) => q.id === id);
-  const client = clients.find((c) => c.ID === quotation?.clientId);
+  const quotation = quotations.find((q) => q.ID === Number(id));
+  const client = clients.find((c) => c.ID === quotation?.ClientID);
 
   if (!quotation) {
     return (
@@ -40,7 +38,7 @@ export const QuotationDetail = () => {
   }
 
   const handleStatusChange = (status: string) => {
-    updateQuotationStatus(quotation.id, status as typeof quotation.status);
+    updateQuotationStatus(quotation.ID, status as typeof quotation.Status);
     toast.success(`Estado actualizado a  ${status}`);
   };
 
@@ -50,7 +48,7 @@ export const QuotationDetail = () => {
   };
 
   const handleSend = () => {
-    updateQuotationStatus(quotation.id, "sent");
+    updateQuotationStatus(quotation.ID, "sent");
     toast.success("Cotizacion marcada como enviada");
   };
 
@@ -69,18 +67,18 @@ export const QuotationDetail = () => {
           <div>
             <div className="flex items-center gap-4">
               <h1 className="text-3xl font-bold font-mono tracking-tight">
-                {quotation.number}
+                {quotation.Number}
               </h1>
-              <StatusBadge status={quotation.status} />
+              <StatusBadge status={quotation.Status} />
             </div>
             <p className="mt-1 text-muted-foreground">
-              Creada el {formatDate(quotation.createdAt)}
+              Creada el {formatDate(quotation.CreatedAt)}
             </p>
           </div>
 
           <div className="flex gap-3">
             <Select
-              value={quotation.status}
+              value={quotation.Status}
               onValueChange={handleStatusChange}
               disabled={isLoading}
             >
@@ -100,7 +98,7 @@ export const QuotationDetail = () => {
               PDF
             </Button>
 
-            {quotation.status === 'draft' && (
+            {quotation.Status === 'draft' && (
               <Button onClick={handleSend} disabled={isLoading}>
                 <Send className="mr-2 h-4 w-4" />
                 Marcar Enviada
@@ -119,7 +117,7 @@ export const QuotationDetail = () => {
             </h2>
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
-                <p className="text-lg font-bold">{client?.Name || quotation.clientName}</p>
+                <p className="text-lg font-bold">{client?.Name || quotation.ClientName}</p>
                 {client?.Company && (
                   <p className="text-muted-foreground">{client.Company}</p>
                 )}
@@ -164,23 +162,23 @@ export const QuotationDetail = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y-2 divide-border">
-                  {quotation.items.map((item) => (
-                    <tr key={item.id}>
+                  {quotation.Items.map((item) => (
+                    <tr key={item.ID}>
                       <td className="p-4">
-                        <p className="font-bold">{item.productName}</p>
+                        <p className="font-bold">{item.ProductName}</p>
                         <p className="text-sm text-muted-foreground">
-                          {item.description}
+                          {item.Description}
                         </p>
                       </td>
-                      <td className="p-4 text-right">{item.quantity}</td>
+                      <td className="p-4 text-right">{item.Quantity}</td>
                       <td className="p-4 text-right">
-                        {formatCurrency(item.unitPrice)}
+                        {formatCurrency(item.UnitPrice)}
                       </td>
                       <td className="p-4 text-right">
-                        {item.discount > 0 ? `${item.discount}%` : '—'}
+                        {item.Discount > 0 ? `${item.Discount}%` : '—'}
                       </td>
                       <td className="p-4 text-right font-bold">
-                        {formatCurrency(item.subtotal)}
+                        {formatCurrency(item.Subtotal)}
                       </td>
                     </tr>
                   ))}
@@ -190,12 +188,12 @@ export const QuotationDetail = () => {
           </div>
 
           {/* Notes */}
-          {quotation.notes && (
+          {quotation.Notes && (
             <div className="border-2 border-border bg-card p-6 rounded-lg">
               <h2 className="mb-2 text-xs font-bold uppercase tracking-wide text-muted-foreground">
                 Notas
               </h2>
-              <p className="whitespace-pre-wrap">{quotation.notes}</p>
+              <p className="whitespace-pre-wrap">{quotation.Notes}</p>
             </div>
           )}
         </div>
@@ -210,19 +208,19 @@ export const QuotationDetail = () => {
             <div className="space-y-3">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Subtotal</span>
-                <span>{formatCurrency(quotation.subtotal)}</span>
+                <span>{formatCurrency(quotation.Subtotal)}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">
-                  IVA ({quotation.taxRate}%)
+                  IVA ({quotation.TaxRate}%)
                 </span>
-                <span>{formatCurrency(quotation.taxAmount)}</span>
+                <span>{formatCurrency(quotation.TaxAmount)}</span>
               </div>
               <div className="border-t-2 border-border pt-3">
                 <div className="flex justify-between">
                   <span className="text-xl font-bold">Total</span>
                   <span className="text-xl font-bold">
-                    {formatCurrency(quotation.total)}
+                    {formatCurrency(quotation.Total)}
                   </span>
                 </div>
               </div>
@@ -236,16 +234,16 @@ export const QuotationDetail = () => {
             <div className="space-y-3 text-sm">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Válida hasta</span>
-                <span>{formatDate(quotation.validUntil)}</span>
+                <span>{formatDate(quotation.ValidUntil)}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Última actualización</span>
-                <span>{formatDate(quotation.updatedAt)}</span>
+                <span>{formatDate(quotation.UpdatedAt)}</span>
               </div>
             </div>
           </div>
 
-          {quotation.status === 'sent' && (
+          {quotation.Status === 'sent' && (
             <div className="grid grid-cols-2 gap-3">
               <Button
                 variant="outline"

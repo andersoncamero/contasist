@@ -1,7 +1,7 @@
 import { QuotationItem } from "./QuotationItem";
 
 export interface Quotation {
-  ID: string;
+  ID?: number;
   Number: string;
   ClientID: string;
   ClientName: string;

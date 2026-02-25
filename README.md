@@ -92,6 +92,7 @@ El sistema incluye rutas protegidas que requieren autenticación previa. Los usu
 - **Clean Architecture**: Separación clara entre entidades de dominio, lógica de aplicación (Use Cases) e infraestructura (Hooks/Servicios).
 - **SOLID**: Implementación de código mantenible, extensible y con responsabilidades únicas.
 - **Legibilidad**: El código prioriza la claridad y la documentación sobre la brevedad.
+- **Generación de IDs**: El sistema delega la generación de identificadores únicos (IDs) al backend, asegurando la integridad de los datos y simplificando el estado del cliente.
 
 ## 🎨 Sistema de Diseño
 

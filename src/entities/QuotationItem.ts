@@ -1,5 +1,5 @@
 export interface QuotationItem {
-  ID: string;
+  ID?: number;
   ProductID: string;
   ProductName: string;
   Description: string;

@@ -5,7 +5,7 @@ import { API_BASE_URL, getAuthHeader } from "@/services/apiConfig";
 
 // Tipos de API
 interface ApiQuotationItemResponse {
-  ID: string;
+  ID: number;
   ProductID: string;
   ProductName: string;
   Description: string;
@@ -16,7 +16,7 @@ interface ApiQuotationItemResponse {
 }
 
 interface ApiQuotationResponse {
-  ID: string;
+  ID: number;
   Number: string;
   ClientID: string;
   ClientName: string;
@@ -93,7 +93,7 @@ const fetchQuotationsApi = async (): Promise<Quotation[]> => {
   return data.map(mapApiQuotation);
 };
 
-const addQuotationApi = async (quotationData: Omit<Quotation, "id" | "createdAt" | "updatedAt">) => {
+const addQuotationApi = async (quotationData: Omit<Quotation, "ID" | "CreatedAt" | "UpdatedAt">) => {
   const response = await fetch(`${API_BASE_URL}/quotations`, {
     method: 'POST',
     headers: getAuthHeader(),
@@ -134,7 +134,7 @@ const deleteQuotationApi = async (id: string) => {
   return response.json();
 };
 
-const updateQuotationStatusApi = async ({ id, status }: { id: string; status: Quotation["Status"] }) => {
+const updateQuotationStatusApi = async ({ id, status }: { id: number; status: Quotation["Status"] }) => {
   const response = await fetch(`${API_BASE_URL}/quotations/${id}/status`, {
     method: 'PATCH',
     headers: getAuthHeader(),
@@ -185,7 +185,7 @@ export const useQuotation = () => {
   });
 
   // Facade
-  const addQuotation = async (quotationData: Omit<Quotation, "id" | "createdAt" | "updatedAt">) => {
+  const addQuotation = async (quotationData: Omit<Quotation, "ID" | "CreatedAt" | "UpdatedAt">) => {
     try {
       const response = await addMutation.mutateAsync(quotationData);
       return { success: true, id: response.id };
@@ -212,7 +212,7 @@ export const useQuotation = () => {
     }
   };
 
-  const updateQuotationStatus = async (id: string, status: Quotation["Status"]) => {
+  const updateQuotationStatus = async (id: number, status: Quotation["Status"]) => {
     try {
       await statusMutation.mutateAsync({ id, status });
       return { success: true };

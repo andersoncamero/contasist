@@ -6,20 +6,20 @@ import { Quotation } from '@/entities/Quotation';
 import { Client } from '@/entities/Client';
 import { BusinessInfo } from '@/entities/BusinessInfo';
 
-  async function loadImageAsBase64(url: string): Promise<string | null> {
-    try {
-      const response = await fetch(url);
-      const blob = await response.blob();
-      return new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.onloadend = () => resolve(reader.result as string);
-        reader.onerror = () => resolve(null);
-        reader.readAsDataURL(blob);
-      });
-    } catch {
-      return null;
-    }
+async function loadImageAsBase64(url: string): Promise<string | null> {
+  try {
+    const response = await fetch(url);
+    const blob = await response.blob();
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result as string);
+      reader.onerror = () => resolve(null);
+      reader.readAsDataURL(blob);
+    });
+  } catch {
+    return null;
   }
+}
 
 export async function generatePDF(
   quotation: Quotation,
@@ -28,7 +28,7 @@ export async function generatePDF(
 ) {
   const doc = new jsPDF();
   const pdfHeader = businessInfo.pdfHeader;
-  
+
   let headerEndY = 15;
 
 
@@ -36,21 +36,21 @@ export async function generatePDF(
     const headerImg = await loadImageAsBase64(pdfHeader.headerImage);
     if (headerImg) {
       const pageWidth = doc.internal.pageSize.getWidth();
-      const imgWidth = pageWidth - 20; 
-      const imgHeight = 40; 
-      
+      const imgWidth = pageWidth - 20;
+      const imgHeight = 40;
+
       doc.addImage(headerImg, 'PNG', 10, 5, imgWidth, imgHeight);
       headerEndY = 50;
-      
+
       if (pdfHeader.showBorder !== false) {
         doc.setLineWidth(0.5);
         doc.line(15, headerEndY, 195, headerEndY);
       }
-      
+
       headerEndY += 5;
     }
   } else {
-  
+
     doc.setFontSize(20);
     doc.setFont('helvetica', 'bold');
     doc.text(businessInfo.name, 20, 25);
@@ -60,7 +60,7 @@ export async function generatePDF(
     doc.text(businessInfo.address, 20, 32);
     doc.text(`Tel: ${businessInfo.phone} | Email: ${businessInfo.email}`, 20, 38);
     doc.text(`RFC: ${businessInfo.taxId}`, 20, 44);
-    
+
     headerEndY = 52;
   }
 
@@ -72,18 +72,18 @@ export async function generatePDF(
   doc.text('COTIZACIÓN', 167.5, headerEndY + 5, { align: 'center' });
   doc.setFontSize(12);
   doc.setFont('helvetica', 'bold');
-  doc.text(quotation.number, 167.5, headerEndY + 13, { align: 'center' });
+  doc.text(quotation.Number, 167.5, headerEndY + 13, { align: 'center' });
   doc.setTextColor(0, 0, 0);
 
   const infoStartY = headerEndY + 25;
 
-  
+
   doc.setFontSize(10);
   doc.setFont('helvetica', 'bold');
   doc.text('CLIENTE:', 20, infoStartY);
   doc.setFont('helvetica', 'normal');
-  doc.text(client?.Name || quotation.clientName, 20, infoStartY + 6);
-  
+  doc.text(client?.Name || quotation.ClientName, 20, infoStartY + 6);
+
   let clientY = infoStartY + 6;
   if (client?.Company) {
     clientY += 6;
@@ -97,23 +97,23 @@ export async function generatePDF(
   doc.setFont('helvetica', 'bold');
   doc.text('FECHA:', 140, infoStartY);
   doc.setFont('helvetica', 'normal');
-  doc.text(formatDate(quotation.createdAt), 160, infoStartY);
+  doc.text(formatDate(quotation.CreatedAt), 160, infoStartY);
 
   doc.setFont('helvetica', 'bold');
   doc.text('VÁLIDA HASTA:', 140, infoStartY + 8);
   doc.setFont('helvetica', 'normal');
-  doc.text(formatDate(quotation.validUntil), 170, infoStartY + 8);
+  doc.text(formatDate(quotation.ValidUntil), 170, infoStartY + 8);
 
 
   const tableStartY = Math.max(clientY, infoStartY + 16) + 10;
-  
-  const tableData = quotation.items.map((item) => [
-    item.productName,
-    item.description.substring(0, 40) + (item.description.length > 40 ? '...' : ''),
-    item.quantity.toString(),
-    formatCurrency(item.unitPrice),
-    item.discount > 0 ? `${item.discount}%` : '-',
-    formatCurrency(item.subtotal),
+
+  const tableData = quotation.Items.map((item) => [
+    item.ProductName,
+    item.Description.substring(0, 40) + (item.Description.length > 40 ? '...' : ''),
+    item.Quantity.toString(),
+    formatCurrency(item.UnitPrice),
+    item.Discount > 0 ? `${item.Discount}%` : '-',
+    formatCurrency(item.Subtotal),
   ]);
 
   autoTable(doc, {
@@ -152,10 +152,10 @@ export async function generatePDF(
   doc.setFontSize(10);
 
   doc.text('Subtotal:', totalsX, finalY);
-  doc.text(formatCurrency(quotation.subtotal), 190, finalY, { align: 'right' });
+  doc.text(formatCurrency(quotation.Subtotal), 190, finalY, { align: 'right' });
 
-  doc.text(`IVA (${quotation.taxRate}%):`, totalsX, finalY + 7);
-  doc.text(formatCurrency(quotation.taxAmount), 190, finalY + 7, { align: 'right' });
+  doc.text(`IVA (${quotation.TaxRate}%):`, totalsX, finalY + 7);
+  doc.text(formatCurrency(quotation.TaxAmount), 190, finalY + 7, { align: 'right' });
 
   doc.setLineWidth(0.5);
   doc.line(totalsX, finalY + 11, 190, finalY + 11);
@@ -163,16 +163,16 @@ export async function generatePDF(
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(12);
   doc.text('TOTAL:', totalsX, finalY + 19);
-  doc.text(formatCurrency(quotation.total), 190, finalY + 19, { align: 'right' });
+  doc.text(formatCurrency(quotation.Total), 190, finalY + 19, { align: 'right' });
 
 
-  if (quotation.notes) {
+  if (quotation.Notes) {
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(10);
     doc.text('Notas:', 20, finalY);
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(9);
-    const splitNotes = doc.splitTextToSize(quotation.notes, 100);
+    const splitNotes = doc.splitTextToSize(quotation.Notes, 100);
     doc.text(splitNotes, 20, finalY + 7);
   }
 
@@ -187,6 +187,6 @@ export async function generatePDF(
     { align: 'center' }
   );
 
-  
-  doc.save(`${quotation.number}.pdf`);
+
+  doc.save(`${quotation.Number}.pdf`);
 }
