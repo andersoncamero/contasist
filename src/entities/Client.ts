@@ -6,7 +6,7 @@ export interface Client {
   PersonType?: 'natural' | 'juridica';
   Company?: string;
   Address?: string;
-  TaxId?: string;
+  TaxID?: string;
   CreatedAt: Date;
 }
 

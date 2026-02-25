@@ -5,83 +5,82 @@ import { API_BASE_URL, getAuthHeader } from "@/services/apiConfig";
 
 // Tipos de API
 interface ApiQuotationItemResponse {
-  id: string;
-  product_id: string;
-  product_name: string;
-  description: string;
-  quantity: number;
-  unit_price: number;
-  discount: number;
-  subtotal: number;
+  ID: string;
+  ProductID: string;
+  ProductName: string;
+  Description: string;
+  Quantity: number;
+  UnitPrice: number;
+  Discount: number;
+  Subtotal: number;
 }
 
 interface ApiQuotationResponse {
-  id: string;
-  number: string;
-  client_id: string;
-  client_name: string;
-  items: ApiQuotationItemResponse[];
-  subtotal: number;
-  tax_rate: number;
-  tax_amount: number;
-  total: number;
-  status: 'draft' | 'sent' | 'approved' | 'rejected';
-  notes?: string;
-  valid_until: string;
-  created_at: string;
-  updated_at: string;
+  ID: string;
+  Number: string;
+  ClientID: string;
+  ClientName: string;
+  Items: ApiQuotationItemResponse[];
+  Subtotal: number;
+  TaxRate: number;
+  TaxAmount: number;
+  Total: number;
+  Status: 'draft' | 'sent' | 'approved' | 'rejected';
+  Notes?: string;
+  ValidUntil: string;
+  CreatedAt: string;
+  UpdatedAt: string;
 }
 
 // Mappers
 const mapApiQuotationItem = (item: ApiQuotationItemResponse): QuotationItem => ({
-  id: item.id,
-  productId: item.product_id,
-  productName: item.product_name,
-  description: item.description,
-  quantity: item.quantity,
-  unitPrice: item.unit_price,
-  discount: item.discount,
-  subtotal: item.subtotal,
+  ID: item.ID,
+  ProductID: item.ProductID,
+  ProductName: item.ProductName,
+  Description: item.Description,
+  Quantity: item.Quantity,
+  UnitPrice: item.UnitPrice,
+  Discount: item.Discount,
+  Subtotal: item.Subtotal,
 });
 
 const mapApiQuotation = (apiQuotation: ApiQuotationResponse): Quotation => ({
-  id: apiQuotation.id,
-  number: apiQuotation.number,
-  clientId: apiQuotation.client_id,
-  clientName: apiQuotation.client_name,
-  items: apiQuotation.items?.map(mapApiQuotationItem) || [],
-  subtotal: apiQuotation.subtotal,
-  taxRate: apiQuotation.tax_rate,
-  taxAmount: apiQuotation.tax_amount,
-  total: apiQuotation.total,
-  status: apiQuotation.status,
-  notes: apiQuotation.notes,
-  validUntil: new Date(apiQuotation.valid_until),
-  createdAt: new Date(apiQuotation.created_at),
-  updatedAt: new Date(apiQuotation.updated_at),
+  ID: apiQuotation.ID,
+  Number: apiQuotation.Number,
+  ClientID: apiQuotation.ClientID,
+  ClientName: apiQuotation.ClientName,
+  Items: apiQuotation.Items?.map(mapApiQuotationItem) || [],
+  Subtotal: apiQuotation.Subtotal,
+  TaxRate: apiQuotation.TaxRate,
+  TaxAmount: apiQuotation.TaxAmount,
+  Total: apiQuotation.Total,
+  Status: apiQuotation.Status,
+  Notes: apiQuotation.Notes,
+  ValidUntil: new Date(apiQuotation.ValidUntil),
+  CreatedAt: new Date(apiQuotation.CreatedAt),
+  UpdatedAt: new Date(apiQuotation.UpdatedAt),
 });
 
 const mapQuotationToApi = (quotation: Partial<Quotation>) => ({
-  number: quotation.number,
-  client_id: quotation.clientId,
-  client_name: quotation.clientName,
-  items: quotation.items?.map((item) => ({
-    id: item.id,
-    product_id: item.productId,
-    product_name: item.productName,
-    description: item.description,
-    quantity: item.quantity,
-    unit_price: item.unitPrice,
-    discount: item.discount,
-    subtotal: item.subtotal,
+  Number: quotation.Number,
+  ClientID: quotation.ClientID,
+  ClientName: quotation.ClientName,
+  Items: quotation.Items?.map((item) => ({
+    ProductID: item.ProductID,
+    ProductName: item.ProductName,
+    Description: item.Description,
+    Quantity: item.Quantity,
+    UnitPrice: item.UnitPrice,
+    Discount: item.Discount,
+    Subtotal: item.Subtotal,
   })),
-  subtotal: quotation.subtotal,
-  tax_rate: quotation.taxRate,
-  tax_amount: quotation.taxAmount,
-  total: quotation.total,
-  status: quotation.status,
-  notes: quotation.notes,
-  valid_until: quotation.validUntil?.toISOString(),
+  Subtotal: quotation.Subtotal,
+  TaxRate: quotation.TaxRate,
+  TaxAmount: quotation.TaxAmount,
+  Total: quotation.Total,
+  Status: quotation.Status,
+  Notes: quotation.Notes,
+  ValidUntil: quotation.ValidUntil?.toISOString(),
 });
 
 // Funciones API
@@ -135,7 +134,7 @@ const deleteQuotationApi = async (id: string) => {
   return response.json();
 };
 
-const updateQuotationStatusApi = async ({ id, status }: { id: string; status: Quotation["status"] }) => {
+const updateQuotationStatusApi = async ({ id, status }: { id: string; status: Quotation["Status"] }) => {
   const response = await fetch(`${API_BASE_URL}/quotations/${id}/status`, {
     method: 'PATCH',
     headers: getAuthHeader(),
@@ -213,7 +212,7 @@ export const useQuotation = () => {
     }
   };
 
-  const updateQuotationStatus = async (id: string, status: Quotation["status"]) => {
+  const updateQuotationStatus = async (id: string, status: Quotation["Status"]) => {
     try {
       await statusMutation.mutateAsync({ id, status });
       return { success: true };

@@ -32,12 +32,12 @@ export const InventoryDashboard = () => {
     const [searchTerm, setSearchTerm] = useState("");
     const navigate = useNavigate();
 
-    const filteredProducts = products.filter(p => !p.isService && (
-        p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        p.code.toLowerCase().includes(searchTerm.toLowerCase())
+    const filteredProducts = products.filter(p => !p.IsService && (
+        p.Name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        p.Code.toLowerCase().includes(searchTerm.toLowerCase())
     ));
 
-    const lowStockCount = filteredProducts.filter(p => getProductStock(p) <= p.minStock).length;
+    const lowStockCount = filteredProducts.filter(p => getProductStock(p) <= p.MinStock).length;
 
     return (
         <MainLayout>
@@ -130,18 +130,18 @@ export const InventoryDashboard = () => {
                                 <tbody className="divide-y">
                                     {filteredProducts.map(product => {
                                         const stock = getProductStock(product);
-                                        const isLow = stock <= product.minStock;
+                                        const isLow = stock <= product.MinStock;
 
                                         return (
-                                            <tr key={product.id} className="hover:bg-muted/30 transition-colors">
-                                                <td className="px-6 py-4 font-medium text-primary">{product.code}</td>
-                                                <td className="px-6 py-4">{product.name}</td>
-                                                <td className="px-6 py-4 text-center">{product.unit}</td>
+                                            <tr key={product.ID} className="hover:bg-muted/30 transition-colors">
+                                                <td className="px-6 py-4 font-medium text-primary">{product.Code}</td>
+                                                <td className="px-6 py-4">{product.Name}</td>
+                                                <td className="px-6 py-4 text-center">{product.Unit}</td>
                                                 <td className="px-6 py-4 text-right font-bold text-base">
                                                     {stock}
                                                 </td>
                                                 <td className="px-6 py-4 text-right text-muted-foreground">
-                                                    {product.minStock}
+                                                    {product.MinStock}
                                                 </td>
                                                 <td className="px-6 py-4 text-center">
                                                     <Badge variant={isLow ? "destructive" : "success"}>
@@ -150,7 +150,7 @@ export const InventoryDashboard = () => {
                                                 </td>
                                                 <td className="px-6 py-4 text-right">
                                                     <div className="flex justify-end gap-2">
-                                                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0" title="Ver Kardex" onClick={() => navigate(`/inventory/kardex/${product.id}`)}>
+                                                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0" title="Ver Kardex" onClick={() => navigate(`/inventory/kardex/${product.ID}`)}>
                                                             <FileText className="h-4 w-4" />
                                                         </Button>
                                                         <Button variant="ghost" size="sm" className="h-8 w-8 p-0" title="Movimientos" onClick={() => navigate("/inventory/movements/new")}>

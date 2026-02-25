@@ -21,7 +21,7 @@ import { useClient } from "@/useCases/useClient";
 import { useProduct } from "@/useCases/useProduct";
 import { useQuotation } from "@/useCases/useQuotation";
 import { ArrowLeft, Trash2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
@@ -42,34 +42,34 @@ export const QuotationNew = () => {
   const selectedClient = clients.find((c) => c.ID === clientId);
 
   const addItem = (productId: string) => {
-    const product = products.find((p) => p.id === productId);
+    const product = products.find((p) => p.ID === productId);
 
     if (!product) return;
 
-    const existingItem = items.find((i) => i.productId === productId);
+    const existingItem = items.find((i) => i.ProductID === productId);
     if (existingItem) {
       setItems(
         items.map((i) =>
-          i.productId === productId
+          i.ProductID === productId
             ? {
               ...i,
-              quantity: i.quantity + 1,
-              subtotal:
-                (i.quantity + 1) * i.unitPrice * (1 - i.discount / 100),
+              Quantity: i.Quantity + 1,
+              Subtotal:
+                (i.Quantity + 1) * i.UnitPrice * (1 - i.Discount / 100),
             }
             : i,
         ),
       );
     } else {
       const newItem: QuotationItem = {
-        id: generateId(),
-        productId: product.id,
-        productName: product.name,
-        description: product.description,
-        quantity: 1,
-        unitPrice: product.price,
-        discount: 0,
-        subtotal: product.price,
+        ID: generateId(),
+        ProductID: product.ID,
+        ProductName: product.Name,
+        Description: product.Description,
+        Quantity: 1,
+        UnitPrice: product.Price,
+        Discount: 0,
+        Subtotal: product.Price,
       };
       setItems([...items, newItem]);
     }
@@ -78,10 +78,10 @@ export const QuotationNew = () => {
   const updateItem = (id: string, updates: Partial<QuotationItem>) => {
     setItems(
       items.map((item) => {
-        if (item.id === id) {
+        if (item.ID === id) {
           const updated = { ...item, ...updates };
-          updated.subtotal =
-            updated.quantity * updated.unitPrice * (1 - updated.discount / 100);
+          updated.Subtotal =
+            updated.Quantity * updated.UnitPrice * (1 - updated.Discount / 100);
           return updated;
         }
         return item;
@@ -90,10 +90,10 @@ export const QuotationNew = () => {
   };
 
   const removeItem = (id: string) => {
-    setItems(items.filter((i) => i.id !== id));
+    setItems(items.filter((i) => i.ID !== id));
   };
 
-  const subtotal = items.reduce((sum, item) => sum + item.subtotal, 0);
+  const subtotal = items.reduce((sum, item) => sum + item.Subtotal, 0);
   const taxAmount = subtotal * (Number(businessInfo.defaultTaxRate) / 100);
   const total = subtotal + taxAmount;
 
@@ -104,26 +104,25 @@ export const QuotationNew = () => {
     }
 
     const quotation = {
-      id: generateId(),
-      number: generateQuotationNumber(),
-      clientId,
-      clientName: selectedClient?.Name || "",
-      items,
-      subtotal,
-      taxRate: Number(businessInfo.defaultTaxRate),
-      taxAmount,
-
-      total,
-      status: "draft" as const,
-      notes,
-      validUntil: new Date(Date.now() + validDays * 24 * 60 * 60 * 1000),
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      ID: generateId(),
+      Number: generateQuotationNumber(),
+      ClientID: clientId,
+      ClientName: selectedClient?.Name || "",
+      Items: items,
+      Subtotal: subtotal,
+      TaxRate: Number(businessInfo.defaultTaxRate),
+      TaxAmount: taxAmount,
+      Total: total,
+      Status: "draft" as const,
+      Notes: notes,
+      ValidUntil: new Date(Date.now() + validDays * 24 * 60 * 60 * 1000),
+      CreatedAt: new Date(),
+      UpdatedAt: new Date(),
     };
 
     addQuotation(quotation);
     toast.success("Cotizacion creada exitosamente");
-    navigate(`/quotations/${quotation.id}`);
+    navigate(`/quotations/${quotation.ID}`);
   };
 
   return (
@@ -180,8 +179,8 @@ export const QuotationNew = () => {
                 </SelectTrigger>
                 <SelectContent>
                   {products.map((product) => (
-                    <SelectItem key={product.id} value={product.id}>
-                      {product.name} - {formatCurrency(product.price)}
+                    <SelectItem key={product.ID} value={product.ID}>
+                      {product.Name} - {formatCurrency(product.Price)}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -198,13 +197,13 @@ export const QuotationNew = () => {
               <div className="space-y-4">
                 {items.map((item) => (
                   <div
-                    key={item.id}
+                    key={item.ID}
                     className="grid grid-cols-[1fr_auto_auto_auto_auto] gap-4 border-2 border-border p-4 rounded-lg"
                   >
                     <div>
-                      <p className="font-bold">{item.productName}</p>
+                      <p className="font-bold">{item.ProductName}</p>
                       <p className="text-sm text-muted-foreground line-clamp-1">
-                        {item.description}
+                        {item.Description}
                       </p>
                     </div>
                     <div>
@@ -214,10 +213,10 @@ export const QuotationNew = () => {
                       <Input
                         type="number"
                         min="1"
-                        value={item.quantity}
+                        value={item.Quantity}
                         onChange={(e) =>
-                          updateItem(item.id, {
-                            quantity: Number(e.target.value),
+                          updateItem(item.ID, {
+                            Quantity: Number(e.target.value),
                           })
                         }
                         className="w-20"
@@ -231,10 +230,10 @@ export const QuotationNew = () => {
                         type="number"
                         min="0"
                         step="0.01"
-                        value={item.unitPrice}
+                        value={item.UnitPrice}
                         onChange={(e) =>
-                          updateItem(item.id, {
-                            unitPrice: Number(e.target.value),
+                          updateItem(item.ID, {
+                            UnitPrice: Number(e.target.value),
                           })
                         }
                         className="w-28"
@@ -248,10 +247,10 @@ export const QuotationNew = () => {
                         type="number"
                         min="0"
                         max="100"
-                        value={item.discount}
+                        value={item.Discount}
                         onChange={(e) =>
-                          updateItem(item.id, {
-                            discount: Number(e.target.value),
+                          updateItem(item.ID, {
+                            Discount: Number(e.target.value),
                           })
                         }
                         className="w-20"
@@ -263,13 +262,13 @@ export const QuotationNew = () => {
                           Subtotal
                         </label>
                         <p className="font-bold">
-                          {formatCurrency(item.subtotal)}
+                          {formatCurrency(item.Subtotal)}
                         </p>
                       </div>
                       <Button
                         variant="outline"
                         size="icon"
-                        onClick={() => removeItem(item.id)}
+                        onClick={() => removeItem(item.ID)}
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>

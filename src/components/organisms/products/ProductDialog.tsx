@@ -25,12 +25,12 @@ import { Product } from '@/entities/Product';
 
 
 const productSchema = z.object({
-  name: z.string().min(2, 'El nombre debe tener al menos 2 caracteres'),
-  description: z.string().min(5, 'La descripción debe tener al menos 5 caracteres'),
-  price: z.coerce.number().positive('El precio debe ser mayor a 0'),
-  unit: z.string().min(1, 'La unidad es requerida'),
-  category: z.string().min(1, 'La categoría es requerida'),
-  isService: z.boolean(),
+  Name: z.string().min(2, 'El nombre debe tener al menos 2 caracteres'),
+  Description: z.string().min(5, 'La descripción debe tener al menos 5 caracteres'),
+  Price: z.coerce.number().positive('El precio debe ser mayor a 0'),
+  Unit: z.number().positive('La unidad debe ser mayor a 0'),
+  Category: z.string().min(1, 'La categoría es requerida'),
+  IsService: z.boolean(),
 });
 
 type ProductFormData = z.infer<typeof productSchema>;
@@ -51,33 +51,33 @@ export function ProductDialog({
   const form = useForm<ProductFormData>({
     resolver: zodResolver(productSchema) as any,
     defaultValues: {
-      name: '',
-      description: '',
-      price: 0,
-      unit: 'unidad',
-      category: '',
-      isService: false,
+      Name: '',
+      Description: '',
+      Price: 0,
+      Unit: 1,
+      Category: '',
+      IsService: false,
     },
   });
 
   useEffect(() => {
     if (product) {
       form.reset({
-        name: product.name,
-        description: product.description,
-        price: product.price,
-        unit: product.unit,
-        category: product.category,
-        isService: product.isService,
+        Name: product.Name,
+        Description: product.Description,
+        Price: product.Price,
+        Unit: product.Unit,
+        Category: product.Category,
+        IsService: product.IsService,
       });
     } else {
       form.reset({
-        name: '',
-        description: '',
-        price: 0,
-        unit: 'unidad',
-        category: '',
-        isService: false,
+        Name: '',
+        Description: '',
+        Price: 0,
+        Unit: 1,
+        Category: '',
+        IsService: false,
       });
     }
   }, [product, form]);
@@ -100,7 +100,7 @@ export function ProductDialog({
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
               control={form.control}
-              name="name"
+              name="Name"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Nombre *</FormLabel>
@@ -114,7 +114,7 @@ export function ProductDialog({
 
             <FormField
               control={form.control}
-              name="description"
+              name="Description"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Descripción *</FormLabel>
@@ -132,7 +132,7 @@ export function ProductDialog({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <FormField
                 control={form.control}
-                name="price"
+                name="Price"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Precio *</FormLabel>
@@ -146,12 +146,12 @@ export function ProductDialog({
 
               <FormField
                 control={form.control}
-                name="unit"
+                name="Unit"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Unidad *</FormLabel>
                     <FormControl>
-                      <Input placeholder="hora, proyecto, mes" {...field} />
+                      <Input type="number" step="0.01" placeholder="1" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -161,7 +161,7 @@ export function ProductDialog({
 
             <FormField
               control={form.control}
-              name="category"
+              name="Category"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Categoría *</FormLabel>
@@ -175,7 +175,7 @@ export function ProductDialog({
 
             <FormField
               control={form.control}
-              name="isService"
+              name="IsService"
               render={({ field }) => (
                 <FormItem className="flex items-center justify-between border-2 border-border p-4 rounded-lg">
                   <div>

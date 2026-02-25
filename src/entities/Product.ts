@@ -1,12 +1,13 @@
 export interface Product {
-    id: string;
-    code: string;
-    name: string;
-    description: string;
-    price: number;
-    unit: string;
-    category: string;
-    isService: boolean;
-    initialStock: number;
-    minStock: number;
-  }
+  ID: string;
+  Code: string;
+  Name: string;
+  Description: string;
+  Price: number;
+  Unit: number;
+  Category: string;
+  IsService: boolean;
+  InitialStock: number;
+  MinStock: number;
+  CreatedAt: Date;
+}

@@ -11,7 +11,7 @@ interface ApiClientResponse {
   PersonType?: 'natural' | 'juridica';
   Company?: string;
   Address?: string;
-  TaxId?: string;
+  TaxID?: string;
   created_at?: string;
 }
 
@@ -24,7 +24,7 @@ const mapApiClient = (apiClient: ApiClientResponse): Client => ({
   PersonType: apiClient.PersonType,
   Company: apiClient.Company,
   Address: apiClient.Address,
-  TaxId: apiClient.TaxId,
+  TaxID: apiClient.TaxID,
   CreatedAt: new Date(apiClient.created_at || Date.now()),
 });
 
