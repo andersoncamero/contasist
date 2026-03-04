@@ -72,15 +72,14 @@ const updateProductApi = async ({ id, data }: { id: number; data: Partial<Produc
     method: "PUT",
     headers: getAuthHeader(),
     body: JSON.stringify({
-      code: data.Code,
       name: data.Name,
       description: data.Description,
       price: data.Price,
       unit: data.Unit,
       category: data.Category,
-      is_service: data.IsService,
-      initial_stock: data.InitialStock,
-      min_stock: data.MinStock,
+      isService: data.IsService,
+      initialStock: data.InitialStock,
+      minStock: data.MinStock,
     }),
   });
 
@@ -88,7 +87,8 @@ const updateProductApi = async ({ id, data }: { id: number; data: Partial<Produc
     const errorData = await response.json();
     throw new Error(errorData.message || "Error al actualizar producto");
   }
-  return response.json();
+  if (response.status === 204) return {};
+  return response.json().catch(() => ({}));
 };
 
 const deleteProductApi = async (id: number) => {
