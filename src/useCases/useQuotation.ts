@@ -111,10 +111,12 @@ const addQuotationApi = async (quotationData: Omit<Quotation, "ID" | "CreatedAt"
   });
 
   if (!response.ok) {
-    const errorData = await response.json();
+    const errorData = await response.json().catch(() => ({}));
     throw new Error(errorData.message || 'Error al crear cotización');
   }
-  return response.json();
+
+  if (response.status === 204) return {};
+  return response.json().catch(() => ({}));
 };
 
 const updateQuotationApi = async ({ id, data }: { id: string; data: Partial<Quotation> }) => {
@@ -125,10 +127,12 @@ const updateQuotationApi = async ({ id, data }: { id: string; data: Partial<Quot
   });
 
   if (!response.ok) {
-    const errorData = await response.json();
+    const errorData = await response.json().catch(() => ({}));
     throw new Error(errorData.message || 'Error al actualizar cotización');
   }
-  return response.json();
+
+  if (response.status === 204) return {};
+  return response.json().catch(() => ({}));
 };
 
 const deleteQuotationApi = async (id: string) => {
@@ -138,10 +142,12 @@ const deleteQuotationApi = async (id: string) => {
   });
 
   if (!response.ok) {
-    const errorData = await response.json();
+    const errorData = await response.json().catch(() => ({}));
     throw new Error(errorData.message || 'Error al eliminar cotización');
   }
-  return response.json();
+
+  if (response.status === 204) return {};
+  return response.json().catch(() => ({}));
 };
 
 const updateQuotationStatusApi = async ({ id, status }: { id: number; status: Quotation["Status"] }) => {
@@ -152,10 +158,20 @@ const updateQuotationStatusApi = async ({ id, status }: { id: number; status: Qu
   });
 
   if (!response.ok) {
-    const errorData = await response.json();
+    const errorData = await response.json().catch(() => ({}));
     throw new Error(errorData.message || 'Error al actualizar estado');
   }
-  return response.json();
+
+  if (response.status === 204) return {};
+  return response.json().catch(() => ({}));
+};
+
+export const useQuotationById = (id: string | undefined) => {
+  return useQuery({
+    queryKey: ["quotations", id],
+    queryFn: () => fetchQuotationByIdApi(id!),
+    enabled: !!id,
+  });
 };
 
 export const useQuotation = () => {
@@ -189,18 +205,14 @@ export const useQuotation = () => {
 
   const statusMutation = useMutation({
     mutationFn: updateQuotationStatusApi,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["quotations"] });
+    onSuccess: async (_data, variables) => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["quotations"] }),
+        queryClient.invalidateQueries({ queryKey: ["quotations", String(variables.id)] })
+      ]);
     },
   });
 
-  const useQuotationById = (id: string | undefined) => {
-    return useQuery({
-      queryKey: ["quotations", id],
-      queryFn: () => fetchQuotationByIdApi(id!),
-      enabled: !!id,
-    });
-  };
 
   // Facade
   const addQuotation = async (quotationData: Omit<Quotation, "ID" | "CreatedAt" | "UpdatedAt">) => {
@@ -248,6 +260,5 @@ export const useQuotation = () => {
     updateQuotation,
     deleteQuotation,
     updateQuotationStatus,
-    useQuotationById,
   };
 };

@@ -7,7 +7,7 @@ import { formatCurrency, formatDate } from "@/lib/utils";
 
 import { useBusiness } from "@/useCases/useBusiness";
 import { useClient } from "@/useCases/useClient";
-import { useQuotation } from "@/useCases/useQuotation";
+import { useQuotation, useQuotationById } from "@/useCases/useQuotation";
 
 import { ArrowLeft, Check, Download, Send, X } from "lucide-react";
 import { useEffect } from "react";
@@ -18,7 +18,7 @@ export const QuotationDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { clients } = useClient();
-  const { useQuotationById, updateQuotationStatus, isLoading: isUpdating } = useQuotation();
+  const { updateQuotationStatus, isLoading: isUpdating } = useQuotation();
   const { data: quotation, isLoading: isQuotationLoading } = useQuotationById(id);
   const { businessInfo } = useBusiness();
 
@@ -48,9 +48,13 @@ export const QuotationDetail = () => {
     );
   }
 
-  const handleStatusChange = (status: string) => {
-    updateQuotationStatus(quotation.ID, status as typeof quotation.Status);
-    toast.success(`Estado actualizado a  ${status}`);
+  const handleStatusChange = async (status: string) => {
+    const result = await updateQuotationStatus(quotation.ID, status as typeof quotation.Status);
+    if (result.success) {
+      toast.success(`Estado actualizado a ${status}`);
+    } else {
+      toast.error(result.error || "Error al actualizar el estado");
+    }
   };
 
   const handleDownloadPDF = () => {
@@ -58,9 +62,13 @@ export const QuotationDetail = () => {
     toast.success("PDF descargado");
   };
 
-  const handleSend = () => {
-    updateQuotationStatus(quotation.ID, "sent");
-    toast.success("Cotizacion marcada como enviada");
+  const handleSend = async () => {
+    const result = await updateQuotationStatus(quotation.ID, "sent");
+    if (result.success) {
+      toast.success("Cotizacion marcada como enviada");
+    } else {
+      toast.error(result.error || "Error al marcar como enviada");
+    }
   };
 
   return (

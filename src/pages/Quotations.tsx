@@ -132,7 +132,6 @@ export const Quotations = () => {
         ) : (
           <div className="divide-y-2 divide-border">
             {sortedQuotations.map((quotation) => (
-              console.log("Items: ", quotation.Items),
               <div
                 key={quotation.ID}
                 className="p-4 transition-colors hover:bg-accent"
