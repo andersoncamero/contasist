@@ -22,20 +22,30 @@ import { StatusBadge } from "@/components/atoms/StatusBadge";
 import { formatCurrency, formatShortDate } from "@/lib/utils";
 
 import { useQuotation } from "@/useCases/useQuotation";
+import { useClient } from "@/useCases/useClient";
 import { Eye, FileText, Plus, Search, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
 
 export const Quotations = () => {
-  const { quotations, deleteQuotation, isLoading } = useQuotation();
+  const { quotations, deleteQuotation, isLoading: isQuotationLoading } = useQuotation();
+  const { clients, isLoading: isClientsLoading } = useClient();
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
-  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [deleteId, setDeleteId] = useState<string | number | null>(null);
 
-  // React Query fetches automatically on mount
+  const isLoading = isQuotationLoading || isClientsLoading;
 
-  const filteredQuotations = quotations.filter((q) => {
+  const getClientName = (clientId: number) => {
+    const client = clients.find((c) => c.ID === clientId);
+    return client ? client.Name : "Cliente Desconocido";
+  };
+
+  const filteredQuotations = quotations.map(q => ({
+    ...q,
+    ClientName: q.ClientName || getClientName(q.ClientID)
+  })).filter((q) => {
     const matchesSerch =
       q.Number?.toLocaleLowerCase().includes(search.toLocaleLowerCase()) ||
       q.ClientName?.toLocaleLowerCase().includes(search.toLocaleLowerCase());
@@ -43,6 +53,7 @@ export const Quotations = () => {
     const matchesStatus = statusFilter === "all" || q.Status === statusFilter;
     return matchesSerch && matchesStatus;
   });
+
 
   const sortedQuotations = [...filteredQuotations].sort(
     (a, b) => new Date(b.CreatedAt).getTime() - new Date(a.CreatedAt).getTime(),
@@ -102,7 +113,7 @@ export const Quotations = () => {
       </div>
 
       <div className="border-2 border-border bg-card rounded-lg overflow-hidden">
-        <div className="table-header hidden md:flex gap-4">
+        <div className="table-header rounded-t-lg hidden md:flex gap-4">
           <div className="flex-1 text-left">Cotización</div>
           <div className="flex-1 text-left">Cliente</div>
           <div className="w-[120px] text-right">Total</div>
@@ -121,6 +132,7 @@ export const Quotations = () => {
         ) : (
           <div className="divide-y-2 divide-border">
             {sortedQuotations.map((quotation) => (
+              console.log("Items: ", quotation.Items),
               <div
                 key={quotation.ID}
                 className="p-4 transition-colors hover:bg-accent"

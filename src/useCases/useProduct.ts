@@ -4,7 +4,7 @@ import { API_BASE_URL, getAuthHeader } from "@/services/apiConfig";
 
 // Tipos de API
 interface ApiProductResponse {
-  ID: string;
+  ID: number;
   Code: string;
   Name: string;
   Description: string;
@@ -67,7 +67,7 @@ const addProductApi = async (product: Omit<Product, "ID" | "CreatedAt">) => {
   return response.json();
 };
 
-const updateProductApi = async ({ id, data }: { id: string; data: Partial<Product> }) => {
+const updateProductApi = async ({ id, data }: { id: number; data: Partial<Product> }) => {
   const response = await fetch(`${API_BASE_URL}/products/${id}`, {
     method: "PUT",
     headers: getAuthHeader(),
@@ -91,7 +91,7 @@ const updateProductApi = async ({ id, data }: { id: string; data: Partial<Produc
   return response.json();
 };
 
-const deleteProductApi = async (id: string) => {
+const deleteProductApi = async (id: number) => {
   const response = await fetch(`${API_BASE_URL}/products/${id}`, {
     method: "DELETE",
     headers: getAuthHeader(),
@@ -143,7 +143,7 @@ export const useProduct = () => {
     }
   };
 
-  const updateProduct = async (id: string, data: Partial<Product>) => {
+  const updateProduct = async (id: number, data: Partial<Product>) => {
     try {
       await updateMutation.mutateAsync({ id, data });
       return { success: true };
@@ -152,7 +152,7 @@ export const useProduct = () => {
     }
   };
 
-  const deleteProduct = async (id: string) => {
+  const deleteProduct = async (id: number) => {
     try {
       await deleteMutation.mutateAsync(id);
       return { success: true };

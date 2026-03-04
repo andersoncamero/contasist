@@ -57,7 +57,7 @@ export function IncomeStatementReport({ accounts, totals, netIncome }: IncomeSta
 
             {/* Tabla Detallada */}
             <div className="border-2 border-border bg-card rounded-lg overflow-hidden">
-                <div className="table-header flex gap-4 px-4 py-3 bg-muted font-bold text-xs uppercase tracking-wider">
+                <div className="table-header rounded-t-lg flex gap-4 px-4 py-3 bg-muted font-bold text-xs uppercase tracking-wider">
                     <div className="w-24">Código</div>
                     <div className="flex-1">Cuenta de Resultado</div>
                     <div className="w-32 text-right">Débitos</div>

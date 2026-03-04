@@ -38,18 +38,19 @@ export const QuotationNew = () => {
   const [notes, setNotes] = useState("");
   const [validDays, setValidDays] = useState(30);
 
-  const selectedClient = clients.find((c) => c.ID === clientId);
+  const selectedClient = clients.find((c) => c.ID === Number(clientId));
 
   const addItem = (productId: string) => {
-    const product = products.find((p) => p.ID === productId);
+    const pId = Number(productId);
+    const product = products.find((p) => p.ID === pId);
 
     if (!product) return;
 
-    const existingItem = items.find((i) => i.ProductID === productId);
+    const existingItem = items.find((i) => i.ProductID === pId);
     if (existingItem) {
       setItems(
         items.map((i) =>
-          i.ProductID === productId
+          i.ProductID === pId
             ? {
               ...i,
               Quantity: i.Quantity + 1,
@@ -73,7 +74,7 @@ export const QuotationNew = () => {
     }
   };
 
-  const updateItem = (id: string, updates: Partial<QuotationItem>) => {
+  const updateItem = (id: number, updates: Partial<QuotationItem>) => {
     setItems(
       items.map((item) => {
         if (item.ProductID === id) {
@@ -87,7 +88,7 @@ export const QuotationNew = () => {
     );
   };
 
-  const removeItem = (id: string) => {
+  const removeItem = (id: number) => {
     setItems(items.filter((i) => i.ProductID !== id));
   };
 
@@ -103,7 +104,7 @@ export const QuotationNew = () => {
 
     const quotation = {
       Number: generateQuotationNumber(),
-      ClientID: clientId,
+      ClientID: Number(clientId),
       ClientName: selectedClient?.Name || "",
       Items: items,
       Subtotal: subtotal,
@@ -111,7 +112,7 @@ export const QuotationNew = () => {
       TaxAmount: taxAmount,
       Total: total,
       Status: "sent" as const,
-      Notes: notes,
+      Note: notes,
       ValidUntil: new Date(Date.now() + validDays * 24 * 60 * 60 * 1000),
       CreatedAt: new Date(),
       UpdatedAt: new Date(),
@@ -149,7 +150,7 @@ export const QuotationNew = () => {
               </SelectTrigger>
               <SelectContent>
                 {clients.map((client) => (
-                  <SelectItem key={client.ID} value={client.ID}>
+                  <SelectItem key={client.ID} value={client.ID.toString()}>
                     {client.Name} {client.Company && `- ${client.Company}`}
                   </SelectItem>
                 ))}
@@ -176,7 +177,7 @@ export const QuotationNew = () => {
                 </SelectTrigger>
                 <SelectContent>
                   {products.map((product) => (
-                    <SelectItem key={product.ID} value={product.ID}>
+                    <SelectItem key={product.ID} value={product.ID.toString()}>
                       {product.Name} - {formatCurrency(product.Price)}
                     </SelectItem>
                   ))}

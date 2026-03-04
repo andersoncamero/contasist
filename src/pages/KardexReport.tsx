@@ -25,7 +25,7 @@ export const KardexReport = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const { products } = useProduct();
-    const product = products.find(p => p.id === id) || null;
+    const product = products.find(p => p.ID === id) || null;
     const { kardex } = useKardex(product);
 
     if (!product) {
@@ -53,9 +53,9 @@ export const KardexReport = () => {
         ]);
 
         exportService.exportToPDF({
-            title: `Kardex: ${product.name}`,
-            subtitle: `Código: ${product.code} | Método: Promedio Ponderado`,
-            filename: `Kardex_${product.code}`,
+            title: `Kardex: ${product.Name}`,
+            subtitle: `Código: ${product.Code} | Método: Promedio Ponderado`,
+            filename: `Kardex_${product.Code}`,
             headers,
             data,
             columnStyles: {
@@ -84,7 +84,7 @@ export const KardexReport = () => {
                                 <FileText className="h-6 w-6 text-primary" />
                                 Kardex / Valoración
                             </h1>
-                            <p className="text-muted-foreground text-sm">Historial de movimientos: <span className="font-bold text-foreground">{product.name} ({product.code})</span></p>
+                            <p className="text-muted-foreground text-sm">Historial de movimientos: <span className="font-bold text-foreground">{product.Name} ({product.Code})</span></p>
                         </div>
                     </div>
                     <Button variant="outline" onClick={handleExportPDF}>
@@ -102,53 +102,59 @@ export const KardexReport = () => {
                     </CardHeader>
                     <CardContent className="p-0">
                         <div className="overflow-x-auto">
-                            <table className="w-full text-[13px] text-left">
-                                <thead className="bg-muted/50 border-b">
-                                    <tr className="divide-x divide-border">
-                                        <th className="px-4 py-3" rowSpan={2}>Fecha</th>
-                                        <th className="px-4 py-3" rowSpan={2}>Detalle</th>
-                                        <th className="px-4 py-3 text-center bg-emerald-50/50" colSpan={3}>Entradas</th>
-                                        <th className="px-4 py-3 text-center bg-rose-50/50" colSpan={3}>Salidas</th>
-                                        <th className="px-4 py-3 text-center bg-blue-50/50" colSpan={3}>Saldos</th>
-                                    </tr>
-                                    <tr className="divide-x divide-border text-[10px] uppercase font-bold text-muted-foreground bg-muted/20">
-                                        <th className="px-2 py-2 text-center bg-emerald-50/30">Cant</th>
-                                        <th className="px-2 py-2 text-right bg-emerald-50/30">Costo</th>
-                                        <th className="px-2 py-2 text-right bg-emerald-50/30">Total</th>
+                            <div className="min-w-[1000px]">
+                                {/* Macro Header */}
+                                <div className="grid grid-cols-[100px_1.5fr_1fr_1fr_1fr] bg-muted/50 border-b border-border text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+                                    <div className="px-4 py-3 flex items-center justify-center border-r border-border">Fecha</div>
+                                    <div className="px-4 py-3 flex items-center justify-center border-r border-border">Detalle</div>
+                                    <div className="px-4 py-3 text-center bg-emerald-50/50 border-r border-border">Entradas</div>
+                                    <div className="px-4 py-3 text-center bg-rose-50/50 border-r border-border">Salidas</div>
+                                    <div className="px-4 py-3 text-center bg-blue-50/50">Saldos</div>
+                                </div>
 
-                                        <th className="px-2 py-2 text-center bg-rose-50/30">Cant</th>
-                                        <th className="px-2 py-2 text-right bg-rose-50/30">Costo</th>
-                                        <th className="px-2 py-2 text-right bg-rose-50/30">Total</th>
+                                {/* Sub Header */}
+                                <div className="grid grid-cols-[100px_1.5fr_repeat(9,minmax(0,1fr))] bg-muted/20 border-b border-border text-[10px] font-bold uppercase text-muted-foreground/70">
+                                    <div className="px-4 py-2 border-r border-border"></div>
+                                    <div className="px-4 py-2 border-r border-border"></div>
+                                    {/* Entradas */}
+                                    <div className="px-2 py-2 text-center bg-emerald-50/30 border-r border-border">Cant</div>
+                                    <div className="px-2 py-2 text-right bg-emerald-50/30 border-r border-border">Costo</div>
+                                    <div className="px-2 py-2 text-right bg-emerald-50/30 border-r border-border">Total</div>
+                                    {/* Salidas */}
+                                    <div className="px-2 py-2 text-center bg-rose-50/30 border-r border-border">Cant</div>
+                                    <div className="px-2 py-2 text-right bg-rose-50/30 border-r border-border">Costo</div>
+                                    <div className="px-2 py-2 text-right bg-rose-50/30 border-r border-border">Total</div>
+                                    {/* Saldos */}
+                                    <div className="px-2 py-2 text-center bg-blue-50/30 border-r border-border">Cant</div>
+                                    <div className="px-2 py-2 text-right bg-blue-50/30 border-r border-border">Costo</div>
+                                    <div className="px-2 py-2 text-right bg-blue-50/30">Total</div>
+                                </div>
 
-                                        <th className="px-2 py-2 text-center bg-blue-50/30">Cant</th>
-                                        <th className="px-2 py-2 text-right bg-blue-50/30">Costo</th>
-                                        <th className="px-2 py-2 text-right bg-blue-50/30">Total</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-border">
+                                {/* Body */}
+                                <div className="divide-y divide-border">
                                     {kardex.map((line, idx) => (
-                                        <tr key={idx} className="divide-x divide-border hover:bg-muted/5">
-                                            <td className="px-4 py-3 italic text-muted-foreground whitespace-nowrap">{line.date}</td>
-                                            <td className="px-4 py-3 font-medium uppercase">{line.description}</td>
+                                        <div key={idx} className="grid grid-cols-[100px_1.5fr_repeat(9,minmax(0,1fr))] text-[13px] hover:bg-muted/5 transition-colors">
+                                            <div className="px-4 py-3 items-center flex italic text-muted-foreground border-r border-border truncate">{line.date}</div>
+                                            <div className="px-4 py-3 items-center flex font-medium uppercase border-r border-border truncate">{line.description}</div>
 
                                             {/* Entradas */}
-                                            <td className="px-2 py-3 text-center bg-emerald-50/5">{line.inQty || "-"}</td>
-                                            <td className="px-2 py-3 text-right text-emerald-600 bg-emerald-50/5">{line.inQty > 0 ? formatCurrency(line.inCost) : "-"}</td>
-                                            <td className="px-2 py-3 text-right font-semibold text-emerald-700 bg-emerald-50/5">{line.inQty > 0 ? formatCurrency(line.inTotal) : "-"}</td>
+                                            <div className="px-2 py-3 items-center flex justify-center bg-emerald-50/5 border-r border-border">{line.inQty || "-"}</div>
+                                            <div className="px-2 py-3 items-center flex justify-end text-emerald-600 bg-emerald-50/5 border-r border-border">{line.inQty > 0 ? formatCurrency(line.inCost) : "-"}</div>
+                                            <div className="px-2 py-3 items-center flex justify-end font-semibold text-emerald-700 bg-emerald-50/5 border-r border-border">{line.inQty > 0 ? formatCurrency(line.inTotal) : "-"}</div>
 
                                             {/* Salidas */}
-                                            <td className="px-2 py-3 text-center bg-rose-50/5">{line.outQty || "-"}</td>
-                                            <td className="px-2 py-3 text-right text-rose-600 bg-rose-50/5">{line.outQty > 0 ? formatCurrency(line.outCost) : "-"}</td>
-                                            <td className="px-2 py-3 text-right font-semibold text-rose-700 bg-rose-50/5">{line.outQty > 0 ? formatCurrency(line.outTotal) : "-"}</td>
+                                            <div className="px-2 py-3 items-center flex justify-center bg-rose-50/5 border-r border-border">{line.outQty || "-"}</div>
+                                            <div className="px-2 py-3 items-center flex justify-end text-rose-600 bg-rose-50/5 border-r border-border">{line.outQty > 0 ? formatCurrency(line.outCost) : "-"}</div>
+                                            <div className="px-2 py-3 items-center flex justify-end font-semibold text-rose-700 bg-rose-50/5 border-r border-border">{line.outQty > 0 ? formatCurrency(line.outTotal) : "-"}</div>
 
                                             {/* Saldos */}
-                                            <td className="px-2 py-3 text-center font-bold bg-blue-50/5">{line.balanceQty}</td>
-                                            <td className="px-2 py-3 text-right bg-blue-50/5">{formatCurrency(line.balanceCost)}</td>
-                                            <td className="px-2 py-3 text-right font-bold text-primary bg-blue-50/5">{formatCurrency(line.balanceTotal)}</td>
-                                        </tr>
+                                            <div className="px-2 py-3 items-center flex justify-center font-bold bg-blue-50/5 border-r border-border">{line.balanceQty}</div>
+                                            <div className="px-2 py-3 items-center flex justify-end bg-blue-50/5 border-r border-border">{formatCurrency(line.balanceCost)}</div>
+                                            <div className="px-2 py-3 items-center flex justify-end font-bold text-primary bg-blue-50/5">{formatCurrency(line.balanceTotal)}</div>
+                                        </div>
                                     ))}
-                                </tbody>
-                            </table>
+                                </div>
+                            </div>
                         </div>
                     </CardContent>
                 </Card>

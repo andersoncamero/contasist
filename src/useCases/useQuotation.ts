@@ -6,9 +6,11 @@ import { API_BASE_URL, getAuthHeader } from "@/services/apiConfig";
 // Tipos de API
 interface ApiQuotationItemResponse {
   ID: number;
-  ProductID: string;
-  ProductName: string;
-  Description: string;
+  ProductID: number;
+  Product: {
+    Name: string;
+    Description: string;
+  };
   Quantity: number;
   UnitPrice: number;
   Discount: number;
@@ -18,15 +20,14 @@ interface ApiQuotationItemResponse {
 interface ApiQuotationResponse {
   ID: number;
   Number: string;
-  ClientID: string;
-  ClientName: string;
-  Items: ApiQuotationItemResponse[];
+  ClientID: number;
+  items: ApiQuotationItemResponse[];
   Subtotal: number;
   TaxRate: number;
   TaxAmount: number;
   Total: number;
   Status: 'draft' | 'sent' | 'approved' | 'rejected';
-  Notes?: string;
+  Note?: string;
   ValidUntil: string;
   CreatedAt: string;
   UpdatedAt: string;
@@ -36,8 +37,8 @@ interface ApiQuotationResponse {
 const mapApiQuotationItem = (item: ApiQuotationItemResponse): QuotationItem => ({
   ID: item.ID,
   ProductID: item.ProductID,
-  ProductName: item.ProductName,
-  Description: item.Description,
+  ProductName: item.Product?.Name || '',
+  Description: item.Product?.Description || '',
   Quantity: item.Quantity,
   UnitPrice: item.UnitPrice,
   Discount: item.Discount,
@@ -48,14 +49,14 @@ const mapApiQuotation = (apiQuotation: ApiQuotationResponse): Quotation => ({
   ID: apiQuotation.ID,
   Number: apiQuotation.Number,
   ClientID: apiQuotation.ClientID,
-  ClientName: apiQuotation.ClientName,
-  Items: apiQuotation.Items?.map(mapApiQuotationItem) || [],
+  ClientName: '',
+  Items: apiQuotation.items?.map(mapApiQuotationItem) || [],
   Subtotal: apiQuotation.Subtotal,
   TaxRate: apiQuotation.TaxRate,
   TaxAmount: apiQuotation.TaxAmount,
   Total: apiQuotation.Total,
   Status: apiQuotation.Status,
-  Notes: apiQuotation.Notes,
+  Note: apiQuotation.Note,
   ValidUntil: new Date(apiQuotation.ValidUntil),
   CreatedAt: new Date(apiQuotation.CreatedAt),
   UpdatedAt: new Date(apiQuotation.UpdatedAt),
@@ -64,11 +65,8 @@ const mapApiQuotation = (apiQuotation: ApiQuotationResponse): Quotation => ({
 const mapQuotationToApi = (quotation: Partial<Quotation>) => ({
   Number: quotation.Number,
   ClientID: quotation.ClientID,
-  ClientName: quotation.ClientName,
-  Items: quotation.Items?.map((item) => ({
+  items: quotation.Items?.map((item) => ({
     ProductID: item.ProductID,
-    ProductName: item.ProductName,
-    Description: item.Description,
     Quantity: item.Quantity,
     UnitPrice: item.UnitPrice,
     Discount: item.Discount,
@@ -79,7 +77,7 @@ const mapQuotationToApi = (quotation: Partial<Quotation>) => ({
   TaxAmount: quotation.TaxAmount,
   Total: quotation.Total,
   Status: quotation.Status,
-  Notes: quotation.Notes,
+  Note: quotation.Note,
   ValidUntil: quotation.ValidUntil?.toISOString(),
 });
 
@@ -91,6 +89,18 @@ const fetchQuotationsApi = async (): Promise<Quotation[]> => {
   if (!response.ok) throw new Error('Error al obtener cotizaciones');
   const data: ApiQuotationResponse[] = await response.json();
   return data.map(mapApiQuotation);
+};
+
+const fetchQuotationByIdApi = async (id: string): Promise<Quotation> => {
+  const response = await fetch(`${API_BASE_URL}/quotations/${id}`, {
+    headers: getAuthHeader(),
+  });
+  if (!response.ok) {
+    if (response.status === 404) throw new Error('Cotización no encontrada');
+    throw new Error('Error al obtener la cotización');
+  }
+  const data: ApiQuotationResponse = await response.json();
+  return mapApiQuotation(data);
 };
 
 const addQuotationApi = async (quotationData: Omit<Quotation, "ID" | "CreatedAt" | "UpdatedAt">) => {
@@ -184,6 +194,14 @@ export const useQuotation = () => {
     },
   });
 
+  const useQuotationById = (id: string | undefined) => {
+    return useQuery({
+      queryKey: ["quotations", id],
+      queryFn: () => fetchQuotationByIdApi(id!),
+      enabled: !!id,
+    });
+  };
+
   // Facade
   const addQuotation = async (quotationData: Omit<Quotation, "ID" | "CreatedAt" | "UpdatedAt">) => {
     try {
@@ -203,9 +221,9 @@ export const useQuotation = () => {
     }
   };
 
-  const deleteQuotation = async (id: string) => {
+  const deleteQuotation = async (id: string | number) => {
     try {
-      await deleteMutation.mutateAsync(id);
+      await deleteMutation.mutateAsync(id.toString());
       return { success: true };
     } catch (error) {
       return { success: false, error: (error as Error).message };
@@ -230,5 +248,6 @@ export const useQuotation = () => {
     updateQuotation,
     deleteQuotation,
     updateQuotationStatus,
+    useQuotationById,
   };
 };

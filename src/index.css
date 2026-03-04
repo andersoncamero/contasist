@@ -184,7 +184,7 @@
 
 @layer components {
   .table-header {
-    @apply bg-slate-200 font-bold uppercase tracking-wide text-xs p-4 border-b-2 border-border rounded-t-lg;
+    @apply bg-slate-200 font-bold uppercase tracking-wide text-xs p-4 border-b-2 border-border;
   }
 
   .page-header {

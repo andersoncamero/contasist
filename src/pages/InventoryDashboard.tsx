@@ -115,61 +115,109 @@ export const InventoryDashboard = () => {
                     </CardHeader>
                     <CardContent className="p-0">
                         <div className="overflow-x-auto">
-                            <table className="w-full text-sm text-left">
-                                <thead className="text-xs uppercase bg-muted/40 text-muted-foreground border-b italic">
-                                    <tr>
-                                        <th className="px-6 py-3 font-semibold">Código</th>
-                                        <th className="px-6 py-3 font-semibold">Producto</th>
-                                        <th className="px-6 py-3 font-semibold text-center">Und.</th>
-                                        <th className="px-6 py-3 font-semibold text-right">Existencias</th>
-                                        <th className="px-6 py-3 font-semibold text-right">Mínimo</th>
-                                        <th className="px-6 py-3 font-semibold text-center">Estado</th>
-                                        <th className="px-6 py-3 font-semibold text-right">Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y">
-                                    {filteredProducts.map(product => {
-                                        const stock = getProductStock(product);
-                                        const isLow = stock <= product.MinStock;
+                            {/* Header Desktop */}
+                            <div className="table-header rounded-t-lg hidden md:grid grid-cols-[100px_1fr_80px_100px_100px_120px_100px] gap-4 bg-muted/40 p-4 text-xs font-semibold uppercase italic text-muted-foreground border-b italic">
+                                <div>Código</div>
+                                <div>Producto</div>
+                                <div className="text-center">Und.</div>
+                                <div className="text-right">Existencias</div>
+                                <div className="text-right">Mínimo</div>
+                                <div className="text-center">Estado</div>
+                                <div className="text-right">Acciones</div>
+                            </div>
 
-                                        return (
-                                            <tr key={product.ID} className="hover:bg-muted/30 transition-colors">
-                                                <td className="px-6 py-4 font-medium text-primary">{product.Code}</td>
-                                                <td className="px-6 py-4">{product.Name}</td>
-                                                <td className="px-6 py-4 text-center">{product.Unit}</td>
-                                                <td className="px-6 py-4 text-right font-bold text-base">
-                                                    {stock}
-                                                </td>
-                                                <td className="px-6 py-4 text-right text-muted-foreground">
-                                                    {product.MinStock}
-                                                </td>
-                                                <td className="px-6 py-4 text-center">
+                            <div className="divide-y divide-border">
+                                {filteredProducts.map((product) => {
+                                    const stock = getProductStock(product);
+                                    const isLow = stock <= product.MinStock;
+
+                                    return (
+                                        <div key={product.ID} className="transition-colors hover:bg-muted/30">
+                                            {/* Desktop Layout */}
+                                            <div className="hidden md:grid grid-cols-[100px_1fr_80px_100px_100px_120px_100px] gap-4 p-4 items-center text-sm">
+                                                <div className="font-medium text-primary font-mono">{product.Code}</div>
+                                                <div className="truncate font-medium">{product.Name}</div>
+                                                <div className="text-center text-muted-foreground">{product.Unit}</div>
+                                                <div className="text-right font-bold text-lg">{stock}</div>
+                                                <div className="text-right text-muted-foreground">{product.MinStock}</div>
+                                                <div className="flex justify-center">
                                                     <Badge variant={isLow ? "destructive" : "success"}>
                                                         {isLow ? "Bajo Stock" : "Optimo"}
                                                     </Badge>
-                                                </td>
-                                                <td className="px-6 py-4 text-right">
-                                                    <div className="flex justify-end gap-2">
-                                                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0" title="Ver Kardex" onClick={() => navigate(`/inventory/kardex/${product.ID}`)}>
-                                                            <FileText className="h-4 w-4" />
+                                                </div>
+                                                <div className="flex justify-end gap-2">
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="sm"
+                                                        className="h-8 w-8 p-0"
+                                                        title="Ver Kardex"
+                                                        onClick={() => navigate(`/inventory/kardex/${product.ID}`)}
+                                                    >
+                                                        <FileText className="h-4 w-4" />
+                                                    </Button>
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="sm"
+                                                        className="h-8 w-8 p-0"
+                                                        title="Movimientos"
+                                                        onClick={() => navigate("/inventory/movements/new")}
+                                                    >
+                                                        <ArrowUpDown className="h-4 w-4" />
+                                                    </Button>
+                                                </div>
+                                            </div>
+
+                                            {/* Mobile Layout */}
+                                            <div className="md:hidden p-4 space-y-3">
+                                                <div className="flex justify-between items-start">
+                                                    <div>
+                                                        <p className="text-xs font-mono text-primary font-bold">{product.Code}</p>
+                                                        <p className="font-bold">{product.Name}</p>
+                                                    </div>
+                                                    <Badge variant={isLow ? "destructive" : "success"}>
+                                                        {isLow ? "Bajo" : "OK"}
+                                                    </Badge>
+                                                </div>
+                                                <div className="flex justify-between items-end border-t border-border/50 pt-2">
+                                                    <div className="grid grid-cols-2 gap-4 text-xs">
+                                                        <div>
+                                                            <p className="text-muted-foreground uppercase">Stock</p>
+                                                            <p className="text-lg font-bold">{stock} {product.Unit}</p>
+                                                        </div>
+                                                        <div>
+                                                            <p className="text-muted-foreground uppercase">Mínimo</p>
+                                                            <p className="text-lg">{product.MinStock}</p>
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex gap-2">
+                                                        <Button
+                                                            variant="outline"
+                                                            size="sm"
+                                                            onClick={() => navigate(`/inventory/kardex/${product.ID}`)}
+                                                        >
+                                                            <FileText className="h-4 w-4 mr-1" />
+                                                            Kardex
                                                         </Button>
-                                                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0" title="Movimientos" onClick={() => navigate("/inventory/movements/new")}>
+                                                        <Button
+                                                            variant="outline"
+                                                            size="sm"
+                                                            onClick={() => navigate("/inventory/movements/new")}
+                                                        >
                                                             <ArrowUpDown className="h-4 w-4" />
                                                         </Button>
                                                     </div>
-                                                </td>
-                                            </tr>
-                                        );
-                                    })}
-                                    {filteredProducts.length === 0 && (
-                                        <tr>
-                                            <td colSpan={7} className="px-6 py-12 text-center text-muted-foreground italic">
-                                                No se encontraron productos físicos.
-                                            </td>
-                                        </tr>
-                                    )}
-                                </tbody>
-                            </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+
+                                {filteredProducts.length === 0 && (
+                                    <div className="px-6 py-12 text-center text-muted-foreground italic">
+                                        No se encontraron productos físicos.
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </CardContent>
                 </Card>

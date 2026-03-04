@@ -46,7 +46,7 @@ export function ExpenseList({
             </div>
 
             <div className="border-2 border-border bg-card rounded-lg overflow-hidden">
-                <div className="table-header hidden md:flex gap-4">
+                <div className="table-header rounded-t-lg hidden md:flex gap-4">
                     <div className="flex-[1.5] flex items-center justify-start text-left">Gasto / Proveedor</div>
                     <div className="flex-1 flex items-center justify-start text-left">Categoría</div>
                     <div className="flex-1 flex items-center justify-start text-left">Fechas</div>

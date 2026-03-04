@@ -1,6 +1,6 @@
 export interface QuotationItem {
   ID?: number;
-  ProductID: string;
+  ProductID: number;
   ProductName: string;
   Description: string;
   Quantity: number;

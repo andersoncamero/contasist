@@ -39,7 +39,7 @@ export const AccountingJournal = () => {
 
                     <TabsContent value="journal" className="mt-6">
                         <div className="border-2 border-border bg-card rounded-lg overflow-hidden">
-                            <div className="table-header hidden md:flex gap-4">
+                            <div className="table-header rounded-t-lg hidden md:flex gap-4">
                                 <div className="w-[120px] text-left">Fecha</div>
                                 <div className="w-[120px] text-left">Referencia</div>
                                 <div className="flex-1 text-left">Concepto</div>

@@ -4,7 +4,7 @@ import { API_BASE_URL, getAuthHeader } from "@/services/apiConfig";
 
 // Tipos de API
 interface ApiClientResponse {
-  ID: string;
+  ID: number;
   Name: string;
   Email: string;
   Phone: string;
@@ -51,7 +51,7 @@ const addClientApi = async (client: Omit<Client, "ID" | "CreatedAt">) => {
   return response.json();
 };
 
-const updateClientApi = async ({ id, data }: { id: string; data: Partial<Client> }) => {
+const updateClientApi = async ({ id, data }: { id: number; data: Partial<Client> }) => {
   const response = await fetch(`${API_BASE_URL}/clients/${id}`, {
     method: "PUT",
     headers: getAuthHeader(),
@@ -64,7 +64,7 @@ const updateClientApi = async ({ id, data }: { id: string; data: Partial<Client>
   return response.json();
 };
 
-const deleteClientApi = async (id: string) => {
+const deleteClientApi = async (id: number) => {
   const response = await fetch(`${API_BASE_URL}/clients/${id}`, {
     method: "DELETE",
     headers: getAuthHeader(),
@@ -107,7 +107,7 @@ export const useClient = () => {
 
   // Facade para mantener compatibilidad con los componentes existentes
   // aunque idealmente deberíamos retornar query y mutations directamente.
-  
+
   const addClient = async (client: Omit<Client, "ID" | "CreatedAt">) => {
     try {
       await addMutation.mutateAsync(client);
@@ -117,7 +117,7 @@ export const useClient = () => {
     }
   };
 
-  const updateClient = async (id: string, data: Partial<Client>) => {
+  const updateClient = async (id: number, data: Partial<Client>) => {
     try {
       await updateMutation.mutateAsync({ id, data });
       return { success: true };
@@ -126,7 +126,7 @@ export const useClient = () => {
     }
   };
 
-  const deleteClient = async (id: string) => {
+  const deleteClient = async (id: number) => {
     try {
       await deleteMutation.mutateAsync(id);
       return { success: true };
