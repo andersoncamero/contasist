@@ -1,12 +1,12 @@
 export interface Client {
-  ID: string;
+  ID: number;
   Name: string;
   Email: string;
   Phone: string;
   PersonType?: 'natural' | 'juridica';
   Company?: string;
   Address?: string;
-  TaxId?: string;
+  TaxID?: string;
   CreatedAt: Date;
 }
 

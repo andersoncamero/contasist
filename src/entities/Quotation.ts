@@ -1,18 +1,18 @@
 import { QuotationItem } from "./QuotationItem";
 
 export interface Quotation {
-    id: string;
-    number: string;
-    clientId: string;
-    clientName: string;
-    items: QuotationItem[];
-    subtotal: number;
-    taxRate: number;
-    taxAmount: number;
-    total: number;
-    status: 'draft' | 'sent' | 'approved' | 'rejected';
-    notes?: string;
-    validUntil: Date;
-    createdAt: Date;
-    updatedAt: Date;
-  }
+  ID?: number;
+  Number: string;
+  ClientID: number;
+  ClientName: string;
+  Items: QuotationItem[];
+  Subtotal: number;
+  TaxRate: number;
+  TaxAmount: number;
+  Total: number;
+  Status: 'draft' | 'sent' | 'approved' | 'rejected';
+  Note?: string;
+  ValidUntil: Date;
+  CreatedAt: Date;
+  UpdatedAt: Date;
+}

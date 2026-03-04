@@ -1,10 +1,10 @@
 export interface QuotationItem {
-    id: string;
-    productId: string;
-    productName: string;
-    description: string;
-    quantity: number;
-    unitPrice: number;
-    discount: number;
-    subtotal: number;
-  }
+  ID?: number;
+  ProductID: number;
+  ProductName: string;
+  Description: string;
+  Quantity: number;
+  UnitPrice: number;
+  Discount: number;
+  Subtotal: number;
+}

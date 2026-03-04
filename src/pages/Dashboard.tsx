@@ -14,11 +14,11 @@ export const Dashboard = () => {
   const { quotations } = useQuotation();
 
   const approvedTotal = quotations
-    .filter((q) => q.status === "approved")
-    .reduce((sum, q) => sum + q.total, 0);
+    .filter((q) => q.Status === "approved")
+    .reduce((sum, q) => sum + q.Total, 0);
 
   const pendingQuotations = quotations.filter(
-    (q) => q.status === "draft" || q.status === "sent",
+    (q) => q.Status === "draft" || q.Status === "sent",
   ).length;
 
   return (

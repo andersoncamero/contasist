@@ -32,19 +32,19 @@ export default function Products() {
   const [search, setSearch] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
-  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [deleteId, setDeleteId] = useState<number | null>(null);
 
   // React Query fetches automatically on mount
 
   const filteredProducts = products.filter(
     (product) =>
-      product.name.toLowerCase().includes(search.toLowerCase()) ||
-      product.category.toLowerCase().includes(search.toLowerCase()),
+      product.Name.toLowerCase().includes(search.toLowerCase()) ||
+      product.Category.toLowerCase().includes(search.toLowerCase()),
   );
 
   const handleSave = async (data: Omit<Product, "id">) => {
     if (editingProduct) {
-      const result = await updateProduct(editingProduct.id, data);
+      const result = await updateProduct(editingProduct.ID, data);
       if (result.success) {
         toast.success("Producto actualizado exitosamente");
       } else {
@@ -108,7 +108,7 @@ export default function Products() {
       </div>
 
       <div className="border-2 border-border bg-card rounded-lg overflow-hidden">
-        <div className="table-header hidden md:flex gap-4">
+        <div className="table-header rounded-t-lg hidden md:flex gap-4">
           <div className="flex-1 text-left">Producto/Servicio</div>
           <div className="flex-1 text-left">Descripción</div>
           <div className="w-[120px] text-right">Precio</div>
@@ -128,34 +128,34 @@ export default function Products() {
           <div className="divide-y-2 divide-border">
             {filteredProducts.map((product) => (
               <div
-                key={product.id}
+                key={product.ID}
                 className="p-4 transition-colors hover:bg-accent"
               >
                 {/* Layout móvil */}
                 <div className="md:hidden space-y-3">
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex-1 min-w-0">
-                      <p className="font-bold truncate">{product.name}</p>
+                      <p className="font-bold truncate">{product.Name}</p>
                       <p className="text-sm text-muted-foreground">
-                        {product.category}
+                        {product.Category}
                       </p>
                     </div>
                     <span className="shrink-0 border-2 border-border px-2 py-1 text-xs font-bold uppercase rounded-lg">
-                      {product.isService ? "Servicio" : "Producto"}
+                      {product.IsService ? "Servicio" : "Producto"}
                     </span>
                   </div>
-                  {product.description && (
+                  {product.Description && (
                     <p className="text-sm text-muted-foreground line-clamp-2">
-                      {product.description}
+                      {product.Description}
                     </p>
                   )}
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="font-mono font-bold">
-                        {formatCurrency(product.price)}
+                        {formatCurrency(product.Price)}
                       </p>
                       <p className="text-xs text-muted-foreground">
-                        /{product.unit}
+                        /{product.Unit}
                       </p>
                     </div>
                     <div className="flex gap-2">
@@ -170,7 +170,7 @@ export default function Products() {
                       <Button
                         variant="outline"
                         size="icon"
-                        onClick={() => setDeleteId(product.id)}
+                        onClick={() => setDeleteId(product.ID)}
                         disabled={isLoading}
                       >
                         <Trash2 className="h-4 w-4" />
@@ -183,27 +183,27 @@ export default function Products() {
 
                 <div className="hidden md:flex gap-4 items-center">
                   <div className="flex-1 text-left">
-                    <p className="font-bold">{product.name}</p>
+                    <p className="font-bold">{product.Name}</p>
                     <p className="text-sm text-muted-foreground">
-                      {product.category}
+                      {product.Category}
                     </p>
                   </div>
                   <div className="flex-1 text-left">
                     <p className="text-sm line-clamp-2">
-                      {product.description}
+                      {product.Description}
                     </p>
                   </div>
                   <div className="w-[120px] text-right">
                     <p className="font-bold">
-                      {formatCurrency(product.price)}
+                      {formatCurrency(product.Price)}
                     </p>
                     <p className="text-sm text-muted-foreground">
-                      /{product.unit}
+                      /{product.Unit}
                     </p>
                   </div>
                   <div className="w-[100px] text-center">
                     <span className="inline-block border-2 border-border px-2 py-1 text-xs font-bold uppercase rounded-lg">
-                      {product.isService ? "Servicio" : "Producto"}
+                      {product.IsService ? "Servicio" : "Producto"}
                     </span>
                   </div>
                   <div className="w-[100px] flex gap-2 justify-end">
@@ -218,7 +218,7 @@ export default function Products() {
                     <Button
                       variant="outline"
                       size="icon"
-                      onClick={() => setDeleteId(product.id)}
+                      onClick={() => setDeleteId(product.ID)}
                       disabled={isLoading}
                     >
                       <Trash2 className="h-4 w-4" />

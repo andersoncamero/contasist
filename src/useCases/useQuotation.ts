@@ -5,83 +5,80 @@ import { API_BASE_URL, getAuthHeader } from "@/services/apiConfig";
 
 // Tipos de API
 interface ApiQuotationItemResponse {
-  id: string;
-  product_id: string;
-  product_name: string;
-  description: string;
-  quantity: number;
-  unit_price: number;
-  discount: number;
-  subtotal: number;
+  ID: number;
+  ProductID: number;
+  Product: {
+    Name: string;
+    Description: string;
+  };
+  Quantity: number;
+  UnitPrice: number;
+  Discount: number;
+  Subtotal: number;
 }
 
 interface ApiQuotationResponse {
-  id: string;
-  number: string;
-  client_id: string;
-  client_name: string;
+  ID: number;
+  Number: string;
+  ClientID: number;
   items: ApiQuotationItemResponse[];
-  subtotal: number;
-  tax_rate: number;
-  tax_amount: number;
-  total: number;
-  status: 'draft' | 'sent' | 'approved' | 'rejected';
-  notes?: string;
-  valid_until: string;
-  created_at: string;
-  updated_at: string;
+  Subtotal: number;
+  TaxRate: number;
+  TaxAmount: number;
+  Total: number;
+  Status: 'draft' | 'sent' | 'approved' | 'rejected';
+  Note?: string;
+  ValidUntil: string;
+  CreatedAt: string;
+  UpdatedAt: string;
 }
 
 // Mappers
 const mapApiQuotationItem = (item: ApiQuotationItemResponse): QuotationItem => ({
-  id: item.id,
-  productId: item.product_id,
-  productName: item.product_name,
-  description: item.description,
-  quantity: item.quantity,
-  unitPrice: item.unit_price,
-  discount: item.discount,
-  subtotal: item.subtotal,
+  ID: item.ID,
+  ProductID: item.ProductID,
+  ProductName: item.Product?.Name || '',
+  Description: item.Product?.Description || '',
+  Quantity: item.Quantity,
+  UnitPrice: item.UnitPrice,
+  Discount: item.Discount,
+  Subtotal: item.Subtotal,
 });
 
 const mapApiQuotation = (apiQuotation: ApiQuotationResponse): Quotation => ({
-  id: apiQuotation.id,
-  number: apiQuotation.number,
-  clientId: apiQuotation.client_id,
-  clientName: apiQuotation.client_name,
-  items: apiQuotation.items?.map(mapApiQuotationItem) || [],
-  subtotal: apiQuotation.subtotal,
-  taxRate: apiQuotation.tax_rate,
-  taxAmount: apiQuotation.tax_amount,
-  total: apiQuotation.total,
-  status: apiQuotation.status,
-  notes: apiQuotation.notes,
-  validUntil: new Date(apiQuotation.valid_until),
-  createdAt: new Date(apiQuotation.created_at),
-  updatedAt: new Date(apiQuotation.updated_at),
+  ID: apiQuotation.ID,
+  Number: apiQuotation.Number,
+  ClientID: apiQuotation.ClientID,
+  ClientName: '',
+  Items: apiQuotation.items?.map(mapApiQuotationItem) || [],
+  Subtotal: apiQuotation.Subtotal,
+  TaxRate: apiQuotation.TaxRate,
+  TaxAmount: apiQuotation.TaxAmount,
+  Total: apiQuotation.Total,
+  Status: apiQuotation.Status,
+  Note: apiQuotation.Note,
+  ValidUntil: new Date(apiQuotation.ValidUntil),
+  CreatedAt: new Date(apiQuotation.CreatedAt),
+  UpdatedAt: new Date(apiQuotation.UpdatedAt),
 });
 
 const mapQuotationToApi = (quotation: Partial<Quotation>) => ({
-  number: quotation.number,
-  client_id: quotation.clientId,
-  client_name: quotation.clientName,
-  items: quotation.items?.map((item) => ({
-    id: item.id,
-    product_id: item.productId,
-    product_name: item.productName,
-    description: item.description,
-    quantity: item.quantity,
-    unit_price: item.unitPrice,
-    discount: item.discount,
-    subtotal: item.subtotal,
+  Number: quotation.Number,
+  ClientID: quotation.ClientID,
+  items: quotation.Items?.map((item) => ({
+    ProductID: item.ProductID,
+    Quantity: item.Quantity,
+    UnitPrice: item.UnitPrice,
+    Discount: item.Discount,
+    Subtotal: item.Subtotal,
   })),
-  subtotal: quotation.subtotal,
-  tax_rate: quotation.taxRate,
-  tax_amount: quotation.taxAmount,
-  total: quotation.total,
-  status: quotation.status,
-  notes: quotation.notes,
-  valid_until: quotation.validUntil?.toISOString(),
+  Subtotal: quotation.Subtotal,
+  TaxRate: quotation.TaxRate,
+  TaxAmount: quotation.TaxAmount,
+  Total: quotation.Total,
+  Status: quotation.Status,
+  Note: quotation.Note,
+  ValidUntil: quotation.ValidUntil?.toISOString(),
 });
 
 // Funciones API
@@ -94,7 +91,19 @@ const fetchQuotationsApi = async (): Promise<Quotation[]> => {
   return data.map(mapApiQuotation);
 };
 
-const addQuotationApi = async (quotationData: Omit<Quotation, "id" | "createdAt" | "updatedAt">) => {
+const fetchQuotationByIdApi = async (id: string): Promise<Quotation> => {
+  const response = await fetch(`${API_BASE_URL}/quotations/${id}`, {
+    headers: getAuthHeader(),
+  });
+  if (!response.ok) {
+    if (response.status === 404) throw new Error('Cotización no encontrada');
+    throw new Error('Error al obtener la cotización');
+  }
+  const data: ApiQuotationResponse = await response.json();
+  return mapApiQuotation(data);
+};
+
+const addQuotationApi = async (quotationData: Omit<Quotation, "ID" | "CreatedAt" | "UpdatedAt">) => {
   const response = await fetch(`${API_BASE_URL}/quotations`, {
     method: 'POST',
     headers: getAuthHeader(),
@@ -102,10 +111,12 @@ const addQuotationApi = async (quotationData: Omit<Quotation, "id" | "createdAt"
   });
 
   if (!response.ok) {
-    const errorData = await response.json();
+    const errorData = await response.json().catch(() => ({}));
     throw new Error(errorData.message || 'Error al crear cotización');
   }
-  return response.json();
+
+  if (response.status === 204) return {};
+  return response.json().catch(() => ({}));
 };
 
 const updateQuotationApi = async ({ id, data }: { id: string; data: Partial<Quotation> }) => {
@@ -116,10 +127,12 @@ const updateQuotationApi = async ({ id, data }: { id: string; data: Partial<Quot
   });
 
   if (!response.ok) {
-    const errorData = await response.json();
+    const errorData = await response.json().catch(() => ({}));
     throw new Error(errorData.message || 'Error al actualizar cotización');
   }
-  return response.json();
+
+  if (response.status === 204) return {};
+  return response.json().catch(() => ({}));
 };
 
 const deleteQuotationApi = async (id: string) => {
@@ -129,13 +142,15 @@ const deleteQuotationApi = async (id: string) => {
   });
 
   if (!response.ok) {
-    const errorData = await response.json();
+    const errorData = await response.json().catch(() => ({}));
     throw new Error(errorData.message || 'Error al eliminar cotización');
   }
-  return response.json();
+
+  if (response.status === 204) return {};
+  return response.json().catch(() => ({}));
 };
 
-const updateQuotationStatusApi = async ({ id, status }: { id: string; status: Quotation["status"] }) => {
+const updateQuotationStatusApi = async ({ id, status }: { id: number; status: Quotation["Status"] }) => {
   const response = await fetch(`${API_BASE_URL}/quotations/${id}/status`, {
     method: 'PATCH',
     headers: getAuthHeader(),
@@ -143,10 +158,20 @@ const updateQuotationStatusApi = async ({ id, status }: { id: string; status: Qu
   });
 
   if (!response.ok) {
-    const errorData = await response.json();
+    const errorData = await response.json().catch(() => ({}));
     throw new Error(errorData.message || 'Error al actualizar estado');
   }
-  return response.json();
+
+  if (response.status === 204) return {};
+  return response.json().catch(() => ({}));
+};
+
+export const useQuotationById = (id: string | undefined) => {
+  return useQuery({
+    queryKey: ["quotations", id],
+    queryFn: () => fetchQuotationByIdApi(id!),
+    enabled: !!id,
+  });
 };
 
 export const useQuotation = () => {
@@ -180,13 +205,17 @@ export const useQuotation = () => {
 
   const statusMutation = useMutation({
     mutationFn: updateQuotationStatusApi,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["quotations"] });
+    onSuccess: async (_data, variables) => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["quotations"] }),
+        queryClient.invalidateQueries({ queryKey: ["quotations", String(variables.id)] })
+      ]);
     },
   });
 
+
   // Facade
-  const addQuotation = async (quotationData: Omit<Quotation, "id" | "createdAt" | "updatedAt">) => {
+  const addQuotation = async (quotationData: Omit<Quotation, "ID" | "CreatedAt" | "UpdatedAt">) => {
     try {
       const response = await addMutation.mutateAsync(quotationData);
       return { success: true, id: response.id };
@@ -204,16 +233,16 @@ export const useQuotation = () => {
     }
   };
 
-  const deleteQuotation = async (id: string) => {
+  const deleteQuotation = async (id: string | number) => {
     try {
-      await deleteMutation.mutateAsync(id);
+      await deleteMutation.mutateAsync(id.toString());
       return { success: true };
     } catch (error) {
       return { success: false, error: (error as Error).message };
     }
   };
 
-  const updateQuotationStatus = async (id: string, status: Quotation["status"]) => {
+  const updateQuotationStatus = async (id: number, status: Quotation["Status"]) => {
     try {
       await statusMutation.mutateAsync({ id, status });
       return { success: true };

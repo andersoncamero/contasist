@@ -53,41 +53,64 @@ export const GeneralLedger = ({ accounts, entries }: GeneralLedgerProps) => {
                 </CardHeader>
                 <CardContent>
                     <div className="overflow-x-auto">
-                        <table className="w-full text-sm">
-                            <thead>
-                                <tr className="border-b bg-muted/50">
-                                    <th className="text-left p-2 font-medium">Código</th>
-                                    <th className="text-left p-2 font-medium">Cuenta</th>
-                                    <th className="text-right p-2 font-medium">Débitos</th>
-                                    <th className="text-right p-2 font-medium">Créditos</th>
-                                    <th className="text-right p-2 font-medium">Saldo</th>
-                                </tr>
-                            </thead>
-                            <tbody>
+                        <div className="min-w-[800px]">
+                            {/* Header Desktop */}
+                            <div className="hidden md:grid grid-cols-[100px_1fr_120px_120px_120px] bg-muted/50 border-b p-2 font-medium text-xs uppercase tracking-wider text-muted-foreground">
+                                <div>Código</div>
+                                <div>Cuenta</div>
+                                <div className="text-right">Débitos</div>
+                                <div className="text-right">Créditos</div>
+                                <div className="text-right">Saldo</div>
+                            </div>
+
+                            <div className="divide-y divide-border">
                                 {ledgerData.length === 0 ? (
-                                    <tr>
-                                        <td colSpan={5} className="text-center p-8 text-muted-foreground">
-                                            No hay movimientos registrados para este periodo.
-                                        </td>
-                                    </tr>
+                                    <div className="text-center p-12 text-muted-foreground italic">
+                                        No hay movimientos registrados para este periodo.
+                                    </div>
                                 ) : (
                                     ledgerData.map((item) => (
-                                        <tr key={item.ID} className="border-b hover:bg-muted/30 transition-colors">
-                                            <td className="p-2 font-mono text-xs">{item.Code}</td>
-                                            <td className="p-2">{item.Name}</td>
-                                            <td className="p-2 text-right">${item.debit.toLocaleString()}</td>
-                                            <td className="p-2 text-right">${item.credit.toLocaleString()}</td>
-                                            <td className={cn(
-                                                "p-2 text-right font-bold",
-                                                item.balance < 0 ? "text-destructive" : "text-green-600"
-                                            )}>
-                                                ${item.balance.toLocaleString()}
-                                            </td>
-                                        </tr>
+                                        <div key={item.ID} className="transition-colors hover:bg-muted/30">
+                                            {/* Desktop Layout */}
+                                            <div className="hidden md:grid grid-cols-[100px_1fr_120px_120px_120px] items-center p-2 text-sm">
+                                                <div className="font-mono text-[11px] text-muted-foreground">{item.Code}</div>
+                                                <div className="font-medium">{item.Name}</div>
+                                                <div className="text-right">${item.debit.toLocaleString()}</div>
+                                                <div className="text-right">${item.credit.toLocaleString()}</div>
+                                                <div className={cn(
+                                                    "text-right font-bold",
+                                                    item.balance < 0 ? "text-destructive" : "text-green-600"
+                                                )}>
+                                                    ${item.balance.toLocaleString()}
+                                                </div>
+                                            </div>
+
+                                            {/* Mobile Layout */}
+                                            <div className="md:hidden p-4 space-y-2 border-b last:border-0">
+                                                <div className="flex justify-between items-start">
+                                                    <div>
+                                                        <span className="text-[10px] font-mono bg-muted px-1.5 py-0.5 rounded text-muted-foreground">
+                                                            {item.Code}
+                                                        </span>
+                                                        <h4 className="font-bold mt-1">{item.Name}</h4>
+                                                    </div>
+                                                    <div className={cn(
+                                                        "text-lg font-black",
+                                                        item.balance < 0 ? "text-destructive" : "text-primary"
+                                                    )}>
+                                                        ${item.balance.toLocaleString()}
+                                                    </div>
+                                                </div>
+                                                <div className="flex justify-end gap-4 text-xs pt-1 border-t border-border/50">
+                                                    <span className="text-muted-foreground">D: <span className="text-foreground">${item.debit.toLocaleString()}</span></span>
+                                                    <span className="text-muted-foreground">C: <span className="text-foreground">${item.credit.toLocaleString()}</span></span>
+                                                </div>
+                                            </div>
+                                        </div>
                                     ))
                                 )}
-                            </tbody>
-                        </table>
+                            </div>
+                        </div>
                     </div>
                 </CardContent>
             </Card>

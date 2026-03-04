@@ -35,7 +35,7 @@ const clientSchema = z.object({
   PersonType: z.enum(['natural', 'juridica']),
   Company: z.string().optional(),
   Address: z.string().optional(),
-  TaxId: z.string().optional(),
+  TaxID: z.string().optional(),
 });
 
 type ClientFormData = z.infer<typeof clientSchema>;
@@ -62,7 +62,7 @@ export function ClientDialog({
       PersonType: 'juridica',
       Company: '',
       Address: '',
-      TaxId: '',
+      TaxID: '',
     },
   });
 
@@ -75,7 +75,7 @@ export function ClientDialog({
         PersonType: client.PersonType || 'juridica',
         Company: client.Company || '',
         Address: client.Address || '',
-        TaxId: client.TaxId || '',
+        TaxID: client.TaxID || '',
       });
     } else {
       form.reset({
@@ -85,7 +85,7 @@ export function ClientDialog({
         PersonType: 'juridica',
         Company: '',
         Address: '',
-        TaxId: '',
+        TaxID: '',
       });
     }
   }, [client, form]);
@@ -131,7 +131,7 @@ export function ClientDialog({
 
             <FormField
               control={form.control}
-              name="Name"
+              name="Company"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Empresa *</FormLabel>
@@ -145,7 +145,7 @@ export function ClientDialog({
 
             <FormField
               control={form.control}
-              name="TaxId"
+              name="TaxID"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>NIT / ID Fiscal *</FormLabel>
@@ -173,7 +173,7 @@ export function ClientDialog({
 
             <FormField
               control={form.control}
-              name="Company"
+              name="Name"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Nombre del Contacto *</FormLabel>

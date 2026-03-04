@@ -30,7 +30,7 @@ export default function Clients() {
   const [search, setSearch] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingClient, setEditingClient] = useState<Client | null>(null);
-  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [deleteId, setDeleteId] = useState<number | null>(null);
 
 
 
@@ -102,7 +102,7 @@ export default function Clients() {
       </div>
 
       <div className="border-2 border-border bg-card rounded-lg overflow-hidden">
-        <div className="table-header hidden md:flex gap-4">
+        <div className="table-header rounded-t-lg hidden md:flex gap-4">
           <div className="flex-1 flex items-center justify-start text-left">Cliente</div>
           <div className="flex-1 flex items-center justify-start text-left">Contacto</div>
           <div className="flex-1 flex items-center justify-start text-left">Empresa</div>

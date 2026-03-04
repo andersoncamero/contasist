@@ -22,30 +22,41 @@ import { StatusBadge } from "@/components/atoms/StatusBadge";
 import { formatCurrency, formatShortDate } from "@/lib/utils";
 
 import { useQuotation } from "@/useCases/useQuotation";
+import { useClient } from "@/useCases/useClient";
 import { Eye, FileText, Plus, Search, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
 
 export const Quotations = () => {
-  const { quotations, deleteQuotation, isLoading } = useQuotation();
+  const { quotations, deleteQuotation, isLoading: isQuotationLoading } = useQuotation();
+  const { clients, isLoading: isClientsLoading } = useClient();
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
-  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [deleteId, setDeleteId] = useState<string | number | null>(null);
 
-  // React Query fetches automatically on mount
+  const isLoading = isQuotationLoading || isClientsLoading;
 
-  const filteredQuotations = quotations.filter((q) => {
+  const getClientName = (clientId: number) => {
+    const client = clients.find((c) => c.ID === clientId);
+    return client ? client.Name : "Cliente Desconocido";
+  };
+
+  const filteredQuotations = quotations.map(q => ({
+    ...q,
+    ClientName: q.ClientName || getClientName(q.ClientID)
+  })).filter((q) => {
     const matchesSerch =
-      q.number.toLocaleLowerCase().includes(search.toLocaleLowerCase()) ||
-      q.clientName.toLocaleLowerCase().includes(search.toLocaleLowerCase());
+      q.Number?.toLocaleLowerCase().includes(search.toLocaleLowerCase()) ||
+      q.ClientName?.toLocaleLowerCase().includes(search.toLocaleLowerCase());
 
-    const matchesStatus = statusFilter === "all" || q.status === statusFilter;
+    const matchesStatus = statusFilter === "all" || q.Status === statusFilter;
     return matchesSerch && matchesStatus;
   });
 
+
   const sortedQuotations = [...filteredQuotations].sort(
-    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    (a, b) => new Date(b.CreatedAt).getTime() - new Date(a.CreatedAt).getTime(),
   );
 
   const handleDelete = async () => {
@@ -102,7 +113,7 @@ export const Quotations = () => {
       </div>
 
       <div className="border-2 border-border bg-card rounded-lg overflow-hidden">
-        <div className="table-header hidden md:flex gap-4">
+        <div className="table-header rounded-t-lg hidden md:flex gap-4">
           <div className="flex-1 text-left">Cotización</div>
           <div className="flex-1 text-left">Cliente</div>
           <div className="w-[120px] text-right">Total</div>
@@ -122,32 +133,32 @@ export const Quotations = () => {
           <div className="divide-y-2 divide-border">
             {sortedQuotations.map((quotation) => (
               <div
-                key={quotation.id}
+                key={quotation.ID}
                 className="p-4 transition-colors hover:bg-accent"
               >
                 {/* Layout móvil */}
                 <div className="md:hidden space-y-3">
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex-1 min-w-0">
-                      <p className="font-bold font-mono">{quotation.number}</p>
+                      <p className="font-bold font-mono">{quotation?.Number}</p>
                       <p className="text-sm text-muted-foreground">
-                        {formatShortDate(quotation.createdAt)}
+                        {formatShortDate(quotation.CreatedAt)}
                       </p>
                     </div>
-                    <StatusBadge status={quotation.status} />
+                    <StatusBadge status={quotation.Status} />
                   </div>
                   <div>
-                    <p className="font-medium">{quotation.clientName}</p>
+                    <p className="font-medium">{quotation.ClientName}</p>
                     <p className="text-sm text-muted-foreground">
-                      {quotation.items.length} item(s)
+                      {quotation.Items.length} item(s)
                     </p>
                   </div>
                   <div className="flex items-center justify-between">
                     <p className="font-bold">
-                      {formatCurrency(quotation.total)}
+                      {formatCurrency(quotation.Total)}
                     </p>
                     <div className="flex gap-2">
-                      <Link to={`/quotations/${quotation.id}`}>
+                      <Link to={`/quotations/${quotation.ID}`}>
                         <Button variant="outline" size="icon">
                           <Eye className="h-4 w-4" />
                         </Button>
@@ -155,7 +166,7 @@ export const Quotations = () => {
                       <Button
                         variant="outline"
                         size="icon"
-                        onClick={() => setDeleteId(quotation.id)}
+                        onClick={() => setDeleteId(quotation.ID)}
                         disabled={isLoading}
                       >
                         <Trash2 className="h-4 w-4" />
@@ -167,27 +178,27 @@ export const Quotations = () => {
                 {/* Layout desktop */}
                 <div className="hidden md:flex gap-4 items-center">
                   <div className="flex-1 text-left">
-                    <p className="font-bold font-mono">{quotation.number}</p>
+                    <p className="font-bold font-mono">{quotation.Number}</p>
                     <p className="text-sm text-muted-foreground">
-                      {formatShortDate(quotation.createdAt)}
+                      {formatShortDate(quotation.CreatedAt)}
                     </p>
                   </div>
                   <div className="flex-1 text-left">
-                    <p className="font-medium">{quotation.clientName}</p>
+                    <p className="font-medium">{quotation.ClientName}</p>
                     <p className="text-sm text-muted-foreground">
-                      {quotation.items.length} item(s)
+                      {quotation.Items.length} item(s)
                     </p>
                   </div>
                   <div className="w-[120px] text-right">
                     <p className="font-bold">
-                      {formatCurrency(quotation.total)}
+                      {formatCurrency(quotation.Total)}
                     </p>
                   </div>
                   <div className="w-[120px] text-center">
-                    <StatusBadge status={quotation.status} />
+                    <StatusBadge status={quotation.Status} />
                   </div>
                   <div className="w-[100px] flex gap-2 justify-end">
-                    <Link to={`/quotations/${quotation.id}`}>
+                    <Link to={`/quotations/${quotation.ID}`}>
                       <Button variant="outline" size="icon">
                         <Eye className="h-4 w-4" />
                       </Button>
@@ -195,7 +206,7 @@ export const Quotations = () => {
                     <Button
                       variant="outline"
                       size="icon"
-                      onClick={() => setDeleteId(quotation.id)}
+                      onClick={() => setDeleteId(quotation.ID)}
                       disabled={isLoading}
                     >
                       <Trash2 className="h-4 w-4" />

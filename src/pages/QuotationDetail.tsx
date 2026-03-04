@@ -7,7 +7,7 @@ import { formatCurrency, formatDate } from "@/lib/utils";
 
 import { useBusiness } from "@/useCases/useBusiness";
 import { useClient } from "@/useCases/useClient";
-import { useQuotation } from "@/useCases/useQuotation";
+import { useQuotation, useQuotationById } from "@/useCases/useQuotation";
 
 import { ArrowLeft, Check, Download, Send, X } from "lucide-react";
 import { useEffect } from "react";
@@ -18,13 +18,22 @@ export const QuotationDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { clients } = useClient();
-  const { quotations, updateQuotation, updateQuotationStatus, isLoading } = useQuotation();
+  const { updateQuotationStatus, isLoading: isUpdating } = useQuotation();
+  const { data: quotation, isLoading: isQuotationLoading } = useQuotationById(id);
   const { businessInfo } = useBusiness();
 
-  // React Query fetches automatically on mount
+  const client = clients.find((c) => c.ID === quotation?.ClientID);
 
-  const quotation = quotations.find((q) => q.id === id);
-  const client = clients.find((c) => c.ID === quotation?.clientId);
+  if (isQuotationLoading) {
+    return (
+      <MainLayout>
+        <div className="flex flex-col items-center justify-center py-20">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+          <p className="mt-4 text-muted-foreground">Cargando cotización...</p>
+        </div>
+      </MainLayout>
+    );
+  }
 
   if (!quotation) {
     return (
@@ -39,9 +48,13 @@ export const QuotationDetail = () => {
     );
   }
 
-  const handleStatusChange = (status: string) => {
-    updateQuotationStatus(quotation.id, status as typeof quotation.status);
-    toast.success(`Estado actualizado a  ${status}`);
+  const handleStatusChange = async (status: string) => {
+    const result = await updateQuotationStatus(quotation.ID, status as typeof quotation.Status);
+    if (result.success) {
+      toast.success(`Estado actualizado a ${status}`);
+    } else {
+      toast.error(result.error || "Error al actualizar el estado");
+    }
   };
 
   const handleDownloadPDF = () => {
@@ -49,9 +62,13 @@ export const QuotationDetail = () => {
     toast.success("PDF descargado");
   };
 
-  const handleSend = () => {
-    updateQuotationStatus(quotation.id, "sent");
-    toast.success("Cotizacion marcada como enviada");
+  const handleSend = async () => {
+    const result = await updateQuotationStatus(quotation.ID, "sent");
+    if (result.success) {
+      toast.success("Cotizacion marcada como enviada");
+    } else {
+      toast.error(result.error || "Error al marcar como enviada");
+    }
   };
 
   return (
@@ -69,20 +86,20 @@ export const QuotationDetail = () => {
           <div>
             <div className="flex items-center gap-4">
               <h1 className="text-3xl font-bold font-mono tracking-tight">
-                {quotation.number}
+                {quotation.Number}
               </h1>
-              <StatusBadge status={quotation.status} />
+              <StatusBadge status={quotation.Status} />
             </div>
             <p className="mt-1 text-muted-foreground">
-              Creada el {formatDate(quotation.createdAt)}
+              Creada el {formatDate(quotation.CreatedAt)}
             </p>
           </div>
 
           <div className="flex gap-3">
             <Select
-              value={quotation.status}
+              value={quotation.Status}
               onValueChange={handleStatusChange}
-              disabled={isLoading}
+              disabled={isUpdating}
             >
               <SelectTrigger className="w-40">
                 <SelectValue />
@@ -100,8 +117,8 @@ export const QuotationDetail = () => {
               PDF
             </Button>
 
-            {quotation.status === 'draft' && (
-              <Button onClick={handleSend} disabled={isLoading}>
+            {quotation.Status === 'draft' && (
+              <Button onClick={handleSend} disabled={isUpdating}>
                 <Send className="mr-2 h-4 w-4" />
                 Marcar Enviada
               </Button>
@@ -119,7 +136,9 @@ export const QuotationDetail = () => {
             </h2>
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
-                <p className="text-lg font-bold">{client?.Name || quotation.clientName}</p>
+                <p className="text-lg font-bold">
+                  {client?.Name || quotation.ClientName}
+                </p>
                 {client?.Company && (
                   <p className="text-muted-foreground">{client.Company}</p>
                 )}
@@ -135,72 +154,84 @@ export const QuotationDetail = () => {
           </div>
 
           {/* Items */}
-          <div className="border-2 border-border bg-card rounded-lg">
-            <div className="border-b-2 border-border p-4">
+          <div className="border-2 border-border bg-card rounded-lg overflow-hidden">
+            <div className="border-b-2 border-border p-4 bg-muted/20">
               <h2 className="text-xs font-bold uppercase tracking-wide text-muted-foreground">
                 Detalle
               </h2>
             </div>
 
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b-2 border-border bg-muted">
-                    <th className="p-4 text-left text-xs font-bold uppercase">
-                      Concepto
-                    </th>
-                    <th className="p-4 text-right text-xs font-bold uppercase">
-                      Cantidad
-                    </th>
-                    <th className="p-4 text-right text-xs font-bold uppercase">
-                      Precio
-                    </th>
-                    <th className="p-4 text-right text-xs font-bold uppercase">
-                      Desc.
-                    </th>
-                    <th className="p-4 text-right text-xs font-bold uppercase">
-                      Subtotal
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y-2 divide-border">
-                  {quotation.items.map((item) => (
-                    <tr key={item.id}>
-                      <td className="p-4">
-                        <p className="font-bold">{item.productName}</p>
-                        <p className="text-sm text-muted-foreground">
-                          {item.description}
+            {/* Header Desktop */}
+            <div className="table-header hidden md:flex gap-4 border-b-2 border-border bg-muted/30">
+              <div className="flex-[2] text-left">Concepto</div>
+              <div className="flex-1 text-center">Cant.</div>
+              <div className="flex-1 text-right">Precio</div>
+              <div className="flex-1 text-right">Desc.</div>
+              <div className="flex-1 text-right">Subtotal</div>
+            </div>
+
+            <div className="divide-y-2 divide-border">
+              {quotation.Items.map((item) => (
+                <div key={item.ProductID} className="p-4 transition-colors hover:bg-accent/50">
+                  {/* Layout Desktop */}
+                  <div className="hidden md:flex gap-4 items-center">
+                    <div className="flex-[2] text-left min-w-0">
+                      <p className="font-bold truncate">{item.ProductName}</p>
+                      <p className="text-sm text-muted-foreground line-clamp-1">
+                        {item.Description}
+                      </p>
+                    </div>
+                    <div className="flex-1 text-center">{item.Quantity}</div>
+                    <div className="flex-1 text-right">{formatCurrency(item.UnitPrice)}</div>
+                    <div className="flex-1 text-right">
+                      {item.Discount > 0 ? `${item.Discount}%` : "—"}
+                    </div>
+                    <div className="flex-1 text-right font-bold">
+                      {formatCurrency(item.Subtotal)}
+                    </div>
+                  </div>
+
+                  {/* Layout Móvil */}
+                  <div className="md:hidden space-y-2">
+                    <div className="flex justify-between items-start gap-2">
+                      <div className="flex-1 min-w-0">
+                        <p className="font-bold">{item.ProductName}</p>
+                        <p className="text-xs text-muted-foreground line-clamp-2">
+                          {item.Description}
                         </p>
-                      </td>
-                      <td className="p-4 text-right">{item.quantity}</td>
-                      <td className="p-4 text-right">
-                        {formatCurrency(item.unitPrice)}
-                      </td>
-                      <td className="p-4 text-right">
-                        {item.discount > 0 ? `${item.discount}%` : '—'}
-                      </td>
-                      <td className="p-4 text-right font-bold">
-                        {formatCurrency(item.subtotal)}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                      </div>
+                      <p className="font-bold whitespace-nowrap">
+                        {formatCurrency(item.Subtotal)}
+                      </p>
+                    </div>
+                    <div className="flex justify-between text-xs text-muted-foreground pt-1 border-t border-border/50">
+                      <span>
+                        {item.Quantity} x {formatCurrency(item.UnitPrice)}
+                      </span>
+                      {item.Discount > 0 && (
+                        <span className="text-destructive">
+                          Desc: {item.Discount}%
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
 
-          {/* Notes */}
-          {quotation.notes && (
+          {/* Note */}
+          {quotation.Note && (
             <div className="border-2 border-border bg-card p-6 rounded-lg">
               <h2 className="mb-2 text-xs font-bold uppercase tracking-wide text-muted-foreground">
                 Notas
               </h2>
-              <p className="whitespace-pre-wrap">{quotation.notes}</p>
+              <p className="whitespace-pre-wrap">{quotation.Note}</p>
             </div>
           )}
         </div>
 
-        {/* Summary */}
+        {/* Summary side */}
         <div className="space-y-6">
           <div className="border-2 border-border bg-card p-6 rounded-lg">
             <h2 className="mb-4 text-xs font-bold uppercase tracking-wide text-muted-foreground">
@@ -210,19 +241,19 @@ export const QuotationDetail = () => {
             <div className="space-y-3">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Subtotal</span>
-                <span>{formatCurrency(quotation.subtotal)}</span>
+                <span>{formatCurrency(quotation.Subtotal)}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">
-                  IVA ({quotation.taxRate}%)
+                  IVA ({quotation.TaxRate}%)
                 </span>
-                <span>{formatCurrency(quotation.taxAmount)}</span>
+                <span>{formatCurrency(quotation.TaxAmount)}</span>
               </div>
               <div className="border-t-2 border-border pt-3">
                 <div className="flex justify-between">
                   <span className="text-xl font-bold">Total</span>
                   <span className="text-xl font-bold">
-                    {formatCurrency(quotation.total)}
+                    {formatCurrency(quotation.Total)}
                   </span>
                 </div>
               </div>
@@ -236,30 +267,32 @@ export const QuotationDetail = () => {
             <div className="space-y-3 text-sm">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Válida hasta</span>
-                <span>{formatDate(quotation.validUntil)}</span>
+                <span>{formatDate(quotation.ValidUntil)}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Última actualización</span>
-                <span>{formatDate(quotation.updatedAt)}</span>
+                <span className="text-muted-foreground">
+                  Última actualización
+                </span>
+                <span>{formatDate(quotation.UpdatedAt)}</span>
               </div>
             </div>
           </div>
 
-          {quotation.status === 'sent' && (
+          {quotation.Status === "sent" && (
             <div className="grid grid-cols-2 gap-3">
               <Button
                 variant="outline"
                 className="flex-1"
-                onClick={() => handleStatusChange('rejected')}
-                disabled={isLoading}
+                onClick={() => handleStatusChange("rejected")}
+                disabled={isUpdating}
               >
                 <X className="mr-2 h-4 w-4" />
                 Rechazada
               </Button>
               <Button
                 className="flex-1"
-                onClick={() => handleStatusChange('approved')}
-                disabled={isLoading}
+                onClick={() => handleStatusChange("approved")}
+                disabled={isUpdating}
               >
                 <Check className="mr-2 h-4 w-4" />
                 Aprobada
@@ -271,3 +304,4 @@ export const QuotationDetail = () => {
     </MainLayout>
   );
 };
+

@@ -27,8 +27,12 @@ interface StatusBadgeProps {
 }
 
 export function StatusBadge({ status, className }: StatusBadgeProps) {
-  const config = statusConfig[status];
-  
+  const normalizedStatus = status?.toLowerCase() as Status;
+  const config = statusConfig[normalizedStatus] || {
+    label: status || 'Desconocido',
+    className: 'bg-muted text-muted-foreground border-border',
+  };
+
   return (
     <span
       className={cn(

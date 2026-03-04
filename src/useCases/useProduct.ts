@@ -4,30 +4,32 @@ import { API_BASE_URL, getAuthHeader } from "@/services/apiConfig";
 
 // Tipos de API
 interface ApiProductResponse {
-  id: string;
-  code: string;
-  name: string;
-  description: string;
-  price: number;
-  unit: string;
-  category: string;
-  is_service: boolean;
-  initial_stock: number;
-  min_stock: number;
+  ID: number;
+  Code: string;
+  Name: string;
+  Description: string;
+  Price: number;
+  Unit: number;
+  Category: string;
+  IsService: boolean;
+  InitialStock: number;
+  MinStock: number;
+  CreatedAt: Date;
 }
 
 // Mappers
 const mapApiProduct = (apiProduct: ApiProductResponse): Product => ({
-  id: apiProduct.id,
-  code: apiProduct.code || "",
-  name: apiProduct.name,
-  description: apiProduct.description,
-  category: apiProduct.category,
-  unit: apiProduct.unit,
-  price: apiProduct.price,
-  isService: apiProduct.is_service,
-  initialStock: apiProduct.initial_stock || 0,
-  minStock: apiProduct.min_stock || 0,
+  ID: apiProduct.ID,
+  Code: apiProduct.Code || "",
+  Name: apiProduct.Name,
+  Description: apiProduct.Description,
+  Category: apiProduct.Category,
+  Unit: apiProduct.Unit,
+  Price: apiProduct.Price,
+  IsService: apiProduct.IsService,
+  InitialStock: apiProduct.InitialStock || 0,
+  MinStock: apiProduct.MinStock || 0,
+  CreatedAt: apiProduct.CreatedAt
 });
 
 // Funciones API
@@ -40,20 +42,21 @@ const fetchProductsApi = async (): Promise<Product[]> => {
   return data.map(mapApiProduct);
 };
 
-const addProductApi = async (product: Omit<Product, "id">) => {
+const addProductApi = async (product: Omit<Product, "ID" | "CreatedAt">) => {
+  console.log(product);
   const response = await fetch(`${API_BASE_URL}/products`, {
     method: "POST",
     headers: getAuthHeader(),
     body: JSON.stringify({
-      code: product.code,
-      name: product.name,
-      description: product.description,
-      price: product.price,
-      unit: product.unit,
-      category: product.category,
-      is_service: product.isService,
-      initial_stock: product.initialStock,
-      min_stock: product.minStock,
+      code: product.Code,
+      name: product.Name,
+      description: product.Description,
+      price: product.Price,
+      unit: product.Unit,
+      category: product.Category,
+      isService: product.IsService,
+      initialStock: product.InitialStock,
+      minStock: product.MinStock,
     }),
   });
 
@@ -64,20 +67,19 @@ const addProductApi = async (product: Omit<Product, "id">) => {
   return response.json();
 };
 
-const updateProductApi = async ({ id, data }: { id: string; data: Partial<Product> }) => {
+const updateProductApi = async ({ id, data }: { id: number; data: Partial<Product> }) => {
   const response = await fetch(`${API_BASE_URL}/products/${id}`, {
     method: "PUT",
     headers: getAuthHeader(),
     body: JSON.stringify({
-      code: data.code,
-      name: data.name,
-      description: data.description,
-      price: data.price,
-      unit: data.unit,
-      category: data.category,
-      is_service: data.isService,
-      initial_stock: data.initialStock,
-      min_stock: data.minStock,
+      name: data.Name,
+      description: data.Description,
+      price: data.Price,
+      unit: data.Unit,
+      category: data.Category,
+      isService: data.IsService,
+      initialStock: data.InitialStock,
+      minStock: data.MinStock,
     }),
   });
 
@@ -85,10 +87,11 @@ const updateProductApi = async ({ id, data }: { id: string; data: Partial<Produc
     const errorData = await response.json();
     throw new Error(errorData.message || "Error al actualizar producto");
   }
-  return response.json();
+  if (response.status === 204) return {};
+  return response.json().catch(() => ({}));
 };
 
-const deleteProductApi = async (id: string) => {
+const deleteProductApi = async (id: number) => {
   const response = await fetch(`${API_BASE_URL}/products/${id}`, {
     method: "DELETE",
     headers: getAuthHeader(),
@@ -140,7 +143,7 @@ export const useProduct = () => {
     }
   };
 
-  const updateProduct = async (id: string, data: Partial<Product>) => {
+  const updateProduct = async (id: number, data: Partial<Product>) => {
     try {
       await updateMutation.mutateAsync({ id, data });
       return { success: true };
@@ -149,7 +152,7 @@ export const useProduct = () => {
     }
   };
 
-  const deleteProduct = async (id: string) => {
+  const deleteProduct = async (id: number) => {
     try {
       await deleteMutation.mutateAsync(id);
       return { success: true };
