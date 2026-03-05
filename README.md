@@ -82,7 +82,7 @@ El sistema incluye rutas protegidas que requieren autenticación previa. Los usu
 - **Proveedores**: Registro y administración de proveedores (Compras).
 - **Gastos**: Control de egresos, categorías de gastos y cuentas por pagar.
 - **Inventario (Avanzado)**: Control de stock físico (Entradas/Salidas) y valorización mediante Kardex (Promedio Ponderado).
-- **Contabilidad**: Libro Diario con partida doble, Libro Mayor y Balances (PUC Colombia).
+- **Contabilidad**: Gestión del Plan Único de Cuentas (PUC Colombia) mediante un flujo de selección inteligente desde el PUC estándar, permitiendo la creación de cuentas personalizadas con autocompletado de código, clase y naturaleza. Incluye Libro Diario con partida doble, Libro Mayor y Balances.
 - **Cotizaciones**: Creación, seguimiento y exportación de presupuestos.
 - **Configuración**: Ajustes de usuario, perfil empresarial y personalización.
 
@@ -93,6 +93,7 @@ El sistema incluye rutas protegidas que requieren autenticación previa. Los usu
 - **SOLID**: Implementación de código mantenible, extensible y con responsabilidades únicas.
 - **Legibilidad**: El código prioriza la claridad y la documentación sobre la brevedad.
 - **Generación de IDs**: El sistema delega la generación de identificadores únicos (IDs) al backend, asegurando la integridad de los datos y simplificando el estado del cliente.
+- **Tipado Estricto de Entidades**: Las entidades de dominio (como `Account`) utilizan tipos extraídos de constantes (`typeof` + `keyof`) para garantizar que las propiedades solo acepten valores válidos y evitar errores de asignación de objetos completos.
 - **Sincronización de Caché**: Las acciones de actualización (mutaciones) esperan explícitamente la invalidación de la caché de React Query antes de notificar al usuario, garantizando que la interfaz siempre refleje el estado más reciente del servidor sin necesidad de recargas manuales.
 
 ## 🎨 Sistema de Diseño

@@ -11,9 +11,12 @@ export const ChartOfAccounts = () => {
     const [isFormOpen, setIsFormOpen] = React.useState(false);
     const [editingAccount, setEditingAccount] = React.useState<any>(null);
 
+    // Filtrar cuentas de la empresa
+    const companyAccounts = accounts.filter(a => a.business_id && a.business_id !== "");
+
     const handleSave = async (data: any) => {
         if (editingAccount) {
-            await updateAccount(editingAccount.ID, data);
+            await updateAccount(editingAccount.id, data);
         } else {
             await addAccount(data);
         }
@@ -26,19 +29,21 @@ export const ChartOfAccounts = () => {
             <div className="p-6 space-y-6">
                 <div className="flex justify-between items-center">
                     <div>
-                        <h1 className="text-3xl font-bold tracking-tight">Plan Único de Cuentas (PUC)</h1>
-                        <p className="text-muted-foreground">Estructura contable estándar para Colombia</p>
+                        <h1 className="text-3xl font-bold tracking-tight text-slate-900">Plan Único de Cuentas (PUC)</h1>
+                        <p className="text-slate-500 font-medium">Gestiona la estructura contable de tu empresa</p>
                     </div>
-                    <Button onClick={() => {
-                        setEditingAccount(null);
-                        setIsFormOpen(true);
-                    }}>
-                        <Plus className="mr-2 h-4 w-4" /> Nueva Cuenta
-                    </Button>
+                    {companyAccounts.length > 0 && (
+                        <Button onClick={() => {
+                            setEditingAccount(null);
+                            setIsFormOpen(true);
+                        }} className="bg-primary hover:bg-primary/90 rounded-xl font-bold shadow-lg shadow-primary/20 transition-all active:scale-95">
+                            <Plus className="mr-2 h-4 w-4" /> Nueva Cuenta
+                        </Button>
+                    )}
                 </div>
 
                 <AccountList
-                    accounts={accounts}
+                    accounts={companyAccounts}
                     search={search}
                     onSearchChange={setSearch}
                     onEdit={(account) => {
@@ -47,6 +52,10 @@ export const ChartOfAccounts = () => {
                     }}
                     onDelete={deleteAccount}
                     isLoading={isLoading}
+                    onAddNew={() => {
+                        setEditingAccount(null);
+                        setIsFormOpen(true);
+                    }}
                 />
 
                 <AccountForm
@@ -57,7 +66,7 @@ export const ChartOfAccounts = () => {
                     }}
                     onSave={handleSave}
                     account={editingAccount}
-                    accounts={accounts}
+                    allAccounts={accounts}
                 />
             </div>
         </MainLayout>

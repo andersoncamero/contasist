@@ -3,5 +3,6 @@ export interface User {
   email: string;
   name: string;
   role: "admin" | "user";
+  business_id: string;
   createdAt: Date;
 }

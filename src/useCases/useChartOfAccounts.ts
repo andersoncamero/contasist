@@ -1,54 +1,76 @@
 import React from "react";
-import { Account, AccountClass, AccountNature } from "../entities/Account";
-
-// Cuentas básicas del PUC Colombia para inicializar el sistema
-const INITIAL_PUC: Account[] = [
-  { ID: "1", Code: "1", Name: "Activo", Class: AccountClass.Activo, Nature: AccountNature.Debito, Level: 1, IsActive: true, CreatedAt: new Date().toISOString() },
-  { ID: "11", Code: "11", Name: "Efectivo y Equivalentes de Efectivo", Class: AccountClass.Activo, Nature: AccountNature.Debito, Level: 2, ParentID: "1", IsActive: true, CreatedAt: new Date().toISOString() },
-  { ID: "1105", Code: "1105", Name: "Caja", Class: AccountClass.Activo, Nature: AccountNature.Debito, Level: 3, ParentID: "11", IsActive: true, CreatedAt: new Date().toISOString() },
-  { ID: "1110", Code: "1110", Name: "Bancos", Class: AccountClass.Activo, Nature: AccountNature.Debito, Level: 3, ParentID: "11", IsActive: true, CreatedAt: new Date().toISOString() },
-  { ID: "2", Code: "2", Name: "Pasivo", Class: AccountClass.Pasivo, Nature: AccountNature.Credito, Level: 1, IsActive: true, CreatedAt: new Date().toISOString() },
-  { ID: "3", Code: "3", Name: "Patrimonio", Class: AccountClass.Patrimonio, Nature: AccountNature.Credito, Level: 1, IsActive: true, CreatedAt: new Date().toISOString() },
-];
+import { Account } from "../entities/Account";
+import { AccountService } from "../services/accountService";
 
 export const useChartOfAccounts = () => {
-    const [accounts, setAccounts] = React.useState<Account[]>(() => {
-        const saved = localStorage.getItem("contasist_puc");
-        return saved ? JSON.parse(saved) : INITIAL_PUC;
-    });
+    const [accounts, setAccounts] = React.useState<Account[]>([]);
+    const [isLoading, setIsLoading] = React.useState(true);
     const [search, setSearch] = React.useState("");
 
-    const saveAccounts = (newAccounts: Account[]) => {
-        setAccounts(newAccounts);
-        localStorage.setItem("contasist_puc", JSON.stringify(newAccounts));
-    };
+    const fetchAccounts = React.useCallback(async () => {
+        setIsLoading(true);
+        try {
+            localStorage.removeItem("contasist_puc");
+            localStorage.removeItem("contasist_puc_version");
 
-    const addAccount = async (account: Omit<Account, "ID" | "CreatedAt">) => {
-        const newAccount: Account = {
-            ...account,
-            ID: Math.random().toString(36).substr(2, 9),
-            CreatedAt: new Date().toISOString(),
-        };
-        saveAccounts([...accounts, newAccount]);
+            const data = await AccountService.getAll();
+            setAccounts(data || []);
+        } catch (error) {
+            console.error("Error loading accounts:", error);
+            setAccounts([]);
+        } finally {
+            setIsLoading(false);
+        }
+    }, []);
+
+    React.useEffect(() => {
+        fetchAccounts();
+    }, [fetchAccounts]);
+
+    const addAccount = async (account: Omit<Account, "id" | "created_at" | "is_active" | "business_id">) => {
+        setIsLoading(true);
+        try {
+            const newAccount = await AccountService.create(account);
+            setAccounts(prev => [...prev, newAccount]);
+        } catch (error) {
+            console.error("Error adding account:", error);
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     const updateAccount = async (id: string, data: Partial<Account>) => {
-        const updated = accounts.map(a => a.ID === id ? { ...a, ...data } : a);
-        saveAccounts(updated);
+        setIsLoading(true);
+        try {
+            const updatedAccount = await AccountService.update(id, data);
+            setAccounts(prev => prev.map(a => a.id === id ? updatedAccount : a));
+        } catch (error) {
+            console.error("Error updating account:", error);
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     const deleteAccount = async (id: string) => {
-        const updated = accounts.filter(a => a.ID !== id);
-        saveAccounts(updated);
+        setIsLoading(true);
+        try {
+            await AccountService.delete(id);
+            setAccounts(prev => prev.filter(a => a.id !== id));
+        } catch (error) {
+            console.error("Error deleting account:", error);
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     return {
         accounts,
-        isLoading: false,
+        isLoading,
         search,
         setSearch,
         addAccount,
         updateAccount,
         deleteAccount,
+        refresh: fetchAccounts,
     };
 };
