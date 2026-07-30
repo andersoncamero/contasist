@@ -1,5 +1,6 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { HelmetProvider } from "react-helmet-async";
 import { Toaster } from "./components/molecules/Toaster";
 import { Toaster as Sonner } from "./components/atoms/Sonner";
 import { TooltipProvider } from "./components/atoms/Tooltip";
@@ -28,6 +29,7 @@ const queryClient = new QueryClient();
 
 function App() {
   return (
+    <HelmetProvider>
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
@@ -176,6 +178,7 @@ function App() {
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>
+    </HelmetProvider>
   );
 }
 

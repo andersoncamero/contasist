@@ -7,6 +7,7 @@ import { formatCurrency } from "@/lib/utils";
 import { useClient } from "@/useCases/useClient";
 import { useProduct } from "@/useCases/useProduct";
 import { useQuotation } from "@/useCases/useQuotation";
+import { SEO } from "@/components/atoms/SEO";
 
 export const Dashboard = () => {
   const { clients } = useClient();
@@ -23,6 +24,7 @@ export const Dashboard = () => {
 
   return (
     <MainLayout>
+      <SEO title="Dashboard" description="Resumen general de tu negocio: clientes, productos, cotizaciones y más." />
       <div className="p-6 space-y-6">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>

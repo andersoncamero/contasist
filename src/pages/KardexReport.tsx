@@ -20,6 +20,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { formatCurrency } from "@/lib/utils";
 import { Badge } from "@/components/atoms/Badge";
 import { exportService } from "@/services/exportService";
+import { SEO } from "@/components/atoms/SEO";
 
 export const KardexReport = () => {
     const { id } = useParams();
@@ -31,6 +32,7 @@ export const KardexReport = () => {
     if (!product) {
         return (
             <MainLayout>
+                <SEO title="Kardex" description="Reporte de valoración de inventario." />
                 <div className="p-12 text-center">
                     <p className="text-muted-foreground">Producto no encontrado.</p>
                     <Button variant="link" onClick={() => navigate("/inventory")}>Volver</Button>
@@ -73,6 +75,7 @@ export const KardexReport = () => {
 
     return (
         <MainLayout>
+            <SEO title="Kardex" description="Reporte de valoración de inventario." />
             <div className="flex flex-col gap-6 p-6">
                 <div className="flex justify-between items-center">
                     <div className="flex items-center gap-4">

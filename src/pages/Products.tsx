@@ -20,6 +20,7 @@ import {
 import { Product } from "@/entities/Product";
 import { useProduct } from "@/useCases/useProduct";
 import { toast } from "sonner";
+import { SEO } from "@/components/atoms/SEO";
 
 export default function Products() {
   const {
@@ -81,7 +82,7 @@ export default function Products() {
 
   return (
     <MainLayout>
-
+      <SEO title="Productos" description="Catálogo de productos y servicios." />
       <div className="page-header">
         <div>
           <h1 className="page-title">Catálogo</h1>

@@ -6,6 +6,7 @@ import { TrendingUp, Printer, Download, Calendar } from "lucide-react";
 import { Button } from "@/components/atoms/Button";
 import { exportService } from "@/services/exportService";
 import { formatCurrency } from "@/lib/utils";
+import { SEO } from "@/components/atoms/SEO";
 
 export const IncomeStatement = () => {
     const { accounts, totals, netIncome } = useIncomeStatement();
@@ -44,6 +45,7 @@ export const IncomeStatement = () => {
 
     return (
         <MainLayout>
+            <SEO title="Estado de Resultados" description="Reporte de ingresos y egresos." />
             <div className="p-6 space-y-6">
                 <div className="flex justify-between items-center">
                     <div>

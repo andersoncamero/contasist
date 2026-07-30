@@ -17,6 +17,7 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from "@/components/molecules/AlertDialog";
+import { SEO } from "@/components/atoms/SEO";
 
 export default function Expenses() {
     const {
@@ -81,6 +82,7 @@ export default function Expenses() {
 
     return (
         <MainLayout>
+            <SEO title="Gastos" description="Controla y da seguimiento a tus gastos." />
             <div className="page-header">
                 <div>
                     <h1 className="page-title">Gastos y Compras</h1>

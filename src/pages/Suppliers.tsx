@@ -17,6 +17,7 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from "@/components/molecules/AlertDialog";
+import { SEO } from "@/components/atoms/SEO";
 
 export default function Suppliers() {
     const {
@@ -71,6 +72,7 @@ export default function Suppliers() {
 
     return (
         <MainLayout>
+            <SEO title="Proveedores" description="Gestiona tus proveedores." />
             <div className="page-header">
                 <div>
                     <h1 className="page-title">Proveedores</h1>

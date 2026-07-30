@@ -27,6 +27,7 @@ import { Eye, FileText, Plus, Search, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
+import { SEO } from "@/components/atoms/SEO";
 
 export const Quotations = () => {
   const { quotations, deleteQuotation, isLoading: isQuotationLoading } = useQuotation();
@@ -73,6 +74,7 @@ export const Quotations = () => {
 
   return (
     <MainLayout>
+      <SEO title="Cotizaciones" description="Administra tus cotizaciones y presupuestos." />
       <div className="page-header">
         <div>
           <h1 className="page-title">Cotizaciones</h1>

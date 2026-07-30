@@ -5,6 +5,7 @@ import { AccountForm } from "@/components/organisms/accounting/AccountForm";
 import { useChartOfAccounts } from "@/useCases/useChartOfAccounts";
 import { Button } from "@/components/atoms/Button";
 import { Plus } from "lucide-react";
+import { SEO } from "@/components/atoms/SEO";
 
 export const ChartOfAccounts = () => {
     const { accounts, isLoading, search, setSearch, addAccount, updateAccount, deleteAccount } = useChartOfAccounts();
@@ -26,6 +27,7 @@ export const ChartOfAccounts = () => {
 
     return (
         <MainLayout>
+            <SEO title="Plan de Cuentas" description="Catálogo de cuentas contables." />
             <div className="p-6 space-y-6">
                 <div className="flex justify-between items-center">
                     <div>

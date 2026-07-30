@@ -37,6 +37,7 @@ interface ApiRegisterResponse {
     name: string;
     role: string;
     created_at: string;
+    business_id: string;
   };
 }
 
@@ -85,6 +86,7 @@ export const useAuth = create<AuthState>()(
             email: successData.user.email,
             name: successData.user.name,
             role: successData.user.role as "admin" | "user",
+            business_id: successData.user.business_id,
             createdAt: new Date(successData.user.created_at),
           };
 
@@ -161,7 +163,7 @@ export const useAuth = create<AuthState>()(
         const token = get().token;
         return token ? { Authorization: `Bearer ${token}` } : {};
       },
-      
+
     }),
     {
       name: "ContAsist-auth",

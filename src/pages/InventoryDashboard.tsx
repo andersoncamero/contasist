@@ -25,6 +25,7 @@ import { useInventory } from "@/useCases/useInventory";
 import { formatCurrency } from "@/lib/utils";
 import { Badge } from "@/components/atoms/Badge";
 import { useNavigate } from "react-router-dom";
+import { SEO } from "@/components/atoms/SEO";
 
 export const InventoryDashboard = () => {
     const { products, isLoading } = useProduct();
@@ -41,6 +42,7 @@ export const InventoryDashboard = () => {
 
     return (
         <MainLayout>
+            <SEO title="Inventario" description="Control de stock y movimientos de inventario." />
             <div className="flex flex-col gap-6 p-6">
                 <div className="flex justify-between items-center">
                     <div>

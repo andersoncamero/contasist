@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1080, height=1080" />
+  <title>contasist — Intro</title>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      background: #000;
+      font-family: Inter, system-ui, sans-serif;
+    }
+    #root {
+      position: relative;
+      width: 1080px;
+      height: 1080px;
+      overflow: hidden;
+      background: #0D1B2A;
+    }
+    .full-bleed {
+      position: absolute;
+      inset: 0;
+    }
+    .clip {
+      position: absolute;
+      inset: 0;
+    }
+    #bg-glow {
+      width: 700px;
+      height: 700px;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: radial-gradient(circle, rgba(46, 196, 182, 0.12) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+    #bg-glow-2 {
+      width: 500px;
+      height: 500px;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.04) 0%, transparent 60%);
+      border-radius: 50%;
+    }
+    .ghost-text {
+      position: absolute;
+      font-size: 160px;
+      font-weight: 800;
+      color: #fff;
+      opacity: 0.04;
+      white-space: nowrap;
+      user-select: none;
+      pointer-events: none;
+    }
+    .ghost-1 { top: 120px; left: -60px; }
+    .ghost-2 { bottom: 100px; right: -40px; }
+    .grid-line {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.04);
+    }
+    .grid-line.h {
+      width: 100%;
+      height: 1px;
+    }
+    .grid-line.v {
+      width: 1px;
+      height: 100%;
+    }
+    .grid-line:nth-child(1) { top: 25%; }
+    .grid-line:nth-child(2) { top: 50%; }
+    .grid-line:nth-child(3) { top: 75%; }
+    .grid-line:nth-child(4) { left: 25%; }
+    .grid-line:nth-child(5) { left: 50%; }
+    .grid-line:nth-child(6) { left: 75%; }
+
+    #scene {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    #title {
+      margin: 0;
+      font-size: 96px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: #fff;
+    }
+    #subtitle {
+      margin: 24px 0 0 0;
+      font-size: 28px;
+      font-weight: 400;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.5);
+    }
+    #divider {
+      width: 60px;
+      height: 2px;
+      background: #2EC4B6;
+      margin-top: 32px;
+    }
+  </style>
+</head>
+<body>
+  <div
+    id="root"
+    data-composition-id="main"
+    data-start="0"
+    data-width="1080"
+    data-height="1080"
+    data-duration="30"
+  >
+    <div id="bg-glow" class="full-bleed"></div>
+    <div id="bg-glow-2" class="full-bleed"></div>
+
+    <div class="ghost-text ghost-1" data-layout-allow-overflow>contasist</div>
+    <div class="ghost-text ghost-2" data-layout-allow-overflow>contasist</div>
+
+    <div class="grid-line h"></div>
+    <div class="grid-line h"></div>
+    <div class="grid-line h"></div>
+    <div class="grid-line v"></div>
+    <div class="grid-line v"></div>
+    <div class="grid-line v"></div>
+
+    <section
+      id="scene"
+      class="clip"
+      data-start="0"
+      data-duration="30"
+      data-track-index="1"
+    >
+      <h1 id="title">contasist</h1>
+      <p id="subtitle">Intelligent Financial Intelligence</p>
+      <div id="divider"></div>
+    </section>
+
+    <audio
+      id="bgm"
+      data-start="0"
+      data-volume="0.3"
+      data-loop="true"
+      src=".media/audio/bgm/bgm_001.mp3"
+    ></audio>
+  </div>
+
+  <script>
+    window.__timelines = window.__timelines || {};
+    const tl = gsap.timeline({ paused: true });
+
+    tl.fromTo("#bg-glow",
+      { scale: 0.8, opacity: 0 },
+      { scale: 1.1, opacity: 1, duration: 3, ease: "power2.out" },
+      0
+    );
+    tl.to("#bg-glow",
+      { scale: 1.2, duration: 8, ease: "sine.inOut" },
+      3
+    );
+    tl.to("#bg-glow",
+      { scale: 1.0, duration: 8, ease: "sine.inOut" },
+      11
+    );
+    tl.to("#bg-glow",
+      { scale: 1.15, duration: 7, ease: "sine.inOut" },
+      19
+    );
+
+    tl.fromTo("#bg-glow-2",
+      { scale: 0.9, opacity: 0 },
+      { scale: 1.0, opacity: 1, duration: 4, ease: "power2.out" },
+      0
+    );
+    tl.to("#bg-glow-2",
+      { scale: 1.1, duration: 10, ease: "sine.inOut" },
+      4
+    );
+    tl.to("#bg-glow-2",
+      { scale: 0.95, duration: 8, ease: "sine.inOut" },
+      14
+    );
+    tl.to("#bg-glow-2",
+      { scale: 1.05, duration: 8, ease: "sine.inOut" },
+      22
+    );
+
+    tl.to(".ghost-1",
+      { x: 60, duration: 15, ease: "sine.inOut" },
+      0
+    );
+    tl.to(".ghost-1",
+      { x: 20, duration: 15, ease: "sine.inOut" },
+      15
+    );
+    tl.to(".ghost-2",
+      { x: -60, duration: 15, ease: "sine.inOut" },
+      0
+    );
+    tl.to(".ghost-2",
+      { x: -20, duration: 15, ease: "sine.inOut" },
+      15
+    );
+
+    tl.to(".grid-line",
+      { opacity: 0.6, duration: 3, ease: "power2.out" },
+      0
+    );
+
+    tl.from("#title",
+      { y: 48, opacity: 0, duration: 1.2, ease: "power3.out" },
+      0.5
+    );
+    tl.from("#subtitle",
+      { y: 24, opacity: 0, duration: 1, ease: "power2.out" },
+      1.8
+    );
+    tl.fromTo("#divider",
+      { scaleX: 0, opacity: 0 },
+      { scaleX: 1, opacity: 1, duration: 0.8, ease: "power2.out" },
+      2.5
+    );
+
+    window.__timelines["main"] = tl;
+  </script>
+</body>
+</html>

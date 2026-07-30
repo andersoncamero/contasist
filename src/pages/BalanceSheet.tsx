@@ -6,6 +6,7 @@ import { FileText, Printer, Download } from "lucide-react";
 import { Button } from "@/components/atoms/Button";
 import { exportService } from "@/services/exportService";
 import { formatCurrency } from "@/lib/utils";
+import { SEO } from "@/components/atoms/SEO";
 
 export const BalanceSheet = () => {
     const { accounts, totals, isBalanced } = useBalanceSheet();
@@ -48,6 +49,7 @@ export const BalanceSheet = () => {
 
     return (
         <MainLayout>
+            <SEO title="Balance General" description="Estado de situación financiera." />
             <div className="p-6 space-y-6">
                 <div className="flex justify-between items-center">
                     <div>

@@ -13,6 +13,7 @@ import { ArrowLeft, Check, Download, Send, X } from "lucide-react";
 import { useEffect } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
+import { SEO } from "@/components/atoms/SEO";
 
 export const QuotationDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -27,6 +28,7 @@ export const QuotationDetail = () => {
   if (isQuotationLoading) {
     return (
       <MainLayout>
+        <SEO title="Detalle de Cotización" description="Revisa el detalle de tu cotización." />
         <div className="flex flex-col items-center justify-center py-20">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
           <p className="mt-4 text-muted-foreground">Cargando cotización...</p>
@@ -38,6 +40,7 @@ export const QuotationDetail = () => {
   if (!quotation) {
     return (
       <MainLayout>
+        <SEO title="Detalle de Cotización" description="Revisa el detalle de tu cotización." />
         <div className="flex flex-col items-center justify-center py-20">
           <p className="text-xl font-bold">Cotización no encontrada</p>
           <Link to="/quotations" className="mt-4 underline">
@@ -73,6 +76,7 @@ export const QuotationDetail = () => {
 
   return (
     <MainLayout>
+      <SEO title="Detalle de Cotización" description="Revisa el detalle de tu cotización." />
       <div className="mb-8">
         <Link
           to="/quotations"

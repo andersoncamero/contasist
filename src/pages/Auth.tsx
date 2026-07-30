@@ -7,6 +7,7 @@ import { Card, CardContent } from "@/components/molecules/Card";
 import { Label } from "@/components/atoms/Label";
 import { Input } from "@/components/atoms/Input";
 import { Button } from "@/components/atoms/Button";
+import { SEO } from "@/components/atoms/SEO";
 
 export const Auth = () => {
   const navigate = useNavigate();
@@ -105,6 +106,7 @@ export const Auth = () => {
 
   return (
     <div className="min-h-screen bg-white flex overflow-hidden">
+      <SEO title="Iniciar Sesión" description="Accede a tu panel de control de ContAsist." />
       {/* Left Side: Form */}
       <div className="w-full lg:w-[45%] flex flex-col p-8 md:p-12 lg:p-16">
         {/* Logo and Brand */}

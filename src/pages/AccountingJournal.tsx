@@ -8,6 +8,7 @@ import { Plus, BookOpen, Calculator } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/molecules/Tabs";
 
 import { MainLayout } from "@/templates/MainLayout";
+import { SEO } from "@/components/atoms/SEO";
 
 export const AccountingJournal = () => {
     const [isFormOpen, setIsFormOpen] = React.useState(false);
@@ -16,6 +17,7 @@ export const AccountingJournal = () => {
 
     return (
         <MainLayout>
+            <SEO title="Libro Diario" description="Registro de transacciones contables." />
             <div className="p-6 space-y-6">
                 <div className="flex justify-between items-center">
                     <div>

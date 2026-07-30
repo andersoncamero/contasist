@@ -23,6 +23,7 @@ import { ArrowLeft, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { SEO } from "@/components/atoms/SEO";
 
 export const QuotationNew = () => {
   const navigate = useNavigate();
@@ -125,6 +126,7 @@ export const QuotationNew = () => {
 
   return (
     <MainLayout>
+      <SEO title="Nueva Cotización" description="Crea una nueva cotización." />
       <div className="mb-8">
         <Link
           to="/quotations"

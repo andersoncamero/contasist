@@ -8,6 +8,7 @@ import { Printer, Download, FileSearch, HelpCircle } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/atoms/Alert";
 import { exportService } from "@/services/exportService";
 import { formatCurrency } from "@/lib/utils";
+import { SEO } from "@/components/atoms/SEO";
 
 export const AuxiliaryReport = () => {
     const {
@@ -71,6 +72,7 @@ export const AuxiliaryReport = () => {
 
     return (
         <MainLayout>
+            <SEO title="Reporte Auxiliar" description="Reportes contables auxiliares." />
             <div className="p-6 space-y-8 max-w-7xl mx-auto">
                 {/* Header */}
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">

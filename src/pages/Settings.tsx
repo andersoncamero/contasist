@@ -18,6 +18,7 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import z from "zod";
+import { SEO } from "@/components/atoms/SEO";
 
 const businessSchema = z.object({
   name: z.string().min(2, "El nombre debe tener al menos 2 caracteres"),
@@ -93,6 +94,7 @@ export const Settings = () => {
 
  return (
     <MainLayout>
+      <SEO title="Configuración" description="Configura los datos de tu empresa." />
       <div className="mb-8">
         <h1 className="text-3xl font-bold tracking-tight">Configuración</h1>
         <p className="mt-1 text-muted-foreground">

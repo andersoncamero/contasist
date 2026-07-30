@@ -18,6 +18,7 @@ import {
 import { Client } from "@/entities/Client";
 import { useClient } from "@/useCases/useClient";
 import { toast } from "sonner";
+import { SEO } from "@/components/atoms/SEO";
 
 export default function Clients() {
   const {
@@ -76,6 +77,7 @@ export default function Clients() {
 
   return (
     <MainLayout>
+      <SEO title="Clientes" description="Gestiona tu cartera de clientes." />
       <div className="page-header">
         <div>
           <h1 className="page-title">Clientes</h1>
