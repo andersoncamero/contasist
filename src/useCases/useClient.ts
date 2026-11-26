@@ -1,87 +1,168 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Client } from "@/entities/Client";
-import { API_BASE_URL, getAuthHeader } from "@/services/apiConfig";
+import { Client, PersonType } from "@/entities/Client";
+import { API_BASE_URL, getFetchOptions } from "@/services/apiConfig";
+import { useCompany } from "./useCompany";
 
-// Tipos de API
 interface ApiClientResponse {
-  ID: number;
-  Name: string;
-  Email: string;
-  Phone: string;
-  PersonType?: 'natural' | 'juridica';
+  id?: number;
+  ID?: number;
+  companyId?: number;
+  name?: string;
+  Name?: string;
+  email?: string;
+  Email?: string;
+  phone?: string;
+  Phone?: string;
+  company?: string;
   Company?: string;
+  address?: string;
   Address?: string;
+  personType?: PersonType;
+  PersonType?: PersonType;
+  taxId?: string;
   TaxID?: string;
+  status?: string;
+  IsActive?: boolean;
+  createdAt?: string;
   created_at?: string;
+  updatedAt?: string;
 }
 
-// Mappers
-const mapApiClient = (apiClient: ApiClientResponse): Client => ({
-  ID: apiClient.ID,
-  Name: apiClient.Name,
-  Email: apiClient.Email,
-  Phone: apiClient.Phone,
-  PersonType: apiClient.PersonType,
-  Company: apiClient.Company,
-  Address: apiClient.Address,
-  TaxID: apiClient.TaxID,
-  CreatedAt: new Date(apiClient.created_at || Date.now()),
-});
+const mapApiClient = (apiClient: ApiClientResponse): Client => {
+  const clientID = apiClient.id ?? apiClient.ID ?? 0;
+  const clientName = apiClient.name ?? apiClient.Name ?? "";
+  const clientEmail = apiClient.email ?? apiClient.Email ?? "";
+  const clientPhone = apiClient.phone ?? apiClient.Phone ?? "";
+  const clientCompany = apiClient.company ?? apiClient.Company ?? "";
+  const clientAddress = apiClient.address ?? apiClient.Address ?? "";
+  const rawPersonType = apiClient.personType ?? apiClient.PersonType ?? "PJ";
+  const clientPersonType: PersonType = (rawPersonType === "PN" || rawPersonType === "natural") ? "natural" : "juridica";
+  const clientTaxID = apiClient.taxId ?? apiClient.TaxID ?? "";
+  const createdDate = apiClient.createdAt || apiClient.created_at || new Date().toISOString();
 
-// Funciones API
-const fetchClientsApi = async (): Promise<Client[]> => {
-  const response = await fetch(`${API_BASE_URL}/clients`, {
-    headers: getAuthHeader(),
-  });
-  if (!response.ok) throw new Error("Error al obtener clientes");
-  const data: ApiClientResponse[] = await response.json();
-  return data.map(mapApiClient);
+  return {
+    id: clientID,
+    ID: clientID,
+    companyId: apiClient.companyId,
+    name: clientName,
+    Name: clientName,
+    email: clientEmail,
+    Email: clientEmail,
+    phone: clientPhone,
+    Phone: clientPhone,
+    company: clientCompany,
+    Company: clientCompany,
+    address: clientAddress,
+    Address: clientAddress,
+    personType: clientPersonType,
+    PersonType: clientPersonType,
+    taxId: clientTaxID,
+    TaxID: clientTaxID,
+    createdAt: createdDate,
+    CreatedAt: new Date(createdDate),
+    updatedAt: apiClient.updatedAt,
+  };
 };
 
-const addClientApi = async (client: Omit<Client, "ID" | "CreatedAt">) => {
-  const response = await fetch(`${API_BASE_URL}/clients`, {
-    method: "POST",
-    headers: getAuthHeader(),
-    body: JSON.stringify(client),
-  });
+const parseResponseJson = async (response: Response) => {
+  const text = await response.text();
   if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.message || "Error al crear cliente");
+    let errorMessage = `Error HTTP ${response.status}`;
+    if (text) {
+      try {
+        const json = JSON.parse(text);
+        errorMessage = json.message || json.error || errorMessage;
+      } catch {
+        errorMessage = text;
+      }
+    }
+    throw new Error(errorMessage);
   }
-  return response.json();
+  if (!text || text.trim() === "") return {};
+  try {
+    return JSON.parse(text);
+  } catch {
+    return {};
+  }
+};
+
+const fetchClientsApi = async (companyId?: number): Promise<Client[]> => {
+  const response = await fetch(`${API_BASE_URL}/clients`, getFetchOptions(companyId));
+  const data: ApiClientResponse[] = await parseResponseJson(response);
+  return Array.isArray(data) ? data.map(mapApiClient) : [];
+};
+
+const addClientApi = async (client: Partial<Client>) => {
+  const payload = {
+    name: client.name || client.Name,
+    email: client.email || client.Email,
+    phone: client.phone || client.Phone,
+    company: client.company || client.Company,
+    address: client.address || client.Address,
+    personType: client.personType || client.PersonType || "PJ",
+    taxId: client.taxId || client.TaxID,
+  };
+
+  const response = await fetch(`${API_BASE_URL}/clients`, getFetchOptions(undefined, {
+    method: "POST",
+    body: JSON.stringify(payload),
+  }));
+  return parseResponseJson(response);
 };
 
 const updateClientApi = async ({ id, data }: { id: number; data: Partial<Client> }) => {
-  const response = await fetch(`${API_BASE_URL}/clients/${id}`, {
+  const payload = {
+    name: data.name || data.Name,
+    email: data.email || data.Email,
+    phone: data.phone || data.Phone,
+    company: data.company || data.Company,
+    address: data.address || data.Address,
+    personType: data.personType || data.PersonType,
+    taxId: data.taxId || data.TaxID,
+  };
+
+  const response = await fetch(`${API_BASE_URL}/clients/${id}`, getFetchOptions(undefined, {
     method: "PUT",
-    headers: getAuthHeader(),
-    body: JSON.stringify(data),
-  });
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.message || "Error al actualizar cliente");
-  }
-  return response.json();
+    body: JSON.stringify(payload),
+  }));
+  return parseResponseJson(response);
 };
 
 const deleteClientApi = async (id: number) => {
-  const response = await fetch(`${API_BASE_URL}/clients/${id}`, {
+  const response = await fetch(`${API_BASE_URL}/clients/${id}`, getFetchOptions(undefined, {
     method: "DELETE",
-    headers: getAuthHeader(),
+  }));
+  return parseResponseJson(response);
+};
+
+const fetchClientByIdApi = async (id: number | string, companyId?: number): Promise<Client | null> => {
+  if (!id || id === 0 || id === "0") return null;
+  const response = await fetch(`${API_BASE_URL}/clients/${id}`, getFetchOptions(companyId));
+  if (!response.ok) return null;
+  const data: ApiClientResponse = await parseResponseJson(response);
+  return data && (data.id || data.ID) ? mapApiClient(data) : null;
+};
+
+export const useClientById = (id?: number | string) => {
+  const { activeCompanyId } = useCompany();
+  const numericCompanyId = activeCompanyId ? Number(activeCompanyId) : undefined;
+
+  return useQuery({
+    queryKey: ["client", id, activeCompanyId],
+    queryFn: () => fetchClientByIdApi(id!, numericCompanyId),
+    enabled: Boolean(numericCompanyId) && Boolean(id && id !== 0 && id !== "0"),
   });
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.message || "Error al eliminar cliente");
-  }
-  return response.json();
 };
 
 export const useClient = () => {
   const queryClient = useQueryClient();
+  const { activeCompanyId } = useCompany();
+  const numericCompanyId = activeCompanyId ? Number(activeCompanyId) : undefined;
 
   const query = useQuery({
-    queryKey: ["clients"],
-    queryFn: fetchClientsApi,
+    queryKey: ["clients", activeCompanyId],
+    queryFn: () => fetchClientsApi(numericCompanyId),
+    enabled: Boolean(numericCompanyId),
   });
 
   const addMutation = useMutation({
@@ -105,10 +186,7 @@ export const useClient = () => {
     },
   });
 
-  // Facade para mantener compatibilidad con los componentes existentes
-  // aunque idealmente deberíamos retornar query y mutations directamente.
-
-  const addClient = async (client: Omit<Client, "ID" | "CreatedAt">) => {
+  const addClient = async (client: Partial<Client>) => {
     try {
       await addMutation.mutateAsync(client);
       return { success: true };
@@ -139,7 +217,7 @@ export const useClient = () => {
     clients: query.data || [],
     isLoading: query.isLoading || addMutation.isPending || updateMutation.isPending || deleteMutation.isPending,
     error: query.error ? (query.error as Error).message : null,
-    fetchClients: async () => { await query.refetch(); }, // Compatibilidad
+    fetchClients: async () => { await query.refetch(); },
     addClient,
     updateClient,
     deleteClient,

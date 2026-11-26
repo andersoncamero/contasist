@@ -23,8 +23,13 @@ import { formatCurrency, formatShortDate } from "@/lib/utils";
 
 import { useQuotation } from "@/useCases/useQuotation";
 import { useClient } from "@/useCases/useClient";
+import { useCompany } from "@/useCases/useCompany";
+import { Quotation } from "@/entities/Quotation";
+import { GenerateProposalModal } from "@/components/organisms/quotations/GenerateProposalModal";
+import { CreateStandaloneProposalModal } from "@/components/organisms/quotations/CreateStandaloneProposalModal";
 import { Eye, FileText, Plus, Search, Trash2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { TableEmptyState, tableEmptyStateButtonClassName } from "@/components/molecules/TableEmptyState";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
 import { SEO } from "@/components/atoms/SEO";
@@ -32,14 +37,17 @@ import { SEO } from "@/components/atoms/SEO";
 export const Quotations = () => {
   const { quotations, deleteQuotation, isLoading: isQuotationLoading } = useQuotation();
   const { clients, isLoading: isClientsLoading } = useClient();
+  const { businessInfo } = useCompany();
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [deleteId, setDeleteId] = useState<string | number | null>(null);
+  const [selectedProposalQuotation, setSelectedProposalQuotation] = useState<Quotation | null>(null);
+  const [isStandaloneProposalOpen, setIsStandaloneProposalOpen] = useState(false);
 
   const isLoading = isQuotationLoading || isClientsLoading;
 
   const getClientName = (clientId: number) => {
-    const client = clients.find((c) => c.ID === clientId);
+    const client = clients.find((c) => (c.ID ?? c.id) === clientId);
     return client ? client.Name : "Cliente Desconocido";
   };
 
@@ -54,7 +62,6 @@ export const Quotations = () => {
     const matchesStatus = statusFilter === "all" || q.Status === statusFilter;
     return matchesSerch && matchesStatus;
   });
-
 
   const sortedQuotations = [...filteredQuotations].sort(
     (a, b) => new Date(b.CreatedAt).getTime() - new Date(a.CreatedAt).getTime(),
@@ -72,6 +79,10 @@ export const Quotations = () => {
     }
   };
 
+  const selectedProposalClient = selectedProposalQuotation
+    ? clients.find((c) => (c.ID ?? c.id) === selectedProposalQuotation.ClientID)
+    : null;
+
   return (
     <MainLayout>
       <SEO title="Cotizaciones" description="Administra tus cotizaciones y presupuestos." />
@@ -79,15 +90,26 @@ export const Quotations = () => {
         <div>
           <h1 className="page-title">Cotizaciones</h1>
           <p className="page-subtitle">
-            Gestiona tus cotizaciones
+            Gestiona tus cotizaciones y propuestas comerciales
           </p>
         </div>
-        <Link to="/quotations/new">
-          <Button disabled={isLoading}>
-            <Plus className="mr-2 h-4 w-4" />
-            Nueva Cotización
+        <div className="flex items-center gap-3 flex-wrap">
+          <Link to="/quotations/new">
+            <Button disabled={isLoading}>
+              <Plus className="mr-2 h-4 w-4" />
+              Crear Cotización
+            </Button>
+          </Link>
+          <Button
+            variant="outline"
+            onClick={() => setIsStandaloneProposalOpen(true)}
+            disabled={isLoading}
+            className="border-primary/40 text-primary hover:bg-primary/10"
+          >
+            <FileText className="mr-2 h-4 w-4" />
+            Crear Propuesta Comercial
           </Button>
-        </Link>
+        </div>
       </div>
 
       <div className="mb-6 flex flex-col sm:flex-row gap-4">
@@ -114,31 +136,42 @@ export const Quotations = () => {
         </Select>
       </div>
 
+      {sortedQuotations.length === 0 ? (
+        <TableEmptyState
+          icon={FileText}
+          title="Sin Cotizaciones"
+          description={
+            search || statusFilter !== "all"
+              ? "No se encontraron cotizaciones con los filtros aplicados."
+              : "Crea tu primera cotización para comenzar."
+          }
+          action={
+            !search && statusFilter === "all" ? (
+              <Link to="/quotations/new">
+                <Button type="button" disabled={isLoading} className={tableEmptyStateButtonClassName}>
+                  <Plus className="h-5 w-5" />
+                  Crear Cotización
+                </Button>
+              </Link>
+            ) : undefined
+          }
+        />
+      ) : (
       <div className="border-2 border-border bg-card rounded-lg overflow-hidden">
-        <div className="table-header rounded-t-lg hidden md:flex gap-4">
-          <div className="flex-1 text-left">Cotización</div>
-          <div className="flex-1 text-left">Cliente</div>
-          <div className="w-[120px] text-right">Total</div>
-          <div className="w-[120px] text-center">Estado</div>
-          <div className="w-[100px] text-right">Acciones</div>
+        <div className="table-header rounded-t-lg hidden md:flex items-center gap-4 px-4 py-3 bg-muted/60 text-xs font-bold uppercase tracking-wider text-muted-foreground">
+          <div className="w-[140px] text-left shrink-0">Cotización</div>
+          <div className="flex-1 text-left min-w-0">Cliente</div>
+          <div className="w-[110px] text-right shrink-0">Total</div>
+          <div className="w-[110px] text-center shrink-0">Estado</div>
+          <div className="w-[110px] text-right shrink-0">Acciones</div>
         </div>
 
-        {sortedQuotations.length === 0 ? (
-          <div className="flex flex-col items-center justify-center p-12 text-center">
-            <FileText className="h-12 w-12 text-muted-foreground" />
-            <p className="mt-4 text-lg font-medium">No hay cotizaciones</p>
-            <p className="text-muted-foreground">
-              Crea tu primera cotización para comenzar
-            </p>
-          </div>
-        ) : (
           <div className="divide-y-2 divide-border">
             {sortedQuotations.map((quotation) => (
               <div
                 key={quotation.ID}
                 className="p-4 transition-colors hover:bg-accent"
               >
-                {/* Layout móvil */}
                 <div className="md:hidden space-y-3">
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex-1 min-w-0">
@@ -161,13 +194,15 @@ export const Quotations = () => {
                     </p>
                     <div className="flex gap-2">
                       <Link to={`/quotations/${quotation.ID}`}>
-                        <Button variant="outline" size="icon">
+                        <Button variant="outline" size="icon" title="Ver detalle">
                           <Eye className="h-4 w-4" />
                         </Button>
                       </Link>
                       <Button
-                        variant="outline"
+                        variant="destructive"
                         size="icon"
+                        className="h-8 w-8 rounded-full bg-red-600 text-white hover:bg-red-700 shadow-sm"
+                        title="Eliminar"
                         onClick={() => setDeleteId(quotation.ID)}
                         disabled={isLoading}
                       >
@@ -177,37 +212,38 @@ export const Quotations = () => {
                   </div>
                 </div>
 
-                {/* Layout desktop */}
                 <div className="hidden md:flex gap-4 items-center">
-                  <div className="flex-1 text-left">
-                    <p className="font-bold font-mono">{quotation.Number}</p>
-                    <p className="text-sm text-muted-foreground">
+                  <div className="w-[140px] text-left shrink-0">
+                    <p className="font-bold font-mono text-sm">{quotation.Number}</p>
+                    <p className="text-xs text-muted-foreground">
                       {formatShortDate(quotation.CreatedAt)}
                     </p>
                   </div>
-                  <div className="flex-1 text-left">
-                    <p className="font-medium">{quotation.ClientName}</p>
-                    <p className="text-sm text-muted-foreground">
+                  <div className="flex-1 text-left min-w-0">
+                    <p className="font-medium text-sm truncate">{quotation.ClientName}</p>
+                    <p className="text-xs text-muted-foreground">
                       {quotation.Items.length} item(s)
                     </p>
                   </div>
-                  <div className="w-[120px] text-right">
-                    <p className="font-bold">
+                  <div className="w-[110px] text-right shrink-0">
+                    <p className="font-bold text-sm">
                       {formatCurrency(quotation.Total)}
                     </p>
                   </div>
-                  <div className="w-[120px] text-center">
+                  <div className="w-[110px] flex justify-center shrink-0">
                     <StatusBadge status={quotation.Status} />
                   </div>
-                  <div className="w-[100px] flex gap-2 justify-end">
+                  <div className="w-[110px] flex items-center justify-end gap-1.5 shrink-0">
                     <Link to={`/quotations/${quotation.ID}`}>
-                      <Button variant="outline" size="icon">
+                      <Button variant="outline" size="icon" className="h-8 w-8 rounded-full border border-border bg-background hover:bg-accent text-foreground" title="Ver detalle">
                         <Eye className="h-4 w-4" />
                       </Button>
                     </Link>
                     <Button
-                      variant="outline"
+                      variant="destructive"
                       size="icon"
+                      className="h-8 w-8 rounded-full bg-red-600 text-white hover:bg-red-700 shadow-sm"
+                      title="Eliminar"
                       onClick={() => setDeleteId(quotation.ID)}
                       disabled={isLoading}
                     >
@@ -218,8 +254,24 @@ export const Quotations = () => {
               </div>
             ))}
           </div>
-        )}
       </div>
+      )}
+
+      {selectedProposalQuotation && (
+        <GenerateProposalModal
+          isOpen={!!selectedProposalQuotation}
+          onClose={() => setSelectedProposalQuotation(null)}
+          quotation={selectedProposalQuotation}
+          client={selectedProposalClient}
+          businessInfo={businessInfo}
+        />
+      )}
+
+      <CreateStandaloneProposalModal
+        isOpen={isStandaloneProposalOpen}
+        onClose={() => setIsStandaloneProposalOpen(false)}
+        businessInfo={businessInfo}
+      />
 
       <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
         <AlertDialogContent>

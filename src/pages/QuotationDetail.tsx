@@ -5,25 +5,41 @@ import { StatusBadge } from "@/components/atoms/StatusBadge";
 import { generatePDF } from "@/lib/PDF";
 import { formatCurrency, formatDate } from "@/lib/utils";
 
-import { useBusiness } from "@/useCases/useBusiness";
-import { useClient } from "@/useCases/useClient";
+import { useCompany } from "@/useCases/useCompany";
+import { useClient, useClientById } from "@/useCases/useClient";
 import { useQuotation, useQuotationById } from "@/useCases/useQuotation";
+import { useInvoice } from "@/useCases/useInvoice";
 
-import { ArrowLeft, Check, Download, Send, X } from "lucide-react";
-import { useEffect } from "react";
+import { ArrowLeft, Check, Download, FileText, Receipt, Send, X } from "lucide-react";
+import { useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 import { SEO } from "@/components/atoms/SEO";
+import { GenerateProposalModal } from "@/components/organisms/quotations/GenerateProposalModal";
 
 export const QuotationDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { clients } = useClient();
+  const [isProposalModalOpen, setIsProposalModalOpen] = useState(false);
+  const { clients, isLoading: isClientsLoading } = useClient();
   const { updateQuotationStatus, isLoading: isUpdating } = useQuotation();
+  const { convertQuotationToInvoice } = useInvoice();
+  const [isConverting, setIsConverting] = useState(false);
   const { data: quotation, isLoading: isQuotationLoading } = useQuotationById(id);
-  const { businessInfo } = useBusiness();
+  const { data: fetchedClient, isLoading: isSingleClientLoading } = useClientById(quotation?.ClientID);
+  const { businessInfo } = useCompany();
 
-  const client = clients.find((c) => c.ID === quotation?.ClientID);
+  const client = clients.find((c) => (c.ID ?? c.id) === quotation?.ClientID) || fetchedClient || null;
+  const isClientLoading = isClientsLoading || isSingleClientLoading;
+
+  const rawClientName = client?.Name || client?.name || quotation?.ClientName || quotation?.Client?.Name || quotation?.Client?.name || "";
+  const clientName = rawClientName
+    ? rawClientName
+    : (isClientLoading ? "Cargando cliente..." : (quotation?.ClientID ? `Cliente #${quotation.ClientID}` : "Sin cliente asignado"));
+  const clientCompany = client?.Company || client?.company || quotation?.ClientCompany || quotation?.Client?.Company || quotation?.Client?.company || "";
+  const clientEmail = client?.Email || client?.email || quotation?.ClientEmail || quotation?.Client?.Email || quotation?.Client?.email || "";
+  const clientPhone = client?.Phone || client?.phone || quotation?.ClientPhone || quotation?.Client?.Phone || quotation?.Client?.phone || "";
+  const clientAddress = client?.Address || client?.address || quotation?.ClientAddress || quotation?.Client?.Address || quotation?.Client?.address || "";
 
   if (isQuotationLoading) {
     return (
@@ -74,6 +90,23 @@ export const QuotationDetail = () => {
     }
   };
 
+  const handleConvertToInvoice = async () => {
+    setIsConverting(true);
+    const result = await convertQuotationToInvoice(quotation.ID);
+    setIsConverting(false);
+    if (result.success) {
+      toast.success("Factura comercial generada con éxito");
+      const invoiceId = result.data?.id || result.data?.ID;
+      if (invoiceId) {
+        navigate(`/invoices/${invoiceId}`);
+      } else {
+        navigate("/invoices");
+      }
+    } else {
+      toast.error(result.error || "Error al generar la factura");
+    }
+  };
+
   return (
     <MainLayout>
       <SEO title="Detalle de Cotización" description="Revisa el detalle de tu cotización." />
@@ -113,6 +146,7 @@ export const QuotationDetail = () => {
                 <SelectItem value="sent">Enviada</SelectItem>
                 <SelectItem value="approved">Aprobada</SelectItem>
                 <SelectItem value="rejected">Rechazada</SelectItem>
+                <SelectItem value="billed">Facturada</SelectItem>
               </SelectContent>
             </Select>
 
@@ -127,13 +161,23 @@ export const QuotationDetail = () => {
                 Marcar Enviada
               </Button>
             )}
+
+            {(quotation.Status === 'approved' || quotation.Status === 'accepted') && (
+              <Button
+                onClick={handleConvertToInvoice}
+                disabled={isConverting}
+                className="bg-emerald-600 hover:bg-emerald-700 text-white"
+              >
+                <Receipt className="mr-2 h-4 w-4" />
+                {isConverting ? "Facturando..." : "Facturar Cotización"}
+              </Button>
+            )}
           </div>
         </div>
       </div>
 
       <div className="grid gap-8 lg:grid-cols-3">
         <div className="lg:col-span-2 space-y-6">
-          {/* Client Info */}
           <div className="border-2 border-border bg-card p-6 rounded-lg">
             <h2 className="mb-4 text-xs font-bold uppercase tracking-wide text-muted-foreground">
               Cliente
@@ -141,17 +185,17 @@ export const QuotationDetail = () => {
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
                 <p className="text-lg font-bold">
-                  {client?.Name || quotation.ClientName}
+                  {clientName}
                 </p>
-                {client?.Company && (
-                  <p className="text-muted-foreground">{client.Company}</p>
+                {clientCompany && (
+                  <p className="text-muted-foreground">{clientCompany}</p>
                 )}
               </div>
               <div className="text-sm">
-                {client?.Email && <p>{client.Email}</p>}
-                {client?.Phone && <p>{client.Phone}</p>}
-                {client?.Address && (
-                  <p className="text-muted-foreground">{client.Address}</p>
+                {clientEmail && <p>{clientEmail}</p>}
+                {clientPhone && <p>{clientPhone}</p>}
+                {clientAddress && (
+                  <p className="text-muted-foreground">{clientAddress}</p>
                 )}
               </div>
             </div>
@@ -305,6 +349,14 @@ export const QuotationDetail = () => {
           )}
         </div>
       </div>
+
+      <GenerateProposalModal
+        isOpen={isProposalModalOpen}
+        onClose={() => setIsProposalModalOpen(false)}
+        quotation={quotation}
+        client={client}
+        businessInfo={businessInfo}
+      />
     </MainLayout>
   );
 };

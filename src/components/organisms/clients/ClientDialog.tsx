@@ -72,7 +72,7 @@ export function ClientDialog({
         Name: client.Name,
         Email: client.Email,
         Phone: client.Phone,
-        PersonType: client.PersonType || 'juridica',
+        PersonType: (client.PersonType as any) || 'juridica',
         Company: client.Company || '',
         Address: client.Address || '',
         TaxID: client.TaxID || '',

@@ -2,8 +2,9 @@ import { Link } from 'react-router-dom';
 
 import { StatusBadge } from '@/components/atoms/StatusBadge';
 import { formatCurrency } from '@/lib/utils';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, FileText } from 'lucide-react';
 import { useQuotation } from '@/useCases/useQuotation';
+import { TableEmptyState } from '@/components/molecules/TableEmptyState';
 
 export function RecentQuotations() {
   const { quotations } = useQuotation();
@@ -25,8 +26,13 @@ export function RecentQuotations() {
 
       <div className="divide-y-2 divide-border">
         {recentQuotations.length === 0 ? (
-          <div className="p-8 text-center text-muted-foreground">
-            No hay cotizaciones aún
+          <div className="p-4">
+            <TableEmptyState
+              compact
+              icon={FileText}
+              title="Sin Cotizaciones Recientes"
+              description="No hay cotizaciones registradas aún."
+            />
           </div>
         ) : (
           recentQuotations.map((quotation) => (
