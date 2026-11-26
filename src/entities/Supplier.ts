@@ -3,8 +3,11 @@ export interface Supplier {
   Name: string;
   Email: string;
   Phone: string;
-  TaxId?: string;
+  Company?: string;
   Address?: string;
+  PersonType?: string;
+  TaxId?: string;
   ContactName?: string;
   CreatedAt: Date;
 }
+

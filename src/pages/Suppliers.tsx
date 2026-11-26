@@ -80,7 +80,7 @@ export default function Suppliers() {
                         Gestiona tus proveedores de bienes y servicios
                     </p>
                 </div>
-                <Button onClick={() => setIsFormOpen(true)} disabled={isLoading}>
+                <Button onClick={() => setIsFormOpen(true)}>
                     <Plus className="mr-2 h-4 w-4" />
                     Nuevo Proveedor
                 </Button>

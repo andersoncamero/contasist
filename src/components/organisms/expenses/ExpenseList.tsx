@@ -4,6 +4,7 @@ import { Input } from "@/components/atoms/Input";
 import { StatusBadge } from "@/components/atoms/StatusBadge";
 import { Expense } from "@/entities/Expense";
 import { formatShortDate, formatCurrency } from "@/lib/utils";
+import { TableEmptyState } from "@/components/molecules/TableEmptyState";
 
 interface ExpenseListProps {
     expenses: Expense[];
@@ -45,6 +46,17 @@ export function ExpenseList({
                 </div>
             </div>
 
+            {filteredExpenses.length === 0 ? (
+                <TableEmptyState
+                    icon={Receipt}
+                    title="Sin Gastos Registrados"
+                    description={
+                        search
+                            ? "No se encontraron gastos con los criterios de búsqueda."
+                            : "Agrega tu primer gasto o factura para comenzar."
+                    }
+                />
+            ) : (
             <div className="border-2 border-border bg-card rounded-lg overflow-hidden">
                 <div className="table-header rounded-t-lg hidden md:flex gap-4">
                     <div className="flex-[1.5] flex items-center justify-start text-left">Gasto / Proveedor</div>
@@ -55,15 +67,6 @@ export function ExpenseList({
                     <div className="w-[120px] flex items-center justify-end text-right">Acciones</div>
                 </div>
 
-                {filteredExpenses.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center p-12 text-center">
-                        <Receipt className="h-12 w-12 text-muted-foreground" />
-                        <p className="mt-4 text-lg font-medium">No hay gastos registrados</p>
-                        <p className="text-muted-foreground">
-                            Agrega tu primer gasto o factura para comenzar
-                        </p>
-                    </div>
-                ) : (
                     <div className="divide-y-2 divide-border">
                         {filteredExpenses.map((expense) => (
                             <div key={expense.ID}>
@@ -185,8 +188,8 @@ export function ExpenseList({
                             </div>
                         ))}
                     </div>
-                )}
             </div>
+            )}
         </div>
     );
 }

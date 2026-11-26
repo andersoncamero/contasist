@@ -3,6 +3,7 @@ import { Button } from "@/components/atoms/Button";
 import { Input } from "@/components/atoms/Input";
 import { Supplier } from "@/entities/Supplier";
 import { formatShortDate } from "@/lib/utils";
+import { TableEmptyState } from "@/components/molecules/TableEmptyState";
 
 interface SupplierListProps {
     suppliers: Supplier[];
@@ -42,6 +43,17 @@ export function SupplierList({
                 </div>
             </div>
 
+            {filteredSuppliers.length === 0 ? (
+                <TableEmptyState
+                    icon={Truck}
+                    title="Sin Proveedores Registrados"
+                    description={
+                        search
+                            ? "No se encontraron proveedores que coincidan con tu búsqueda."
+                            : "Agrega tu primer proveedor para comenzar."
+                    }
+                />
+            ) : (
             <div className="border-2 border-border bg-card rounded-lg overflow-hidden">
                 <div className="table-header rounded-t-lg hidden md:flex gap-4">
                     <div className="flex-1 flex items-center justify-start text-left">Proveedor</div>
@@ -50,15 +62,6 @@ export function SupplierList({
                     <div className="w-[100px] flex items-center justify-end text-right">Acciones</div>
                 </div>
 
-                {filteredSuppliers.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center p-12 text-center">
-                        <Truck className="h-12 w-12 text-muted-foreground" />
-                        <p className="mt-4 text-lg font-medium">No hay proveedores</p>
-                        <p className="text-muted-foreground">
-                            Agrega tu primer proveedor para comenzar
-                        </p>
-                    </div>
-                ) : (
                     <div className="divide-y-2 divide-border">
                         {filteredSuppliers.map((supplier) => (
                             <div key={supplier.ID}>
@@ -143,8 +146,8 @@ export function SupplierList({
                             </div>
                         ))}
                     </div>
-                )}
             </div>
+            )}
         </div>
     );
 }

@@ -22,11 +22,13 @@ import { Supplier } from '@/entities/Supplier';
 
 const supplierSchema = z.object({
     Name: z.string().min(2, 'La razón social debe tener al menos 2 caracteres'),
-    Email: z.email('Email inválido'),
+    Email: z.string().email('Email inválido'),
     Phone: z.string().min(10, 'El teléfono debe tener al menos 10 dígitos'),
     ContactName: z.string().optional(),
+    Company: z.string().optional(),
     Address: z.string().optional(),
     TaxId: z.string().optional(),
+    PersonType: z.string().optional(),
 });
 
 type SupplierFormData = z.infer<typeof supplierSchema>;
@@ -51,8 +53,10 @@ export function SupplierForm({
             Email: '',
             Phone: '',
             ContactName: '',
+            Company: '',
             Address: '',
             TaxId: '',
+            PersonType: 'PF',
         },
     });
 
@@ -63,8 +67,10 @@ export function SupplierForm({
                 Email: supplier.Email,
                 Phone: supplier.Phone,
                 ContactName: supplier.ContactName || '',
+                Company: supplier.Company || '',
                 Address: supplier.Address || '',
                 TaxId: supplier.TaxId || '',
+                PersonType: supplier.PersonType || 'PF',
             });
         } else {
             form.reset({
@@ -72,8 +78,10 @@ export function SupplierForm({
                 Email: '',
                 Phone: '',
                 ContactName: '',
+                Company: '',
                 Address: '',
                 TaxId: '',
+                PersonType: 'PF',
             });
         }
     }, [supplier, form]);

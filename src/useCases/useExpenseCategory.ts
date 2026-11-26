@@ -1,8 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { ExpenseCategory } from "@/entities/ExpenseCategory";
-import { API_BASE_URL, getAuthHeader } from "@/services/apiConfig";
+import { API_BASE_URL, getFetchOptions, parseResponseJson } from "@/services/apiConfig";
+import { useCompany } from "./useCompany";
 
-// Tipos de API
 interface ApiCategoryResponse {
   ID: string;
   Name: string;
@@ -11,7 +11,6 @@ interface ApiCategoryResponse {
   created_at?: string;
 }
 
-// Mappers
 const mapApiCategory = (apiCategory: ApiCategoryResponse): ExpenseCategory => ({
   ID: apiCategory.ID,
   Name: apiCategory.Name,
@@ -20,60 +19,44 @@ const mapApiCategory = (apiCategory: ApiCategoryResponse): ExpenseCategory => ({
   CreatedAt: new Date(apiCategory.created_at || Date.now()),
 });
 
-// Funciones API
-const fetchCategoriesApi = async (): Promise<ExpenseCategory[]> => {
-  const response = await fetch(`${API_BASE_URL}/expense-categories`, {
-    headers: getAuthHeader(),
-  });
-  if (!response.ok) throw new Error("Error al obtener categorías de gastos");
-  const data: ApiCategoryResponse[] = await response.json();
-  return data.map(mapApiCategory);
+const fetchCategoriesApi = async (companyId?: number): Promise<ExpenseCategory[]> => {
+  const response = await fetch(`${API_BASE_URL}/expense-categories`, getFetchOptions(companyId));
+  const data = (await parseResponseJson(response)) as ApiCategoryResponse[];
+  return Array.isArray(data) ? data.map(mapApiCategory) : [];
 };
 
 const addCategoryApi = async (category: Omit<ExpenseCategory, "ID" | "CreatedAt">) => {
-  const response = await fetch(`${API_BASE_URL}/expense-categories`, {
+  const response = await fetch(`${API_BASE_URL}/expense-categories`, getFetchOptions(undefined, {
     method: "POST",
-    headers: getAuthHeader(),
     body: JSON.stringify(category),
-  });
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.message || "Error al crear categoría de gasto");
-  }
-  return response.json();
+  }));
+  return parseResponseJson(response);
 };
 
 const updateCategoryApi = async ({ id, data }: { id: string; data: Partial<ExpenseCategory> }) => {
-  const response = await fetch(`${API_BASE_URL}/expense-categories/${id}`, {
+  const response = await fetch(`${API_BASE_URL}/expense-categories/${id}`, getFetchOptions(undefined, {
     method: "PUT",
-    headers: getAuthHeader(),
     body: JSON.stringify(data),
-  });
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.message || "Error al actualizar categoría de gasto");
-  }
-  return response.json();
+  }));
+  return parseResponseJson(response);
 };
 
 const deleteCategoryApi = async (id: string) => {
-  const response = await fetch(`${API_BASE_URL}/expense-categories/${id}`, {
+  const response = await fetch(`${API_BASE_URL}/expense-categories/${id}`, getFetchOptions(undefined, {
     method: "DELETE",
-    headers: getAuthHeader(),
-  });
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.message || "Error al eliminar categoría de gasto");
-  }
-  return response.json();
+  }));
+  return parseResponseJson(response);
 };
 
 export const useExpenseCategory = () => {
   const queryClient = useQueryClient();
+  const { activeCompanyId } = useCompany();
+  const numericCompanyId = activeCompanyId ? Number(activeCompanyId) : undefined;
 
   const query = useQuery({
-    queryKey: ["expense-categories"],
-    queryFn: fetchCategoriesApi,
+    queryKey: ["expense-categories", activeCompanyId],
+    queryFn: () => fetchCategoriesApi(numericCompanyId),
+    enabled: Boolean(numericCompanyId),
   });
 
   const addMutation = useMutation({
@@ -97,40 +80,13 @@ export const useExpenseCategory = () => {
     },
   });
 
-  const addCategory = async (category: Omit<ExpenseCategory, "ID" | "CreatedAt">) => {
-    try {
-      await addMutation.mutateAsync(category);
-      return { success: true };
-    } catch (error) {
-      return { success: false, error: (error as Error).message };
-    }
-  };
-
-  const updateCategory = async (id: string, data: Partial<ExpenseCategory>) => {
-    try {
-      await updateMutation.mutateAsync({ id, data });
-      return { success: true };
-    } catch (error) {
-      return { success: false, error: (error as Error).message };
-    }
-  };
-
-  const deleteCategory = async (id: string) => {
-    try {
-      await deleteMutation.mutateAsync(id);
-      return { success: true };
-    } catch (error) {
-      return { success: false, error: (error as Error).message };
-    }
-  };
-
   return {
     categories: query.data || [],
     isLoading: query.isLoading || addMutation.isPending || updateMutation.isPending || deleteMutation.isPending,
     error: query.error ? (query.error as Error).message : null,
     fetchCategories: async () => { await query.refetch(); },
-    addCategory,
-    updateCategory,
-    deleteCategory,
+    addCategory: addMutation.mutateAsync,
+    updateCategory: updateMutation.mutateAsync,
+    deleteCategory: deleteMutation.mutateAsync,
   };
 };

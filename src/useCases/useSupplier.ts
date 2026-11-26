@@ -1,85 +1,129 @@
+import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { API_BASE_URL, getFetchOptions } from "@/services/apiConfig";
 import { Supplier } from "@/entities/Supplier";
-import { API_BASE_URL, getAuthHeader } from "@/services/apiConfig";
+import { useCompany } from "./useCompany";
 
-// Tipos de API
 interface ApiSupplierResponse {
-  ID: string;
-  Name: string;
-  Email: string;
-  Phone: string;
-  TaxId?: string;
+  ID?: number | string;
+  id?: number | string;
+  Name?: string;
+  name?: string;
+  Email?: string;
+  email?: string;
+  Phone?: string;
+  phone?: string;
+  Company?: string;
+  company?: string;
   Address?: string;
+  address?: string;
+  PersonType?: string;
+  personType?: string;
+  TaxId?: string;
+  taxId?: string;
   ContactName?: string;
+  contactName?: string;
+  CreatedAt?: string;
   created_at?: string;
 }
 
-// Mappers
-const mapApiSupplier = (apiSupplier: ApiSupplierResponse): Supplier => ({
-  ID: apiSupplier.ID,
-  Name: apiSupplier.Name,
-  Email: apiSupplier.Email,
-  Phone: apiSupplier.Phone,
-  TaxId: apiSupplier.TaxId,
-  Address: apiSupplier.Address,
-  ContactName: apiSupplier.ContactName,
-  CreatedAt: new Date(apiSupplier.created_at || Date.now()),
-});
+const mapApiSupplier = (apiSupplier: ApiSupplierResponse): Supplier => {
+  const rawId = apiSupplier.ID || apiSupplier.id || "0";
+  return {
+    ID: String(rawId),
+    Name: apiSupplier.Name || apiSupplier.name || "",
+    Email: apiSupplier.Email || apiSupplier.email || "",
+    Phone: apiSupplier.Phone || apiSupplier.phone || "",
+    Company: apiSupplier.Company || apiSupplier.company || "",
+    Address: apiSupplier.Address || apiSupplier.address || "",
+    PersonType: apiSupplier.PersonType || apiSupplier.personType || "PF",
+    TaxId: apiSupplier.TaxId || apiSupplier.taxId || "",
+    ContactName: apiSupplier.ContactName || apiSupplier.contactName || "",
+    CreatedAt: new Date(apiSupplier.CreatedAt || apiSupplier.created_at || Date.now()),
+  };
+};
 
-// Funciones API
-const fetchSuppliersApi = async (): Promise<Supplier[]> => {
-  const response = await fetch(`${API_BASE_URL}/suppliers`, {
-    headers: getAuthHeader(),
-  });
+const fetchSuppliersApi = async (companyId?: number): Promise<Supplier[]> => {
+  const response = await fetch(`${API_BASE_URL}/suppliers`, getFetchOptions(companyId));
   if (!response.ok) throw new Error("Error al obtener proveedores");
   const data: ApiSupplierResponse[] = await response.json();
+  if (!Array.isArray(data)) return [];
   return data.map(mapApiSupplier);
 };
 
 const addSupplierApi = async (supplier: Omit<Supplier, "ID" | "CreatedAt">) => {
-  const response = await fetch(`${API_BASE_URL}/suppliers`, {
+  const payload = {
+    name: supplier.Name,
+    email: supplier.Email,
+    phone: supplier.Phone,
+    company: supplier.Company || supplier.Name,
+    address: supplier.Address || "N/A",
+    personType: supplier.PersonType || "PF",
+    taxId: supplier.TaxId || "0000000000-0",
+  };
+
+  const response = await fetch(`${API_BASE_URL}/suppliers`, getFetchOptions(undefined, {
     method: "POST",
-    headers: getAuthHeader(),
-    body: JSON.stringify(supplier),
-  });
+    body: JSON.stringify(payload),
+  }));
+
   if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.message || "Error al crear proveedor");
+    const errorData = await response.json().catch(() => null);
+    throw new Error(errorData?.message || "Error al crear proveedor");
   }
-  return response.json();
+
+  return response.json().catch(() => ({}));
 };
 
 const updateSupplierApi = async ({ id, data }: { id: string; data: Partial<Supplier> }) => {
-  const response = await fetch(`${API_BASE_URL}/suppliers/${id}`, {
+  const payload: Record<string, string> = {};
+  if (data.Name !== undefined) payload.name = data.Name;
+  if (data.Email !== undefined) payload.email = data.Email;
+  if (data.Phone !== undefined) payload.phone = data.Phone;
+  if (data.Company !== undefined) payload.company = data.Company;
+  if (data.Address !== undefined) payload.address = data.Address;
+  if (data.PersonType !== undefined) payload.personType = data.PersonType;
+  if (data.TaxId !== undefined) payload.taxId = data.TaxId;
+
+  const response = await fetch(`${API_BASE_URL}/suppliers/${id}`, getFetchOptions(undefined, {
     method: "PUT",
-    headers: getAuthHeader(),
-    body: JSON.stringify(data),
-  });
+    body: JSON.stringify(payload),
+  }));
+
   if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.message || "Error al actualizar proveedor");
+    const errorData = await response.json().catch(() => null);
+    throw new Error(errorData?.message || "Error al actualizar proveedor");
   }
-  return response.json();
+
+  if (response.status === 204) return {};
+  return response.json().catch(() => ({}));
 };
 
 const deleteSupplierApi = async (id: string) => {
-  const response = await fetch(`${API_BASE_URL}/suppliers/${id}`, {
+  const response = await fetch(`${API_BASE_URL}/suppliers/${id}`, getFetchOptions(undefined, {
     method: "DELETE",
-    headers: getAuthHeader(),
-  });
+  }));
+
   if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.message || "Error al eliminar proveedor");
+    const errorData = await response.json().catch(() => null);
+    throw new Error(errorData?.message || "Error al eliminar proveedor");
   }
-  return response.json();
+
+  return true;
 };
 
 export const useSupplier = () => {
   const queryClient = useQueryClient();
+  const { activeCompanyId } = useCompany();
+  const numericCompanyId = activeCompanyId ? Number(activeCompanyId) : undefined;
 
   const query = useQuery({
-    queryKey: ["suppliers"],
-    queryFn: fetchSuppliersApi,
+    queryKey: ["suppliers", activeCompanyId],
+    queryFn: () => fetchSuppliersApi(numericCompanyId),
+    enabled: Boolean(numericCompanyId),
+    staleTime: 1000 * 60 * 5,
+    retry: 1,
+    refetchOnWindowFocus: false,
   });
 
   const addMutation = useMutation({
@@ -102,7 +146,7 @@ export const useSupplier = () => {
       queryClient.invalidateQueries({ queryKey: ["suppliers"] });
     },
   });
-  
+
   const addSupplier = async (supplier: Omit<Supplier, "ID" | "CreatedAt">) => {
     try {
       await addMutation.mutateAsync(supplier);
@@ -132,11 +176,15 @@ export const useSupplier = () => {
 
   return {
     suppliers: query.data || [],
-    isLoading: query.isLoading || addMutation.isPending || updateMutation.isPending || deleteMutation.isPending,
+    isLoading: query.isLoading,
+    isMutating: addMutation.isPending || updateMutation.isPending || deleteMutation.isPending,
     error: query.error ? (query.error as Error).message : null,
-    fetchSuppliers: async () => { await query.refetch(); },
+    fetchSuppliers: async () => {
+      await query.refetch();
+    },
     addSupplier,
     updateSupplier,
     deleteSupplier,
   };
 };
+
