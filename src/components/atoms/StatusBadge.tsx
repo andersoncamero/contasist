@@ -1,6 +1,6 @@
 import { cn } from '@/lib/utils';
 
-type Status = 'draft' | 'sent' | 'approved' | 'rejected';
+type Status = 'draft' | 'sent' | 'approved' | 'accepted' | 'rejected' | 'billed';
 
 const statusConfig: Record<Status, { label: string; className: string }> = {
   draft: {
@@ -15,9 +15,17 @@ const statusConfig: Record<Status, { label: string; className: string }> = {
     label: 'Aprobada',
     className: 'bg-primary text-primary-foreground border-border',
   },
+  accepted: {
+    label: 'Aceptada',
+    className: 'bg-primary text-primary-foreground border-border',
+  },
   rejected: {
     label: 'Rechazada',
     className: 'bg-destructive text-destructive-foreground border-destructive',
+  },
+  billed: {
+    label: 'Facturada',
+    className: 'bg-emerald-600 text-white border-emerald-700',
   },
 };
 
