@@ -5,21 +5,28 @@ import { Toaster } from "./components/molecules/Toaster";
 import { Toaster as Sonner } from "./components/atoms/Sonner";
 import { TooltipProvider } from "./components/atoms/Tooltip";
 import { Auth } from "./pages/Auth";
+import { ResetPassword } from "./pages/ResetPassword";
 import { Dashboard } from "./pages/Dashboard";
-import Clients from "./pages/Clients";
+import { Clients } from "./pages/Clients";
 import NotFound from "./pages/NotFound";
 import Products from "./pages/Products";
+import ServiceCategories from "./pages/ServiceCategories";
 import Suppliers from "./pages/Suppliers";
 import Expenses from "./pages/Expenses";
 import ChartOfAccounts from "./pages/ChartOfAccounts";
 import AccountingJournal from "./pages/AccountingJournal";
 import { Quotations } from "./pages/Quotations";
+import { Proposals } from "./pages/Proposals";
 import { QuotationDetail } from "./pages/QuotationDetail";
 import { QuotationNew } from "./pages/QuotationNew";
+import { Invoices } from "./pages/Invoices";
+import { InvoiceDetail } from "./pages/InvoiceDetail";
+import { Companies } from "./pages/Companies";
 import { Settings } from "./pages/Settings";
 import { BalanceSheet } from "./pages/BalanceSheet";
 import { IncomeStatement } from "./pages/IncomeStatement";
 import { AuxiliaryReport } from "./pages/AuxiliaryReport";
+import { TrialBalance } from "./pages/TrialBalance";
 import { InventoryDashboard } from "./pages/InventoryDashboard";
 import { InventoryMovementNew } from "./pages/InventoryMovementNew";
 import { KardexReport } from "./pages/KardexReport";
@@ -37,84 +44,125 @@ function App() {
         <BrowserRouter>
           <Routes>
             <Route path="/auth" element={<Auth />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             <Route
               path="/"
               element={
-                //<ProtectedRoute>
-                <Dashboard />
-                //</ProtectedRoute>
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
               }
             />
             <Route
               path="/clients"
               element={
-                //<ProtectedRoute>
-                <Clients />
-                //</ProtectedRoute>
+                <ProtectedRoute>
+                  <Clients />
+                </ProtectedRoute>
               }
             />
             <Route
               path="/products"
               element={
-                //<ProtectedRoute>
-                <Products />
-                //</ProtectedRoute>
+                <ProtectedRoute>
+                  <Products />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/service-categories"
+              element={
+                <ProtectedRoute>
+                  <ServiceCategories />
+                </ProtectedRoute>
               }
             />
             <Route
               path="/suppliers"
               element={
-                //<ProtectedRoute>
-                <Suppliers />
-                //</ProtectedRoute>
+                <ProtectedRoute>
+                  <Suppliers />
+                </ProtectedRoute>
               }
             />
             <Route
               path="/expenses"
               element={
-                //<ProtectedRoute>
-                <Expenses />
-                //</ProtectedRoute>
+                <ProtectedRoute>
+                  <Expenses />
+                </ProtectedRoute>
               }
             />
             <Route
               path="/accounting/chart"
               element={
-                //<ProtectedRoute>
-                <ChartOfAccounts />
-                //</ProtectedRoute>
+                <ProtectedRoute>
+                  <ChartOfAccounts />
+                </ProtectedRoute>
               }
             />
             <Route
               path="/accounting/journal"
               element={
-                //<ProtectedRoute>
-                <AccountingJournal />
-                //</ProtectedRoute>
+                <ProtectedRoute>
+                  <AccountingJournal />
+                </ProtectedRoute>
               }
             />
             <Route
               path="/quotations"
               element={
-                //<ProtectedRoute>
-                <Quotations />
-                //</ProtectedRoute>
+                <ProtectedRoute>
+                  <Quotations />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/invoices"
+              element={
+                <ProtectedRoute>
+                  <Invoices />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/invoices/:id"
+              element={
+                <ProtectedRoute>
+                  <InvoiceDetail />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/proposals"
+              element={
+                <ProtectedRoute>
+                  <Proposals />
+                </ProtectedRoute>
               }
             />
             <Route
               path="/quotations/:id"
               element={
-                //<ProtectedRoute>
-                <QuotationDetail />
-                //</ProtectedRoute>
+                <ProtectedRoute>
+                  <QuotationDetail />
+                </ProtectedRoute>
               }
             />
             <Route
               path="/quotations/new"
               element={
-                //<ProtectedRoute>
-                <QuotationNew />
-                //</ProtectedRoute>
+                <ProtectedRoute>
+                  <QuotationNew />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/companies"
+              element={
+                <ProtectedRoute>
+                  <Companies />
+                </ProtectedRoute>
               }
             />
             <Route
@@ -128,49 +176,57 @@ function App() {
             <Route
               path="/reports/balance"
               element={
-                //<ProtectedRoute>
-                <BalanceSheet />
-                //</ProtectedRoute>
+                <ProtectedRoute>
+                  <BalanceSheet />
+                </ProtectedRoute>
               }
             />
             <Route
               path="/reports/income-statement"
               element={
-                //<ProtectedRoute>
-                <IncomeStatement />
-                //</ProtectedRoute>
+                <ProtectedRoute>
+                  <IncomeStatement />
+                </ProtectedRoute>
               }
             />
             <Route
               path="/reports/auxiliary"
               element={
-                //<ProtectedRoute>
-                <AuxiliaryReport />
-                //</ProtectedRoute>
+                <ProtectedRoute>
+                  <AuxiliaryReport />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/reports/trial-balance"
+              element={
+                <ProtectedRoute>
+                  <TrialBalance />
+                </ProtectedRoute>
               }
             />
             <Route
               path="/inventory"
               element={
-                //<ProtectedRoute>
-                <InventoryDashboard />
-                //</ProtectedRoute>
+                <ProtectedRoute>
+                  <InventoryDashboard />
+                </ProtectedRoute>
               }
             />
             <Route
               path="/inventory/movements/new"
               element={
-                //<ProtectedRoute>
-                <InventoryMovementNew />
-                //</ProtectedRoute>
+                <ProtectedRoute>
+                  <InventoryMovementNew />
+                </ProtectedRoute>
               }
             />
             <Route
               path="/inventory/kardex/:id"
               element={
-                //<ProtectedRoute>
-                <KardexReport />
-                //</ProtectedRoute>
+                <ProtectedRoute>
+                  <KardexReport />
+                </ProtectedRoute>
               }
             />
             <Route path="*" element={<NotFound />} />

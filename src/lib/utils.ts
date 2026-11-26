@@ -12,20 +12,26 @@ export function formatCurrency(amount: number): string {
   }).format(amount);
 }
 
-export function formatDate(date: Date | string): string {
+export function formatDate(date: Date | string | null | undefined): string {
+  if (!date) return "-";
+  const parsedDate = new Date(date);
+  if (isNaN(parsedDate.getTime())) return "-";
   return new Intl.DateTimeFormat('es-MX', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
-  }).format(new Date(date));
+  }).format(parsedDate);
 }
 
-export function formatShortDate(date: Date | string): string {
+export function formatShortDate(date: Date | string | null | undefined): string {
+  if (!date) return "-";
+  const parsedDate = new Date(date);
+  if (isNaN(parsedDate.getTime())) return "-";
   return new Intl.DateTimeFormat('es-MX', {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
-  }).format(new Date(date));
+  }).format(parsedDate);
 }
 
 export function generateId(): string {

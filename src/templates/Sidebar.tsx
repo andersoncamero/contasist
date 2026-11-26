@@ -4,6 +4,7 @@ import {
   Users,
   Package,
   FileText,
+  FileCheck,
   Settings,
   Receipt,
   LogOut,
@@ -19,7 +20,10 @@ import {
   ChevronRight,
   ShoppingCart,
   HelpCircle,
-  Boxes
+  Boxes,
+  Building2,
+  Scale,
+  type LucideIcon
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/useCases/auth";
@@ -29,12 +33,20 @@ import {
   SheetContent,
   SheetTrigger,
 } from "@/components/molecules/Sheet";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/molecules/Dialog";
 import { useState, useEffect } from "react";
+import { CompanySwitcher } from "@/components/organisms/dashboard/CompanySwitcher";
 
 type NavItem = {
   name: string;
   href?: string;
-  icon: any;
+  icon: LucideIcon;
   subItems?: Omit<NavItem, 'subItems'>[];
 };
 
@@ -46,6 +58,8 @@ const navigation: NavItem[] = [
     subItems: [
       { name: "Clientes", href: "/clients", icon: Users },
       { name: "Cotizaciones", href: "/quotations", icon: FileText },
+      { name: "Facturación", href: "/invoices", icon: Receipt },
+      { name: "Propuestas", href: "/proposals", icon: FileCheck },
     ]
   },
   {
@@ -61,6 +75,7 @@ const navigation: NavItem[] = [
     icon: Box,
     subItems: [
       { name: "Catálogo", href: "/products", icon: Package },
+      { name: "Categorías & Servicios", href: "/service-categories", icon: ListTree },
       { name: "Control de Stock", href: "/inventory", icon: Boxes },
     ]
   },
@@ -70,11 +85,13 @@ const navigation: NavItem[] = [
     subItems: [
       { name: "Plan de Cuentas", href: "/accounting/chart", icon: ListTree },
       { name: "Libro Diario", href: "/accounting/journal", icon: BookOpen },
+      { name: "Balance de Prueba", href: "/reports/trial-balance", icon: Scale },
       { name: "Balance General", href: "/reports/balance", icon: FileText },
       { name: "Estado de Resultados", href: "/reports/income-statement", icon: TrendingUp },
       { name: "Movimientos Auxiliares", href: "/reports/auxiliary", icon: FileSearch },
     ]
   },
+  { name: "Empresas", href: "/companies", icon: Building2 },
   { name: "Configuración", href: "/settings", icon: Settings },
 ];
 
@@ -154,9 +171,10 @@ function NavGroup({ item, onNavigate, depth = 0 }: { item: NavItem, onNavigate?:
 function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
   const navigate = useNavigate();
   const { currentUser, logout } = useAuth();
+  const [helpOpen, setHelpOpen] = useState(false);
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logout();
     navigate("/auth");
   };
 
@@ -167,7 +185,11 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
         <span className="text-2xl font-bold tracking-tight text-primary">CONTASIST</span>
       </div>
 
-      <nav className="mt-6 px-4 flex-1 overflow-y-auto mb-4 scrollbar-hide">
+      <div className="px-4 mt-2 mb-1">
+        <CompanySwitcher />
+      </div>
+
+      <nav className="mt-4 px-4 flex-1 overflow-y-auto mb-4 scrollbar-hide">
         <ul className="space-y-2">
           {navigation.map((item) => (
             <NavGroup key={item.name} item={item} onNavigate={onNavigate} />
@@ -190,14 +212,16 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
         )}
         <div className="flex gap-2">
           <Button
+            type="button"
             variant="outline"
             className="w-full justify-center gap-2 border-border/50 shadow-sm"
-            onClick={() => { }}
+            onClick={() => setHelpOpen(true)}
           >
             <HelpCircle className="h-4 w-4" />
             Ayuda
           </Button>
           <Button
+            type="button"
             variant="outline"
             className="w-full justify-center gap-2 border-border/50 shadow-sm text-destructive hover:text-destructive hover:bg-destructive/10"
             onClick={handleLogout}
@@ -207,6 +231,37 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
           </Button>
         </div>
       </div>
+
+      <Dialog open={helpOpen} onOpenChange={setHelpOpen}>
+        <DialogContent className="sm:max-w-[440px]">
+          <DialogHeader>
+            <DialogTitle>Centro de Ayuda · ContAsist</DialogTitle>
+            <DialogDescription>
+              Guía rápida de inicio y canal de soporte técnico.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 text-sm text-muted-foreground">
+            <div className="rounded-lg border border-border bg-muted/40 p-3 space-y-1.5">
+              <p className="font-semibold text-foreground">Primeros pasos recomendados</p>
+              <p>1. Registra tu empresa desde el selector superior izquierdo.</p>
+              <p>2. Configura datos fiscales y cuentas por defecto en Configuración.</p>
+              <p>3. Crea clientes, catálogo de productos/servicios y emite cotizaciones o facturas.</p>
+            </div>
+            <div className="rounded-lg border border-border p-3 space-y-1">
+              <p className="font-semibold text-foreground">Soporte técnico</p>
+              <p>
+                Escríbenos a{" "}
+                <a
+                  href="mailto:contasist.soporte@gmail.com"
+                  className="font-semibold text-primary hover:underline"
+                >
+                  contasist.soporte@gmail.com
+                </a>
+              </p>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
