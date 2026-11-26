@@ -86,10 +86,50 @@ export default {
             height: "0",
           },
         },
+        "showcase-enter": {
+          "0%": {
+            opacity: "0",
+            transform: "translateY(18px) scale(0.97)",
+          },
+          "100%": {
+            opacity: "1",
+            transform: "translateY(0) scale(1)",
+          },
+        },
+        "showcase-float": {
+          "0%, 100%": {
+            transform: "translateY(0px)",
+          },
+          "50%": {
+            transform: "translateY(-6px)",
+          },
+        },
+        "showcase-float-reverse": {
+          "0%, 100%": {
+            transform: "translateY(0px)",
+          },
+          "50%": {
+            transform: "translateY(6px)",
+          },
+        },
+        "showcase-caption": {
+          "0%": {
+            opacity: "0",
+            transform: "translateY(6px)",
+          },
+          "100%": {
+            opacity: "1",
+            transform: "translateY(0)",
+          },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "showcase-enter": "showcase-enter 0.65s cubic-bezier(0.22, 1, 0.36, 1) both",
+        "showcase-float": "showcase-float 8s ease-in-out infinite",
+        "showcase-float-reverse": "showcase-float-reverse 9s ease-in-out infinite",
+        "showcase-caption": "showcase-caption 0.45s cubic-bezier(0.22, 1, 0.36, 1) both",
       },
       fontFamily: {
         sans: [
