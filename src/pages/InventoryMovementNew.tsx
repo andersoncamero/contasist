@@ -51,8 +51,8 @@ export const InventoryMovementNew = () => {
         description: ""
     });
 
-    const physicalProducts = products.filter(p => !p.isService);
-    const selectedProduct = physicalProducts.find(p => p.id === formData.productId);
+    const physicalProducts = products.filter(p => !p.IsService && p.ItemType !== 'SERVICE');
+    const selectedProduct = physicalProducts.find(p => String(p.id || p.ID) === String(formData.productId));
     const currentStock = selectedProduct ? getProductStock(selectedProduct) : 0;
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -88,6 +88,8 @@ export const InventoryMovementNew = () => {
         if (result.success) {
             toast.success("Movimiento registrado correctamente");
             navigate("/inventory");
+        } else {
+            toast.error(result.error || "Error al registrar el movimiento");
         }
     };
 
@@ -122,9 +124,12 @@ export const InventoryMovementNew = () => {
                                             <SelectValue placeholder="Seleccione producto..." />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            {physicalProducts.map(p => (
-                                                <SelectItem key={p.id} value={p.id}>{p.code} - {p.name}</SelectItem>
-                                            ))}
+                                            {physicalProducts.map(p => {
+                                                const pId = String(p.id || p.ID);
+                                                return (
+                                                    <SelectItem key={pId} value={pId}>{p.Code || p.code} - {p.Name || p.name}</SelectItem>
+                                                );
+                                            })}
                                         </SelectContent>
                                     </Select>
                                 </div>

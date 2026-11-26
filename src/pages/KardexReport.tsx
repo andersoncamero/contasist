@@ -21,12 +21,13 @@ import { formatCurrency } from "@/lib/utils";
 import { Badge } from "@/components/atoms/Badge";
 import { exportService } from "@/services/exportService";
 import { SEO } from "@/components/atoms/SEO";
+import { TableEmptyState } from "@/components/molecules/TableEmptyState";
 
 export const KardexReport = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const { products } = useProduct();
-    const product = products.find(p => p.ID === id) || null;
+    const product = products.find(p => String(p.id || p.ID) === String(id)) || null;
     const { kardex } = useKardex(product);
 
     if (!product) {
@@ -135,7 +136,17 @@ export const KardexReport = () => {
 
                                 {/* Body */}
                                 <div className="divide-y divide-border">
-                                    {kardex.map((line, idx) => (
+                                    {kardex.length === 0 ? (
+                                        <div className="p-6">
+                                            <TableEmptyState
+                                                compact
+                                                icon={FileText}
+                                                title="Sin Movimientos en Kardex"
+                                                description="No hay entradas ni salidas registradas para este producto."
+                                            />
+                                        </div>
+                                    ) : (
+                                        kardex.map((line, idx) => (
                                         <div key={idx} className="grid grid-cols-[100px_1.5fr_repeat(9,minmax(0,1fr))] text-[13px] hover:bg-muted/5 transition-colors">
                                             <div className="px-4 py-3 items-center flex italic text-muted-foreground border-r border-border truncate">{line.date}</div>
                                             <div className="px-4 py-3 items-center flex font-medium uppercase border-r border-border truncate">{line.description}</div>
@@ -155,7 +166,8 @@ export const KardexReport = () => {
                                             <div className="px-2 py-3 items-center flex justify-end bg-blue-50/5 border-r border-border">{formatCurrency(line.balanceCost)}</div>
                                             <div className="px-2 py-3 items-center flex justify-end font-bold text-primary bg-blue-50/5">{formatCurrency(line.balanceTotal)}</div>
                                         </div>
-                                    ))}
+                                        ))
+                                    )}
                                 </div>
                             </div>
                         </div>

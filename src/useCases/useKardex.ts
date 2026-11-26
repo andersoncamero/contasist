@@ -27,12 +27,15 @@ export const useKardex = (product: Product | null) => {
     const kardex = useMemo(() => {
         if (!product) return [];
 
-        const movements = getMovementsByProduct(product.id);
+        const prodIdStr = String(product.id || product.ID);
+        const movements = getMovementsByProduct(prodIdStr);
         const lines: KardexLine[] = [];
 
-        // Saldo Inicial
-        let currentQty = product.initialStock || 0;
-        let currentTotal = (product.initialStock || 0) * (product.price * 0.6); // Asumimos un costo base del 60% del precio si no hay historial
+        const initStock = product.InitialStock ?? product.initialStock ?? 0;
+        const prodPrice = product.BasePrice ?? product.Price ?? product.price ?? 0;
+
+        let currentQty = initStock;
+        let currentTotal = initStock * (prodPrice * 0.6);
         let currentCost = currentQty > 0 ? currentTotal / currentQty : 0;
 
         lines.push({
