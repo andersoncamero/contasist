@@ -9,14 +9,14 @@ Actualmente, Contasist llega hasta la generación de **Cotizaciones**. El paso n
 *   **Gestión de Ventas:** Control de ciclo completo (Cotización -> Remisión/Albarán -> Factura).
 *   **Gestión de Cobros (Cuentas por Cobrar):** Seguimiento de facturas emitidas, vencimientos de pagos y recibos de caja.
 
-## 2. Módulo de Contabilidad y Plan de Cuentas (PUC)
-Actualmente, el PUC es fundamental para la estructuración contable. Se requiere una interfaz jerárquica para gestionar el catálogo de cuentas.
-*   **Gestión del PUC:** Interfaz para navegar la jerarquía (Clase, Grupo, Cuenta, Subcuenta).
-*   **Creación/Edición de Cuentas:** Formulario con validación de niveles de código y asignación de descripciones.
-*   **Visualización en Árbol:** Componente interactivo para expandir/colapsar niveles del plan de cuentas.
-*   **Búsqueda Avanzada:** Filtros por código PUC o nombre de cuenta.
-*   **Integración Contable:** Vinculación de cuentas con otros módulos (ej. Ventas -> Cuenta de Ingresos).
+## 2. Módulo de Contabilidad y Plan de Cuentas (PUC) — ✅ INTEGRADO (2026-11-24)
+El PUC y la contabilidad ya están conectados al backend Go:
+*   **Gestión del PUC:** El backend clona la plantilla oficial (Decreto 2650, 377 cuentas) por empresa; la interfaz lista, busca, crea subcuentas/auxiliares y desactiva cuentas (`/accounting/chart`).
+*   **Libro Diario:** Comprobantes reales del backend (automáticos por facturación/recaudo y manuales), con anulación por reversa (`/accounting/journal`).
+*   **Balance de Prueba:** Nuevo reporte `/reports/trial-balance` con sumas y saldos por cuenta.
+*   **Reportes financieros:** Balance General y Estado de Resultados se derivan del balance de prueba del backend; el auxiliar de cuenta consulta los movimientos reales por cuenta.
+*   **Causación automática configurable:** Cuentas por defecto (clientes, ingresos, IVA, caja, bancos) editables en Configuración → Contabilidad.
 
 ---
 **Conclusión para Contasist:**
-Para que Contasist evolucione de un "Gestor de Cotizaciones" a un "Software Contable", la prioridad número uno debería ser la **Facturación (Cuentas por Cobrar)**, la **Gestión de Gastos (Cuentas por Pagar)** y la implementación del **Plan de Cuentas (PUC)** como eje central de la contabilidad.
+Con la Facturación y el **Plan de Cuentas (PUC)** ya integrados al backend, la siguiente prioridad es la **Gestión de Gastos (Cuentas por Pagar)** y la emisión de facturación electrónica ante la DIAN.
