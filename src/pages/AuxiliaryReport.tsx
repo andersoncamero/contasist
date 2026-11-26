@@ -39,9 +39,9 @@ export const AuxiliaryReport = () => {
         ]);
 
         exportService.exportToPDF({
-            title: `AUXILIAR DE CUENTA: ${account.Code} - ${account.Name}`,
+            title: `AUXILIAR DE CUENTA: ${account.code} - ${account.name}`,
             subtitle: `Periodo: ${startDate} al ${endDate} | Saldo Inicial: ${formatCurrency(initialBalance)}`,
-            filename: `Auxiliar_${account.Code}`,
+            filename: `Auxiliar_${account.code}`,
             headers,
             data
         });
@@ -64,7 +64,7 @@ export const AuxiliaryReport = () => {
         ];
 
         exportService.exportToCSV({
-            filename: `Auxiliar_${account.Code}`,
+            filename: `Auxiliar_${account.code}`,
             headers,
             data
         });

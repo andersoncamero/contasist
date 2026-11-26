@@ -1,90 +1,90 @@
 import { useMemo, useState } from "react";
 import { useChartOfAccounts } from "./useChartOfAccounts";
-import { useJournalEntry } from "./useJournalEntry";
+import { useJournalEntries } from "./useJournalEntry";
 import { Account, AccountNature } from "../entities/Account";
-import { AccountingMovement } from "../entities/AccountingMovement";
 import { isBefore, isAfter, parseISO, startOfDay, endOfDay } from "date-fns";
 
-export interface AuxiliaryMovement extends AccountingMovement {
+export interface AuxiliaryMovement {
+  EntryID: number;
   Date: string;
-  EntryID: string;
   EntryDescription: string;
   Reference?: string;
+  Description?: string;
+  Debit: number;
+  Credit: number;
   RunningBalance: number;
 }
 
 export const useAuxiliaryReport = () => {
   const { accounts } = useChartOfAccounts();
-  const { entries } = useJournalEntry();
 
   const [selectedAccountId, setSelectedAccountId] = useState<string>("");
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>("");
 
-  const reportData = useMemo(() => {
-    if (!selectedAccountId) return { initialBalance: 0, movements: [], finalBalance: 0, account: null };
+  const accountId = selectedAccountId ? Number(selectedAccountId) : undefined;
+  const { data: entries = [], isLoading } = useJournalEntries(
+    { accountId },
+    !!accountId
+  );
 
-    const account = accounts.find(a => a.ID === selectedAccountId);
-    if (!account) return { initialBalance: 0, movements: [], finalBalance: 0, account: null };
+  const reportData = useMemo(() => {
+    const empty = { initialBalance: 0, movements: [] as AuxiliaryMovement[], finalBalance: 0, account: null as Account | null };
+    if (!accountId) return empty;
+
+    const account = accounts.find(a => a.id === accountId);
+    if (!account) return empty;
 
     const start = startDate ? startOfDay(parseISO(startDate)) : null;
     const end = endDate ? endOfDay(parseISO(endDate)) : null;
+    const applyMovement = (balance: number, debit: number, credit: number) =>
+      account.nature === AccountNature.Debito
+        ? balance + (debit - credit)
+        : balance + (credit - debit);
 
-    // 1. Calcular Saldo Inicial (movimientos antes de startDate)
     let initialBalance = 0;
-    const allMovements: AuxiliaryMovement[] = [];
+    const inRange: Omit<AuxiliaryMovement, "RunningBalance">[] = [];
 
     entries.forEach(entry => {
-      const entryDate = parseISO(entry.Date);
-      
-      entry.Movements.forEach(move => {
-        if (move.AccountID === selectedAccountId) {
-          const isBeforeStart = start && isBefore(entryDate, start);
-          const isInRange = (!start || !isBefore(entryDate, start)) && (!end || !isAfter(entryDate, end));
+      const entryDate = parseISO(entry.date);
+      const isBeforeStart = start && isBefore(entryDate, start);
+      const isInRange = (!start || !isBefore(entryDate, start)) && (!end || !isAfter(entryDate, end));
 
-          if (isBeforeStart) {
-            if (account.Nature === AccountNature.Debito) {
-              initialBalance += (move.Debit - move.Credit);
-            } else {
-              initialBalance += (move.Credit - move.Debit);
-            }
-          }
+      entry.lines.forEach(line => {
+        if (line.accountId !== accountId || entry.status !== "posted") return;
 
-          if (isInRange) {
-            allMovements.push({
-              ...move,
-              Date: entry.Date,
-              EntryID: entry.ID,
-              EntryDescription: entry.Description,
-              Reference: entry.Reference,
-              RunningBalance: 0 // Se calculará después
-            });
-          }
+        if (isBeforeStart) {
+          initialBalance = applyMovement(initialBalance, line.debit, line.credit);
+        }
+        if (isInRange) {
+          inRange.push({
+            EntryID: entry.id,
+            Date: entry.date,
+            EntryDescription: entry.description,
+            Reference: entry.number,
+            Description: line.description,
+            Debit: line.debit,
+            Credit: line.credit,
+          });
         }
       });
     });
 
-    // Ordenar movimientos por fecha
-    allMovements.sort((a, b) => parseISO(a.Date).getTime() - parseISO(b.Date).getTime());
+    inRange.sort((a, b) => parseISO(a.Date).getTime() - parseISO(b.Date).getTime());
 
-    // 2. Calcular Saldos Progresivos
     let currentBalance = initialBalance;
-    const movementsWithRunningBalance = allMovements.map(move => {
-      if (account.Nature === AccountNature.Debito) {
-        currentBalance += (move.Debit - move.Credit);
-      } else {
-        currentBalance += (move.Credit - move.Debit);
-      }
+    const movements = inRange.map(move => {
+      currentBalance = applyMovement(currentBalance, move.Debit, move.Credit);
       return { ...move, RunningBalance: currentBalance };
     });
 
     return {
       initialBalance,
-      movements: movementsWithRunningBalance,
+      movements,
       finalBalance: currentBalance,
-      account
+      account,
     };
-  }, [selectedAccountId, startDate, endDate, accounts, entries]);
+  }, [accountId, startDate, endDate, accounts, entries]);
 
   return {
     selectedAccountId,
@@ -94,6 +94,7 @@ export const useAuxiliaryReport = () => {
     endDate,
     setEndDate,
     accounts,
-    ...reportData
+    isLoading,
+    ...reportData,
   };
 };

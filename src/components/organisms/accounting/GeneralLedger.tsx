@@ -1,49 +1,17 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/molecules/Card";
-import { Account } from "@/entities/Account";
-import { JournalEntry } from "@/entities/JournalEntry";
+import { TrialBalanceRow } from "@/entities/JournalEntry";
 import { cn } from "@/lib/utils";
+import { Calculator } from "lucide-react";
+import { TableEmptyState } from "@/components/molecules/TableEmptyState";
 
 interface GeneralLedgerProps {
-    accounts: Account[];
-    entries: JournalEntry[];
+    rows: TrialBalanceRow[];
+    isLoading?: boolean;
 }
 
-export const GeneralLedger = ({ accounts, entries }: GeneralLedgerProps) => {
-    const ledgerData = useMemo(() => {
-        // Calcular saldos por cuenta
-        const balances: Record<string, { debit: number; credit: number }> = {};
-
-        entries.forEach(entry => {
-            entry.Movements.forEach(move => {
-                if (!balances[move.AccountID]) {
-                    balances[move.AccountID] = { debit: 0, credit: 0 };
-                }
-                balances[move.AccountID].debit += move.Debit;
-                balances[move.AccountID].credit += move.Credit;
-
-                // También acumular en cuentas padre (opcional, pero útil para contabilidad)
-                // Por ahora solo cuentas de detalle (Nivel 4)
-            });
-        });
-
-        return accounts
-            .filter(a => a.Level === 4 || balances[a.ID])
-            .map(account => {
-                const { debit = 0, credit = 0 } = balances[account.ID] || {};
-                const balance = account.Nature === 'Débito'
-                    ? debit - credit
-                    : credit - debit;
-
-                return {
-                    ...account,
-                    debit,
-                    credit,
-                    balance
-                };
-            })
-            .filter(a => a.debit > 0 || a.credit > 0); // Solo mostrar cuentas con movimiento
-    }, [accounts, entries]);
+export const GeneralLedger = ({ rows, isLoading = false }: GeneralLedgerProps) => {
+    const ledgerData = rows.filter(row => row.debit > 0 || row.credit > 0);
 
     return (
         <div className="space-y-4">
@@ -64,17 +32,26 @@ export const GeneralLedger = ({ accounts, entries }: GeneralLedgerProps) => {
                             </div>
 
                             <div className="divide-y divide-border">
-                                {ledgerData.length === 0 ? (
+                                {isLoading ? (
                                     <div className="text-center p-12 text-muted-foreground italic">
-                                        No hay movimientos registrados para este periodo.
+                                        Cargando movimientos...
+                                    </div>
+                                ) : ledgerData.length === 0 ? (
+                                    <div className="p-4">
+                                        <TableEmptyState
+                                            compact
+                                            icon={Calculator}
+                                            title="Sin Movimientos en Mayor"
+                                            description="No hay movimientos registrados para este periodo."
+                                        />
                                     </div>
                                 ) : (
                                     ledgerData.map((item) => (
-                                        <div key={item.ID} className="transition-colors hover:bg-muted/30">
+                                        <div key={item.accountId} className="transition-colors hover:bg-muted/30">
                                             {/* Desktop Layout */}
                                             <div className="hidden md:grid grid-cols-[100px_1fr_120px_120px_120px] items-center p-2 text-sm">
-                                                <div className="font-mono text-[11px] text-muted-foreground">{item.Code}</div>
-                                                <div className="font-medium">{item.Name}</div>
+                                                <div className="font-mono text-[11px] text-muted-foreground">{item.code}</div>
+                                                <div className="font-medium">{item.name}</div>
                                                 <div className="text-right">${item.debit.toLocaleString()}</div>
                                                 <div className="text-right">${item.credit.toLocaleString()}</div>
                                                 <div className={cn(
@@ -90,9 +67,9 @@ export const GeneralLedger = ({ accounts, entries }: GeneralLedgerProps) => {
                                                 <div className="flex justify-between items-start">
                                                     <div>
                                                         <span className="text-[10px] font-mono bg-muted px-1.5 py-0.5 rounded text-muted-foreground">
-                                                            {item.Code}
+                                                            {item.code}
                                                         </span>
-                                                        <h4 className="font-bold mt-1">{item.Name}</h4>
+                                                        <h4 className="font-bold mt-1">{item.name}</h4>
                                                     </div>
                                                     <div className={cn(
                                                         "text-lg font-black",

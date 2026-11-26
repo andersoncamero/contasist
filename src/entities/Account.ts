@@ -8,26 +8,38 @@ export const AccountClass = {
   CostosDeProduccion: 7,
   CuentasDeOrdenDeudoras: 8,
   CuentasDeOrdenAcreedoras: 9,
-}
+};
 
 export const AccountNature = {
   Debito: "Débito",
   Credito: "Crédito",
-}
+};
 
 export type AccountClassType = typeof AccountClass[keyof typeof AccountClass];
 export type AccountNatureType = typeof AccountNature[keyof typeof AccountNature];
 
 export interface Account {
-  id: string;
-  business_id: string;
+  id: number;
+  class: AccountClassType;
   code: string;
   name: string;
-  class: AccountClassType;
-  nature: AccountNatureType;
-  level: 1 | 2 | 3 | 4;
   description: string;
-  parent_id?: string;
+  nature: AccountNatureType;
+  level: number;
+  parent_id?: number | null;
   is_active: boolean;
-  created_at: string;
+}
+
+export interface CreateAccountReq {
+  code: string;
+  name: string;
+  description?: string;
+  nature?: AccountNatureType;
+  parentId: number;
+}
+
+export interface UpdateAccountReq {
+  name: string;
+  description?: string;
+  isActive?: boolean;
 }

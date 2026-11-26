@@ -5,6 +5,8 @@ import { Account } from "@/entities/Account";
 import { format, parseISO } from "date-fns";
 import { es } from "date-fns/locale";
 import { cn } from "@/lib/utils";
+import { FileSearch } from "lucide-react";
+import { TableEmptyState } from "@/components/molecules/TableEmptyState";
 
 interface AuxiliaryReportTableProps {
     movements: AuxiliaryMovement[];
@@ -21,10 +23,10 @@ export function AuxiliaryReportTable({ movements, initialBalance, finalBalance, 
             <div className="flex justify-between items-end border-b-2 border-border pb-4">
                 <div>
                     <h3 className="text-lg font-bold flex items-center gap-2">
-                        <span className="bg-primary/10 text-primary px-2 py-1 rounded text-sm font-mono">{account.Code}</span>
-                        {account.Name}
+                        <span className="bg-primary/10 text-primary px-2 py-1 rounded text-sm font-mono">{account.code}</span>
+                        {account.name}
                     </h3>
-                    <p className="text-sm text-muted-foreground italic">Naturaleza: {account.Nature}</p>
+                    <p className="text-sm text-muted-foreground italic">Naturaleza: {account.nature}</p>
                 </div>
                 <div className="text-right">
                     <p className="text-sm text-muted-foreground">Saldo a la fecha</p>
@@ -63,8 +65,13 @@ export function AuxiliaryReportTable({ movements, initialBalance, finalBalance, 
                             </div>
 
                             {movements.length === 0 ? (
-                                <div className="px-4 py-12 text-center text-muted-foreground italic">
-                                    No se encontraron movimientos en el rango seleccionado.
+                                <div className="p-4">
+                                    <TableEmptyState
+                                        compact
+                                        icon={FileSearch}
+                                        title="Sin Movimientos Auxiliares"
+                                        description="No se encontraron movimientos en el rango seleccionado."
+                                    />
                                 </div>
                             ) : (
                                 movements.map((move, index) => (

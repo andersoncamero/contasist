@@ -29,10 +29,10 @@ export function AuxiliaryReportFilters({
     endDate,
     onEndDateChange
 }: AuxiliaryReportFiltersProps) {
-    // Solo mostrar cuentas de nivel 4 (Subcuentas) para el auxiliar
+    // Cuentas de detalle (nivel 3 en adelante) para el auxiliar
     const subAccounts = accounts
-        .filter(acc => acc.Level === 4)
-        .sort((a, b) => a.Code.localeCompare(b.Code));
+        .filter(acc => acc.level >= 3)
+        .sort((a, b) => a.code.localeCompare(b.code));
 
     return (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-6 bg-card border-2 border-border rounded-xl shadow-sm">
@@ -44,9 +44,9 @@ export function AuxiliaryReportFilters({
                     </SelectTrigger>
                     <SelectContent className="max-h-80">
                         {subAccounts.map((acc) => (
-                            <SelectItem key={acc.ID} value={acc.ID}>
-                                <span className="font-mono text-xs mr-2">{acc.Code}</span>
-                                {acc.Name}
+                            <SelectItem key={acc.id} value={acc.id.toString()}>
+                                <span className="font-mono text-xs mr-2">{acc.code}</span>
+                                {acc.name}
                             </SelectItem>
                         ))}
                     </SelectContent>

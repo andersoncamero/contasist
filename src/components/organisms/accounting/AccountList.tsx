@@ -4,13 +4,14 @@ import { Button } from "@/components/atoms/Button";
 import { Input } from "@/components/atoms/Input";
 import { Account, AccountClassType } from "@/entities/Account";
 import { cn } from "@/lib/utils";
+import { TableEmptyState } from "@/components/molecules/TableEmptyState";
 
 interface AccountListProps {
     accounts: Account[];
     search: string;
     onSearchChange: (value: string) => void;
     onEdit: (account: Account) => void;
-    onDelete: (id: string) => void;
+    onDeactivate: (id: number) => void;
     isLoading: boolean;
     onAddNew: () => void;
 }
@@ -20,7 +21,7 @@ export function AccountList({
     search,
     onSearchChange,
     onEdit,
-    onDelete,
+    onDeactivate,
     isLoading,
     onAddNew,
 }: AccountListProps) {
@@ -61,27 +62,16 @@ export function AccountList({
                 </div>
             </div>
 
-            {/* Empty State or Table */}
             {sortedAccounts.length === 0 ? (
-                <div className="flex flex-col items-center justify-center p-12 bg-white border-2 border-dashed border-slate-200 rounded-2xl animate-in fade-in zoom-in duration-500 shadow-sm">
-                    <div className="bg-primary/10 p-5 rounded-full mb-6">
-                        <ListTree className="h-10 w-10 text-primary" />
-                    </div>
-                    <h3 className="text-2xl font-extrabold text-slate-900 mb-2">Sin Cuentas Configuradas</h3>
-                    <p className="text-slate-500 text-center max-w-sm mb-8 font-medium">
-                        Agrega tu primera cuenta buscando en el PUC estándar o créala manualmente para empezar tu contabilidad.
-                    </p>
-                    <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
-                        <Button
-                            onClick={onAddNew}
-                            disabled={isLoading}
-                            className="bg-primary hover:bg-primary/90 text-white font-bold h-12 px-8 rounded-xl shadow-lg shadow-primary/20 transition-all hover:scale-[1.02] active:scale-95 flex items-center gap-2"
-                        >
-                            <Plus className="h-5 w-5" />
-                            Agregar Nueva Cuenta
-                        </Button>
-                    </div>
-                </div>
+                <TableEmptyState
+                    icon={ListTree}
+                    title="Sin Cuentas Configuradas"
+                    description="Agrega tu primera cuenta buscando en el PUC estándar o créala manualmente para empezar tu contabilidad."
+                    actionLabel="Agregar Nueva Cuenta"
+                    actionIcon={Plus}
+                    onAction={onAddNew}
+                    actionDisabled={isLoading}
+                />
             ) : (
                 <div className="bg-white rounded-2xl shadow-xl shadow-slate-200/40 border border-slate-100 overflow-hidden">
                     <div className="overflow-x-auto">
@@ -101,7 +91,8 @@ export function AccountList({
                                         key={account.id}
                                         className={cn(
                                             "group transition-colors hover:bg-slate-50/80 items-center",
-                                            account.level === 1 && "bg-slate-50/30 font-bold"
+                                            account.level === 1 && "bg-slate-50/30 font-bold",
+                                            !account.is_active && "opacity-50"
                                         )}
                                     >
                                         <td className="py-4 px-6">
@@ -114,7 +105,12 @@ export function AccountList({
                                             </div>
                                         </td>
                                         <td className="py-4 px-6">
-                                            <div className="text-slate-900 font-medium">{account.name}</div>
+                                            <div className="text-slate-900 font-medium">
+                                                {account.name}
+                                                {!account.is_active && (
+                                                    <span className="ml-2 text-[10px] font-bold uppercase text-red-500">Inactiva</span>
+                                                )}
+                                            </div>
                                         </td>
                                         <td className="py-4 px-6">
                                             <span className="px-2.5 py-1 rounded-lg bg-slate-100 border border-slate-200 text-[11px] font-bold text-slate-600 whitespace-nowrap uppercase tracking-wider">
@@ -144,8 +140,9 @@ export function AccountList({
                                                     variant="ghost"
                                                     size="icon"
                                                     className="h-8 w-8 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg"
-                                                    onClick={() => onDelete(account.id)}
-                                                    disabled={isLoading}
+                                                    onClick={() => onDeactivate(account.id)}
+                                                    disabled={isLoading || !account.is_active}
+                                                    title="Desactivar cuenta"
                                                 >
                                                     <Trash2 className="h-4 w-4" />
                                                 </Button>

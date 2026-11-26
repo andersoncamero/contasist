@@ -1,55 +1,44 @@
-import { API_BASE_URL, getAuthHeader } from "./apiConfig";
-import { Account } from "../entities/Account";
+import { API_BASE_URL, getFetchOptions, parseResponseJson } from "./apiConfig";
+import { Account, CreateAccountReq, UpdateAccountReq } from "../entities/Account";
+
+export interface AccountListFilter {
+    search?: string;
+    parentId?: number;
+    activeOnly?: boolean;
+}
 
 export const AccountService = {
-    /**
-     * Obtiene todas las cuentas del plan de cuentas.
-     */
-    async getAll(): Promise<Account[]> {
-        const response = await fetch(`${API_BASE_URL}/accounts`, {
-            headers: getAuthHeader(),
-        });
-        if (!response.ok) throw new Error("Error fetching accounts");
-        const data = await response.json();
-        return (data || [])
+    async getAll(filter: AccountListFilter = {}): Promise<Account[]> {
+        const params = new URLSearchParams();
+        if (filter.search) params.append("search", filter.search);
+        if (filter.parentId) params.append("parentId", filter.parentId.toString());
+        if (filter.activeOnly) params.append("active", "true");
+
+        const url = `${API_BASE_URL}/accounts${params.toString() ? `?${params.toString()}` : ""}`;
+        const data = await parseResponseJson(await fetch(url, getFetchOptions()));
+        return Array.isArray(data) ? data : [];
     },
 
-    async create(account: Omit<Account, "id" | "created_at" | "is_active" | "business_id">): Promise<Account> {
-        const response = await fetch(`${API_BASE_URL}/accounts`, {
-            method: 'POST',
-            headers: {
-                ...getAuthHeader(),
-                'Content-Type': 'application/json',
-            },
+    async create(account: CreateAccountReq): Promise<Account> {
+        const response = await fetch(`${API_BASE_URL}/accounts`, getFetchOptions(undefined, {
+            method: "POST",
             body: JSON.stringify(account),
-        });
-        if (!response.ok) throw new Error("Error creating account");
-        const newAccount: Account = await response.json();
-        return newAccount;
+        }));
+        return parseResponseJson(response);
     },
 
-    async update(id: string, data: Partial<Account>): Promise<Account> {
-        const response = await fetch(`${API_BASE_URL}/accounts/${id}`, {
-            method: 'PATCH',
-            headers: {
-                ...getAuthHeader(),
-                'Content-Type': 'application/json',
-            },
+    async update(id: number, data: UpdateAccountReq): Promise<Account> {
+        const response = await fetch(`${API_BASE_URL}/accounts/${id}`, getFetchOptions(undefined, {
+            method: "PUT",
             body: JSON.stringify(data),
-        });
-        if (!response.ok) throw new Error("Error updating account");
-        const updatedAccount: Account = await response.json();
-        return updatedAccount;
+        }));
+        return parseResponseJson(response);
     },
 
-    async delete(id: string): Promise<void> {
-        // LLAMADA REAL AL BACKEND (DESCOMENTAR CUANDO ESTÉ LISTO)
-        /*
-        const response = await fetch(`${API_BASE_URL}/accounts/${id}`, {
-          method: 'DELETE',
-          headers: getAuthHeader(),
-        });
-        if (!response.ok) throw new Error("Error deleting account");
-        */
-    }
+    async deactivate(id: number): Promise<void> {
+        const response = await fetch(`${API_BASE_URL}/accounts/${id}/deactivate`, getFetchOptions(undefined, {
+            method: "PATCH",
+        }));
+        await parseResponseJson(response);
+    },
 };

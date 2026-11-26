@@ -1,19 +1,45 @@
 import React from 'react';
 import { GeneralLedger } from "@/components/organisms/accounting/GeneralLedger";
 import { JournalEntryForm } from "@/components/organisms/accounting/JournalEntryForm";
-import { useJournalEntry } from "@/useCases/useJournalEntry";
+import { useJournalEntries, useCreateJournalEntry, useVoidJournalEntry } from "@/useCases/useJournalEntry";
 import { useChartOfAccounts } from "@/useCases/useChartOfAccounts";
+import { useTrialBalance } from "@/useCases/useTrialBalance";
+import { JournalEntryType } from "@/entities/JournalEntry";
 import { Button } from "@/components/atoms/Button";
-import { Plus, BookOpen, Calculator } from "lucide-react";
+import { Badge } from "@/components/atoms/Badge";
+import { Plus, BookOpen, Calculator, Ban } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/molecules/Tabs";
 
 import { MainLayout } from "@/templates/MainLayout";
 import { SEO } from "@/components/atoms/SEO";
+import { TableEmptyState } from "@/components/molecules/TableEmptyState";
+
+const entryTypeLabels: Record<JournalEntryType, string> = {
+    INVOICE_ISSUE: "Factura",
+    PAYMENT_RECEIPT: "Recaudo",
+    MANUAL: "Manual",
+    REVERSAL: "Reversa",
+};
 
 export const AccountingJournal = () => {
     const [isFormOpen, setIsFormOpen] = React.useState(false);
-    const { entries, addEntry, isLoading: entriesLoading } = useJournalEntry();
+    const { data: entries = [], isLoading: entriesLoading } = useJournalEntries();
     const { accounts, isLoading: accountsLoading } = useChartOfAccounts();
+    const { data: trialBalance = [], isLoading: ledgerLoading } = useTrialBalance();
+    const createEntry = useCreateJournalEntry();
+    const voidEntry = useVoidJournalEntry();
+
+    const handleSave = (data: Parameters<typeof createEntry.mutate>[0]) => {
+        createEntry.mutate(data, {
+            onSuccess: () => setIsFormOpen(false),
+        });
+    };
+
+    const handleVoid = (id: number, number: string) => {
+        if (window.confirm(`¿Anular el comprobante ${number}? Se generará un asiento de reversa.`)) {
+            voidEntry.mutate(id);
+        }
+    };
 
     return (
         <MainLayout>
@@ -40,38 +66,50 @@ export const AccountingJournal = () => {
                     </TabsList>
 
                     <TabsContent value="journal" className="mt-6">
+                        {!entriesLoading && entries.length === 0 ? (
+                            <TableEmptyState
+                                icon={BookOpen}
+                                title="Sin Asientos Registrados"
+                                description="Registra un comprobante contable manual o emite una factura para comenzar tu libro diario."
+                                actionLabel="Nuevo Asiento"
+                                actionIcon={Plus}
+                                onAction={() => setIsFormOpen(true)}
+                            />
+                        ) : (
                         <div className="border-2 border-border bg-card rounded-lg overflow-hidden">
                             <div className="table-header rounded-t-lg hidden md:flex gap-4">
-                                <div className="w-[120px] text-left">Fecha</div>
-                                <div className="w-[120px] text-left">Referencia</div>
+                                <div className="w-[110px] text-left">Comprobante</div>
+                                <div className="w-[110px] text-left">Fecha</div>
+                                <div className="w-[100px] text-left">Tipo</div>
                                 <div className="flex-1 text-left">Concepto</div>
-                                <div className="w-[150px] text-right">Monto</div>
+                                <div className="w-[130px] text-right">Monto</div>
+                                <div className="w-[90px] text-right">Acciones</div>
                             </div>
 
-                            {entries.length === 0 ? (
+                            {entriesLoading ? (
                                 <div className="flex flex-col items-center justify-center p-8 text-center">
-                                    <BookOpen className="h-10 w-10 text-muted-foreground mb-4" />
-                                    <p className="text-muted-foreground">No hay asientos registrados.</p>
+                                    <p className="text-muted-foreground">Cargando asientos...</p>
                                 </div>
                             ) : (
                                 <div className="divide-y-2 divide-border">
                                     {entries.map((entry) => {
-                                        const total = entry.Movements.reduce((sum, m) => sum + m.Debit, 0);
+                                        const total = entry.lines.reduce((sum, l) => sum + l.debit, 0);
+                                        const isVoid = entry.status === "void";
                                         return (
-                                            <div key={entry.ID} className="p-4 transition-colors hover:bg-accent/50 flex flex-col md:flex-row gap-4 md:items-center">
+                                            <div key={entry.id} className="p-4 transition-colors hover:bg-accent/50 flex flex-col md:flex-row gap-4 md:items-center">
                                                 {/* Mobile layout labels (hidden on md) */}
                                                 <div className="md:hidden space-y-2">
                                                     <div className="flex justify-between items-center">
-                                                        <span className="text-sm text-muted-foreground font-medium">Fecha</span>
-                                                        <span className="font-medium text-right">{entry.Date}</span>
+                                                        <span className="text-sm text-muted-foreground font-medium">Comprobante</span>
+                                                        <span className="text-xs font-mono bg-muted px-2 py-0.5 rounded">{entry.number}</span>
                                                     </div>
-                                                    <div className="flex justify-between flex-wrap gap-2">
-                                                        <span className="text-sm text-muted-foreground font-medium">Referencia</span>
-                                                        <span className="text-xs font-mono bg-muted px-2 py-0.5 rounded text-right">{entry.Reference || '-'}</span>
+                                                    <div className="flex justify-between items-center">
+                                                        <span className="text-sm text-muted-foreground font-medium">Fecha</span>
+                                                        <span className="font-medium text-right">{entry.date?.slice(0, 10)}</span>
                                                     </div>
                                                     <div className="flex flex-col gap-1">
                                                         <span className="text-sm text-muted-foreground font-medium">Concepto</span>
-                                                        <span className="text-sm">{entry.Description}</span>
+                                                        <span className="text-sm">{entry.description}</span>
                                                     </div>
                                                     <div className="flex justify-between items-center pt-2 border-t border-border mt-2 w-full">
                                                         <span className="text-sm text-muted-foreground font-medium">Monto</span>
@@ -81,10 +119,32 @@ export const AccountingJournal = () => {
 
                                                 {/* Desktop layout (hidden on mobile) */}
                                                 <div className="hidden md:flex w-full gap-4 items-center">
-                                                    <div className="w-[120px] text-left text-sm font-medium">{entry.Date}</div>
-                                                    <div className="w-[120px] text-left"><span className="text-xs font-mono bg-muted px-2 py-0.5 rounded">{entry.Reference || '-'}</span></div>
-                                                    <div className="flex-1 text-left text-sm truncate" title={entry.Description}>{entry.Description}</div>
-                                                    <div className="w-[150px] text-right font-bold">${total.toLocaleString()}</div>
+                                                    <div className="w-[110px] text-left"><span className="text-xs font-mono bg-muted px-2 py-0.5 rounded">{entry.number}</span></div>
+                                                    <div className="w-[110px] text-left text-sm font-medium">{entry.date?.slice(0, 10)}</div>
+                                                    <div className="w-[100px] text-left">
+                                                        <Badge variant={isVoid ? "destructive" : "secondary"} className="text-[10px]">
+                                                            {entryTypeLabels[entry.type] || entry.type}
+                                                        </Badge>
+                                                    </div>
+                                                    <div className="flex-1 text-left text-sm truncate" title={entry.description}>
+                                                        {entry.description}
+                                                        {isVoid && <span className="ml-2 text-[10px] font-bold uppercase text-destructive">Anulado</span>}
+                                                    </div>
+                                                    <div className="w-[130px] text-right font-bold">${total.toLocaleString()}</div>
+                                                    <div className="w-[90px] text-right">
+                                                        {!isVoid && (
+                                                            <Button
+                                                                variant="ghost"
+                                                                size="sm"
+                                                                className="text-muted-foreground hover:text-destructive"
+                                                                onClick={() => handleVoid(entry.id, entry.number)}
+                                                                disabled={voidEntry.isPending}
+                                                                title="Anular comprobante"
+                                                            >
+                                                                <Ban className="h-4 w-4" />
+                                                            </Button>
+                                                        )}
+                                                    </div>
                                                 </div>
                                             </div>
                                         );
@@ -92,10 +152,11 @@ export const AccountingJournal = () => {
                                 </div>
                             )}
                         </div>
+                        )}
                     </TabsContent>
 
                     <TabsContent value="ledger" className="mt-6">
-                        <GeneralLedger accounts={accounts} entries={entries} />
+                        <GeneralLedger rows={trialBalance} isLoading={ledgerLoading} />
                     </TabsContent>
                 </Tabs>
 
@@ -103,10 +164,8 @@ export const AccountingJournal = () => {
                     open={isFormOpen}
                     onOpenChange={setIsFormOpen}
                     accounts={accounts}
-                    onSave={(data) => {
-                        addEntry(data);
-                        setIsFormOpen(false);
-                    }}
+                    isSaving={createEntry.isPending || accountsLoading}
+                    onSave={handleSave}
                 />
             </div>
         </MainLayout>

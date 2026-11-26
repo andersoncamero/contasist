@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { useForm, useFieldArray } from "react-hook-form";
+import React from "react";
+import { useForm, useFieldArray, Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Plus, Trash2, AlertCircle, Save } from "lucide-react";
@@ -19,7 +19,6 @@ import {
 } from "@/components/molecules/Form";
 import { Input } from "@/components/atoms/Input";
 import { Button } from "@/components/atoms/Button";
-import { Textarea } from "@/components/atoms/Textarea";
 import {
     Select,
     SelectContent,
@@ -28,22 +27,20 @@ import {
     SelectValue,
 } from "@/components/molecules/Select";
 import { Account } from "@/entities/Account";
-import { JournalEntry } from "@/entities/JournalEntry";
+import { CreateJournalEntryReq } from "@/entities/JournalEntry";
 import { cn } from "@/lib/utils";
 
-const movementSchema = z.object({
-    AccountID: z.string().min(1, "La cuenta es requerida"),
-    TerceroNombre: z.string().optional(),
-    Debit: z.coerce.number().min(0),
-    Credit: z.coerce.number().min(0),
-    Description: z.string().optional(),
+const lineSchema = z.object({
+    accountId: z.string().min(1, "La cuenta es requerida"),
+    debit: z.coerce.number().min(0),
+    credit: z.coerce.number().min(0),
+    description: z.string().optional(),
 });
 
 const journalEntrySchema = z.object({
-    Date: z.string().min(1, "La fecha es requerida"),
-    Description: z.string().min(3, "La descripción general es requerida"),
-    Reference: z.string().optional(),
-    Movements: z.array(movementSchema).min(2, "Se requieren al menos 2 movimientos"),
+    date: z.string().min(1, "La fecha es requerida"),
+    description: z.string().min(3, "La descripción general es requerida"),
+    lines: z.array(lineSchema).min(2, "Se requieren al menos 2 movimientos"),
 });
 
 type JournalEntryFormData = z.infer<typeof journalEntrySchema>;
@@ -52,58 +49,59 @@ interface JournalEntryFormProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
     accounts: Account[];
-    onSave: (data: any) => void;
+    isSaving?: boolean;
+    onSave: (data: CreateJournalEntryReq) => void;
 }
 
 export function JournalEntryForm({
     open,
     onOpenChange,
     accounts,
+    isSaving = false,
     onSave,
 }: JournalEntryFormProps) {
     const form = useForm<JournalEntryFormData>({
-        resolver: zodResolver(journalEntrySchema) as any,
+        resolver: zodResolver(journalEntrySchema) as Resolver<JournalEntryFormData>,
         defaultValues: {
-            Date: new Date().toISOString().split("T")[0],
-            Description: "",
-            Reference: "",
-            Movements: [
-                { AccountID: "", Debit: 0, Credit: 0, Description: "" },
-                { AccountID: "", Debit: 0, Credit: 0, Description: "" },
+            date: new Date().toISOString().split("T")[0],
+            description: "",
+            lines: [
+                { accountId: "", debit: 0, credit: 0, description: "" },
+                { accountId: "", debit: 0, credit: 0, description: "" },
             ],
         },
     });
 
     const { fields, append, remove } = useFieldArray({
         control: form.control,
-        name: "Movements",
+        name: "lines",
     });
 
-    const watchMovements = form.watch("Movements");
-    const totalDebit = watchMovements.reduce((sum, m) => sum + (m.Debit || 0), 0);
-    const totalCredit = watchMovements.reduce((sum, m) => sum + (m.Credit || 0), 0);
+    const watchLines = form.watch("lines");
+    const totalDebit = watchLines.reduce((sum, m) => sum + (Number(m.debit) || 0), 0);
+    const totalCredit = watchLines.reduce((sum, m) => sum + (Number(m.credit) || 0), 0);
     const diff = Math.abs(totalDebit - totalCredit);
-    const isBalanced = diff < 0.01;
+    const isBalanced = diff < 0.01 && totalDebit > 0;
+
+    const selectableAccounts = accounts
+        .filter(a => a.is_active && a.level >= 3)
+        .sort((a, b) => a.code.localeCompare(b.code));
 
     const onSubmit = (data: JournalEntryFormData) => {
         if (!isBalanced) {
-            alert("El asiento no está cuadrado (Débito != Crédito)");
             return;
         }
 
-        const preparedData = {
-            ...data,
-            Movements: data.Movements.map((m) => {
-                const account = accounts.find((a) => a.ID === m.AccountID);
-                return {
-                    ...m,
-                    AccountCode: account?.Code || "",
-                    AccountName: account?.Name || "",
-                };
-            }),
-        };
-
-        onSave(preparedData);
+        onSave({
+            date: new Date(`${data.date}T00:00:00`).toISOString(),
+            description: data.description,
+            lines: data.lines.map((line) => ({
+                accountId: Number(line.accountId),
+                debit: Math.round(Number(line.debit) || 0),
+                credit: Math.round(Number(line.credit) || 0),
+                description: line.description || undefined,
+            })),
+        });
         form.reset();
     };
 
@@ -116,10 +114,10 @@ export function JournalEntryForm({
 
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <FormField
                                 control={form.control}
-                                name="Date"
+                                name="date"
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Fecha *</FormLabel>
@@ -132,25 +130,12 @@ export function JournalEntryForm({
                             />
                             <FormField
                                 control={form.control}
-                                name="Reference"
+                                name="description"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Doc. Soporte / Referencia</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder="Ej: FAC-001" {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="Description"
-                                render={({ field }) => (
-                                    <FormItem className="md:col-span-1">
                                         <FormLabel>Concepto General *</FormLabel>
                                         <FormControl>
-                                            <Input placeholder="Ej: Apertura de caja" {...field} />
+                                            <Input placeholder="Ej: Ajuste de cartera" {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -167,7 +152,7 @@ export function JournalEntryForm({
                                     type="button"
                                     variant="outline"
                                     size="sm"
-                                    onClick={() => append({ AccountID: "", Debit: 0, Credit: 0, Description: "" })}
+                                    onClick={() => append({ accountId: "", debit: 0, credit: 0, description: "" })}
                                 >
                                     <Plus className="mr-2 h-4 w-4" /> Agregar Línea
                                 </Button>
@@ -176,10 +161,10 @@ export function JournalEntryForm({
                             <div className="space-y-2">
                                 {fields.map((field, index) => (
                                     <div key={field.id} className="grid grid-cols-1 md:grid-cols-12 gap-2 items-start bg-muted/20 p-2 rounded-lg border border-border">
-                                        <div className="md:col-span-4">
+                                        <div className="md:col-span-5">
                                             <FormField
                                                 control={form.control}
-                                                name={`Movements.${index}.AccountID`}
+                                                name={`lines.${index}.accountId`}
                                                 render={({ field }) => (
                                                     <FormItem>
                                                         <Select onValueChange={field.onChange} value={field.value}>
@@ -188,15 +173,12 @@ export function JournalEntryForm({
                                                                     <SelectValue placeholder="Cuenta..." />
                                                                 </SelectTrigger>
                                                             </FormControl>
-                                                            <SelectContent>
-                                                                {accounts
-                                                                    .filter(a => a.Level === 4) // Solo subcuentas para asientos
-                                                                    .sort((a, b) => a.Code.localeCompare(b.Code))
-                                                                    .map(a => (
-                                                                        <SelectItem key={a.ID} value={a.ID}>
-                                                                            {a.Code} - {a.Name}
-                                                                        </SelectItem>
-                                                                    ))}
+                                                            <SelectContent className="max-h-72">
+                                                                {selectableAccounts.map(a => (
+                                                                    <SelectItem key={a.id} value={a.id.toString()}>
+                                                                        {a.code} - {a.name}
+                                                                    </SelectItem>
+                                                                ))}
                                                             </SelectContent>
                                                         </Select>
                                                         <FormMessage />
@@ -207,11 +189,11 @@ export function JournalEntryForm({
                                         <div className="md:col-span-2">
                                             <FormField
                                                 control={form.control}
-                                                name={`Movements.${index}.TerceroNombre`}
+                                                name={`lines.${index}.debit`}
                                                 render={({ field }) => (
                                                     <FormItem>
                                                         <FormControl>
-                                                            <Input placeholder="Tercero" className="h-9" {...field} />
+                                                            <Input type="number" step="1" min="0" placeholder="Debe" className="h-9" {...field} />
                                                         </FormControl>
                                                     </FormItem>
                                                 )}
@@ -220,33 +202,20 @@ export function JournalEntryForm({
                                         <div className="md:col-span-2">
                                             <FormField
                                                 control={form.control}
-                                                name={`Movements.${index}.Debit`}
+                                                name={`lines.${index}.credit`}
                                                 render={({ field }) => (
                                                     <FormItem>
                                                         <FormControl>
-                                                            <Input type="number" step="0.01" placeholder="Debe" className="h-9" {...field} />
+                                                            <Input type="number" step="1" min="0" placeholder="Haber" className="h-9" {...field} />
                                                         </FormControl>
                                                     </FormItem>
                                                 )}
                                             />
                                         </div>
-                                        <div className="md:col-span-2">
+                                        <div className="md:col-span-3 flex gap-2">
                                             <FormField
                                                 control={form.control}
-                                                name={`Movements.${index}.Credit`}
-                                                render={({ field }) => (
-                                                    <FormItem>
-                                                        <FormControl>
-                                                            <Input type="number" step="0.01" placeholder="Haber" className="h-9" {...field} />
-                                                        </FormControl>
-                                                    </FormItem>
-                                                )}
-                                            />
-                                        </div>
-                                        <div className="md:col-span-2 flex gap-2">
-                                            <FormField
-                                                control={form.control}
-                                                name={`Movements.${index}.Description`}
+                                                name={`lines.${index}.description`}
                                                 render={({ field }) => (
                                                     <FormItem className="flex-1">
                                                         <FormControl>
@@ -294,8 +263,8 @@ export function JournalEntryForm({
                                 <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
                                     Cancelar
                                 </Button>
-                                <Button type="submit" disabled={!isBalanced}>
-                                    Guardar Asiento
+                                <Button type="submit" disabled={!isBalanced || isSaving}>
+                                    {isSaving ? "Guardando..." : "Guardar Asiento"}
                                 </Button>
                             </div>
                         </div>

@@ -1,76 +1,54 @@
 import React from "react";
-import { Account } from "../entities/Account";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { CreateAccountReq, UpdateAccountReq } from "../entities/Account";
 import { AccountService } from "../services/accountService";
+import { useToast } from "../hooks/useToast";
+import { useCompany } from "./useCompany";
 
 export const useChartOfAccounts = () => {
-    const [accounts, setAccounts] = React.useState<Account[]>([]);
-    const [isLoading, setIsLoading] = React.useState(true);
     const [search, setSearch] = React.useState("");
+    const queryClient = useQueryClient();
+    const { toast } = useToast();
+    const { activeCompanyId } = useCompany();
 
-    const fetchAccounts = React.useCallback(async () => {
-        setIsLoading(true);
-        try {
-            localStorage.removeItem("contasist_puc");
-            localStorage.removeItem("contasist_puc_version");
+    const { data: accounts = [], isLoading, refetch } = useQuery({
+        queryKey: ["accounts", search, activeCompanyId],
+        queryFn: () => AccountService.getAll({ search: search || undefined }),
+        enabled: Boolean(activeCompanyId),
+    });
 
-            const data = await AccountService.getAll();
-            setAccounts(data || []);
-        } catch (error) {
-            console.error("Error loading accounts:", error);
-            setAccounts([]);
-        } finally {
-            setIsLoading(false);
-        }
-    }, []);
+    const invalidate = () => queryClient.invalidateQueries({ queryKey: ["accounts"] });
 
-    React.useEffect(() => {
-        fetchAccounts();
-    }, [fetchAccounts]);
-
-    const addAccount = async (account: Omit<Account, "id" | "created_at" | "is_active" | "business_id">) => {
-        setIsLoading(true);
-        try {
-            const newAccount = await AccountService.create(account);
-            setAccounts(prev => [...prev, newAccount]);
-        } catch (error) {
-            console.error("Error adding account:", error);
-        } finally {
-            setIsLoading(false);
-        }
+    const showError = (title: string) => (error: Error) => {
+        toast({ title, description: error.message, variant: "destructive" });
     };
 
-    const updateAccount = async (id: string, data: Partial<Account>) => {
-        setIsLoading(true);
-        try {
-            const updatedAccount = await AccountService.update(id, data);
-            setAccounts(prev => prev.map(a => a.id === id ? updatedAccount : a));
-        } catch (error) {
-            console.error("Error updating account:", error);
-        } finally {
-            setIsLoading(false);
-        }
-    };
+    const createMutation = useMutation({
+        mutationFn: (account: CreateAccountReq) => AccountService.create(account),
+        onSuccess: invalidate,
+        onError: showError("No se pudo crear la cuenta"),
+    });
 
-    const deleteAccount = async (id: string) => {
-        setIsLoading(true);
-        try {
-            await AccountService.delete(id);
-            setAccounts(prev => prev.filter(a => a.id !== id));
-        } catch (error) {
-            console.error("Error deleting account:", error);
-        } finally {
-            setIsLoading(false);
-        }
-    };
+    const updateMutation = useMutation({
+        mutationFn: ({ id, data }: { id: number; data: UpdateAccountReq }) => AccountService.update(id, data),
+        onSuccess: invalidate,
+        onError: showError("No se pudo actualizar la cuenta"),
+    });
+
+    const deactivateMutation = useMutation({
+        mutationFn: (id: number) => AccountService.deactivate(id),
+        onSuccess: invalidate,
+        onError: showError("No se pudo desactivar la cuenta"),
+    });
 
     return {
         accounts,
         isLoading,
         search,
         setSearch,
-        addAccount,
-        updateAccount,
-        deleteAccount,
-        refresh: fetchAccounts,
+        addAccount: (account: CreateAccountReq) => createMutation.mutateAsync(account),
+        updateAccount: (id: number, data: UpdateAccountReq) => updateMutation.mutateAsync({ id, data }),
+        deactivateAccount: (id: number) => deactivateMutation.mutateAsync(id),
+        refresh: refetch,
     };
 };
